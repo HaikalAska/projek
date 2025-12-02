@@ -6,15 +6,13 @@
 #include <conio.h>
 #include <string.h>
 #include <windows.h>
+#include "FrameTabel.h"
 
 
 //==================================//
 static void fullscreen();
-static void clearscreen();
 static void setPointer(int row, int col);
-static void tampilanlogin(char *filename, int startX, int startY);
 static void inputPassword(char *pw);
-void gotoxy(int x, int y);
 void fillBackground(int colorPair);
 //=================================//
 
@@ -89,52 +87,23 @@ static void validLogin() {
     printf("\n\n\n\n\n\n\n");
     printf("\t\t\t\t\t   Batas percobaan habis, program keluar...\n");
     getchar();
+    getchar();
+    exit(0);
+
+
 }
 
-
-
-//Untuk Clearscreen
-static void clearscreen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-
-
-//setting pointer nya
+//=========================================//
+//==========setting pointer nya============//
 static void setPointer(int row, int col){
     printf("\033[%d;%dH", row, col);
 }
-
-
-//buat nampilin ASCI nya
-static void tampilanlogin(char *filename, int startX, int startY) {
-    FILE *f = fopen(filename, "r");
-    if (!f) return;
-
-    char line[300];
-    int currentRow = 0;
-
-    while (fgets(line, sizeof(line), f)) {
-        gotoxy(startX, startY + currentRow);
-        printf("%s", line);
-        currentRow++;
-    }
-
-    fclose(f);
-}
-
-//biar tiap print teks ga harus n sama t
-void gotoxy(int x, int y) {
-    COORD pos = {x, y};
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-}
+//=======================================//
 
 
 
-//biar ga ada blank hitam di cmd saat di run
+//=================================================================//
+//=========biar ga ada blank hitam di cmd saat di run=============//
 void fillBackground(int colorPair) {
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -155,10 +124,13 @@ void fillBackground(int colorPair) {
     }
     (h, pos);
 }
+//===============================================================//
 
 
 
-//Bagian Password
+
+//=============================================//
+//==============Bagian Password===============//
 static void inputPassword(char *pw) {
     int i = 0;
     char ch;
@@ -201,6 +173,6 @@ static void inputPassword(char *pw) {
         }
     }
 }
-
+//=============================================//
 
 #endif

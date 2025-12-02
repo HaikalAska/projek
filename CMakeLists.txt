@@ -7,4 +7,6 @@ add_executable(projek
 #        masterAdmin.c
         main.c
         Menu.h
+        PesanTiket.h
+        FrameTabel.h
 )

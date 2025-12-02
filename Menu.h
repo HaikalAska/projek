@@ -1,57 +1,45 @@
 #ifndef PROJEK_MENU_H
 #define PROJEK_MENU_H
 #include "login.h"
+#include "FrameTabel.h"
+#include "PesanTiket.h"
 
-void BorderMenu(char filename[50]);
-void printFileAtPosition(char *filename, int startX, int startY);
 
 static void tampilanMenu() {
     char filename [50];
     int pilihan;
-
-    strcpy (filename, "MenuTabel.txt");
-
-    fillBackground(0x70);
     clearscreen();
+    fillBackground(0x70);
+    printBorder(1, 1, 153, 43);
+    FrameYangTengah(31, 1, 43);
+    FrameYangHider(1,9,153);
+    tampilanlogin("GAMBARASCI.txt", 60, 3);
 
-    BorderMenu(filename);
-    printFileAtPosition("GAMBARASCI.txt", 50, 1);
-
-    gotoxy(8,3);
+    gotoxy(8,5);
     printf("Kelompok 5");
 
-    gotoxy(5,23);
+
+
+
+    gotoxy(3,11);
+    printf("[1] Pemesanan Tiket");
+    gotoxy(3,13);
+    printf("[2] Reffund");
+    gotoxy(3,15);
+    printf("[3] Kelola Data Dan Laporan");
+    gotoxy(3,17);
+    printf("[4] Info Pribadi");
+    gotoxy(3,19);
+    printf("[5] Log Out");
+    gotoxy(3,23);
     printf("Masukkan pilihan [1-4]: ");
     scanf("%d", &pilihan);
+
+    if (pilihan == 1) {
+        PesanTiket();
+    }
 
     getchar();
     getchar();
 };
-
-
-
-void BorderMenu(char filename[50]){
-    FILE *Asci = fopen(filename, "r");
-    char line[200];
-    while (fgets(line, sizeof(line), Asci)) {
-        printf("%s", line);
-    }
-    fclose(Asci);
-}
-
-void printFileAtPosition(char *filename, int startX, int startY) {
-    FILE *f = fopen(filename, "r");
-    if (!f) return;
-
-    char line[300];
-    int currentRow = 0;
-
-    while (fgets(line, sizeof(line), f)) {
-        gotoxy(startX, startY + currentRow);
-        printf("%s", line);
-        currentRow++;
-    }
-
-    fclose(f);
-}
 #endif
