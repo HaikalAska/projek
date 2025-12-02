@@ -5,6 +5,6 @@ set(CMAKE_C_STANDARD 23)
 
 add_executable(projek
 #        masterAdmin.c
-        MasterAdminn.c
+        main.c
         Menu.h
 )

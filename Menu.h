@@ -7,6 +7,7 @@ void printFileAtPosition(char *filename, int startX, int startY);
 
 static void tampilanMenu() {
     char filename [50];
+    int pilihan;
 
     strcpy (filename, "MenuTabel.txt");
 
@@ -18,6 +19,10 @@ static void tampilanMenu() {
 
     gotoxy(8,3);
     printf("Kelompok 5");
+
+    gotoxy(5,23);
+    printf("Masukkan pilihan [1-4]: ");
+    scanf("%d", &pilihan);
 
     getchar();
     getchar();
