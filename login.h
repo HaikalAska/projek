@@ -10,20 +10,27 @@
 
 
 //==================================//
-static void fullscreen();
 static void setPointer(int row, int col);
 static void inputPassword(char *pw);
-void fillBackground(int colorPair);
 //=================================//
 
 
 
 static void validLogin() {
-    char filename[100] = "GAMBARASCI.txt";
     char id[50];
     char pw[50];
-    char validID[] = "1";
-    char validPW[] = "1";
+    char role[50];
+
+    char AdminID[] = "admin";
+    char AdminPW[] = "admin";
+
+    char staffID[] = "staff";
+    char staffPW[] = "staff";
+
+    char managerID[] = "aanager";
+    char managerPW[] = "manager";
+
+
     int percobaan = 0;
     int Maxpercobaan = 3;
     int trash;
@@ -61,14 +68,14 @@ static void validLogin() {
         setPointer(31, 62);
         inputPassword(pw);
 
-        if (strcmp(id, validID) == 0 && strcmp(pw, validPW) == 0) {
-            printf("\n\n\n\n                     [OK] Login berhasil!\n");
-            printf("                     Tekan Enter untuk melanjutkan...");
-
-            while ((trash = getchar()) != '\n');
-            clearscreen();
-
-            return;
+        if (strcmp(id, AdminID) == 0 && strcmp(pw, AdminPW) == 0) {
+            strcpy(role, "Admin");
+        }
+        else if (strcmp(id, staffID) == 0 && strcmp(pw, staffPW) == 0) {
+            strcpy(role, "Staff");
+        }
+        else if (strcmp(id, managerID) == 0 && strcmp(pw, managerPW) == 0) {
+            strcpy(role, "Manager");
         } else {
             percobaan++;
 
@@ -80,7 +87,29 @@ static void validLogin() {
                 while ((trash = getchar()) != '\n');
                 getchar();
             }
+            continue;
         }
+
+        {
+            printf("\n\n\n\n                     [OK] Login berhasil!\n");
+            printf("                     Tekan Enter untuk melanjutkan...");
+            getchar();
+            getchar();
+            return;
+        }
+
+
+        // Contoh akses berdasarkan role
+        if (strcmp(role, "Admin") == 0) {
+            printf("Halo Admin, kamu punya akses penuh.\n");
+        }
+        else if (strcmp(role, "Staff") == 0) {
+            printf("Halo Staff, kamu punya akses input dan layanan.\n");
+        }
+        else if (strcmp(role, "Manager") == 0) {
+            printf("Halo Manager, kamu bisa melihat laporan.\n");
+        }
+
     }
 
     clearscreen();
@@ -99,34 +128,6 @@ static void setPointer(int row, int col){
     printf("\033[%d;%dH", row, col);
 }
 //=======================================//
-
-
-
-//=================================================================//
-//=========biar ga ada blank hitam di cmd saat di run=============//
-void fillBackground(int colorPair) {
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(h, &csbi);
-
-    int width  = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-    SetConsoleTextAttribute(h, colorPair);
-
-    COORD pos = {0, 0};
-    SetConsoleCursorPosition(h, pos);
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            printf(" ");
-        }
-    }
-    (h, pos);
-}
-//===============================================================//
-
-
 
 
 //=============================================//

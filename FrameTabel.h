@@ -1,6 +1,5 @@
 #ifndef PROJEK_FRAMETABEL_H
 #define PROJEK_FRAMETABEL_H
-#include <fcntl.h>
 
 //==================================================================//
 //=====================buat nampilin ASCI nya======================//
@@ -36,6 +35,9 @@ static void clearscreen() {
 //============================================//
 
 
+
+
+
 //======================================================================//
 //==============BIAR TIAP PRINT GA HARUS (\N DAN \t)  =================//
 void gotoxy(int x, int y) {
@@ -48,10 +50,41 @@ void gotoxy(int x, int y) {
 
 
 
+//=================================================================//
+//==============BIAR GA ADA BLANK HITAM SAAT DI RUN===============//
+void fillBackground(int colorPair) {
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(h, &csbi);
+
+    int width  = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    SetConsoleTextAttribute(h, colorPair);
+
+    COORD pos = {0, 0};
+    SetConsoleCursorPosition(h, pos);
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            printf(" ");
+        }
+    }
+    (h, pos);
+}
+//===============================================================//
+
+
+
+
+
 
 //***********************************************************************//
 //***************** INI BAGIAN FRAME HITAM NYA DOANG*********************//
 //**********************************************************************//
+
+
+
 
 
 //==================================================================//

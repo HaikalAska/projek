@@ -1,6 +1,5 @@
 #ifndef PROJEK_MENU_H
 #define PROJEK_MENU_H
-#include "login.h"
 #include "FrameTabel.h"
 #include "PesanTiket.h"
 
