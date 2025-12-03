@@ -97,15 +97,26 @@ static void disableScroll()
 {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(hOut, &csbi);
+    CONSOLE_SCREEN_BUFFER_INFOEX info;
+    info.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+    GetConsoleScreenBufferInfoEx(hOut, &info);
 
-    COORD size;
-    size.X = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    size.Y = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-    SetConsoleScreenBufferSize(hOut, size);
+    // Samakan buffer dengan window view
+    SHORT width  = info.srWindow.Right - info.srWindow.Left + 1;
+    SHORT height = info.srWindow.Bottom - info.srWindow.Top + 1;
+
+    info.dwSize.X = width;
+    info.dwSize.Y = height;
+
+    SetConsoleScreenBufferInfoEx(hOut, &info);
 }
 //==================================================//
+
+
+void forceHideScrollbar() {
+    HWND consoleWindow = GetConsoleWindow();
+    ShowScrollBar(consoleWindow, SB_BOTH, FALSE);
+}
 
 
 

@@ -5,8 +5,9 @@
 int main() {
     system("color 91");
     trueFullscreen();
-    Sleep(400);
+    Sleep(300);
     disableScroll();
+    forceHideScrollbar();
     validLogin();
     tampilanMenu();
     return 0;
