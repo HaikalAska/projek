@@ -49,25 +49,7 @@ static void PesanTiket() {
 
     gotoxy(97,11);
     printf("Data Penumpang");
-
-
-
-    //NOTE GUA PENGEN PAS KEMBALI PENCET TOMBOL DI KYBOARD
-    while (1) {
-        gotoxy(5, 18);
-        printf("Tekan Esc untuk Kembali");
-
-        ch = getch();
-
-        if (ch == 27) {
-            return;
-        }
-    }
-
-
-    gotoxy(65, 30);
-    printf("Tekan ENTER untuk kembali...");
-    getchar();
+    waitEsc();
 }
 
 #endif //PROJEK_PESANTIKET_H

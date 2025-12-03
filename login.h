@@ -7,6 +7,7 @@
 #include <string.h>
 #include <windows.h>
 #include "FrameTabel.h"
+#include "Menu.h"
 
 
 //==================================//
@@ -19,10 +20,10 @@ static void inputPassword(char *pw);
 static void validLogin() {
     char id[50];
     char pw[50];
-    char role[50];
+    char role[50] = "";
 
-    char AdminID[] = "admin";
-    char AdminPW[] = "admin";
+    char AdminID[] = "SuperAdmin";
+    char AdminPW[] = "SuperAdmin";
 
     char staffID[] = "staff";
     char staffPW[] = "staff";
@@ -30,19 +31,18 @@ static void validLogin() {
     char managerID[] = "manager";
     char managerPW[] = "manager";
 
-
     int percobaan = 0;
     int Maxpercobaan = 3;
     int trash;
 
     while (percobaan < Maxpercobaan) {
-
         fillBackground(0x90);
         clearscreen();
         gotoxy(70, 10);
         printf("SELAMAT DATANG");
 
         tampilanlogin("GAMBARASCI.txt", 42, 15);
+
 
 
         gotoxy(73, 26);
@@ -52,21 +52,23 @@ static void validLogin() {
         gotoxy(45, 28);
         printf("||                                                         ||");
         gotoxy(45,29);
-        printf("||    ID       :                                           ||");
+        printf("||          ID :                                           ||");
         gotoxy(45,30);
         printf("||    Password :                                           ||");
         gotoxy(45,31);
         printf("||                                                         ||");
         gotoxy(45,32);
         printf("=============================================================");
-        gotoxy(45,33);
-        printf("[Tab] Untuk Melihat Password");
+        gotoxy(45,33); printf("[Tab] Untuk Melihat Password");
+
+
 
         setPointer(30, 62);
         scanf("%s", id);
 
         setPointer(31, 62);
         inputPassword(pw);
+
 
         if (strcmp(id, AdminID) == 0 && strcmp(pw, AdminPW) == 0) {
             strcpy(role, "Admin");
@@ -76,40 +78,48 @@ static void validLogin() {
         }
         else if (strcmp(id, managerID) == 0 && strcmp(pw, managerPW) == 0) {
             strcpy(role, "Manager");
-        } else {
+        }
+        else {
             percobaan++;
-
-            printf("\n\n\n\n                     ID atau Password salah!\n");
-            printf("\t\t     Sisa percobaan: %d\n", Maxpercobaan - percobaan);
+            printf("\n\n\n\n                    ID atau Password salah!\n");
+            printf("                    Sisa percobaan: %d\n", Maxpercobaan - percobaan);
 
             if (percobaan < Maxpercobaan) {
-                printf("                     Tekan Enter untuk coba lagi...");
+                printf("                    Tekan Enter untuk coba lagi...");
                 while ((trash = getchar()) != '\n');
                 getchar();
             }
             continue;
         }
-
-        {
-            gotoxy(65, 35);
-            printf("[OK] Login berhasil!");
-
-            gotoxy(60, 36);
-            printf("Tekan Enter untuk melanjutkan...");
-            getchar();
-            getchar();
-            return;
-        }
+        break;
     }
 
-    clearscreen();
-    printf("\n\n\n\n\n\n\n");
-    printf("\t\t\t\t\t   Batas percobaan habis, program keluar...\n");
+    if (percobaan == Maxpercobaan) {
+        clearscreen();
+        printf("Batas percobaan habis, program keluar...\n");
+        getchar();
+        getchar();
+        exit(0);
+    }
+
+    gotoxy(65, 35); printf("[OK] Login berhasil!");
+    gotoxy(60, 36); printf("Tekan Enter untuk melanjutkan...");
     getchar();
     getchar();
-    exit(0);
 
 
+    if (strcmp(role, "Admin") == 0) {
+        menuSuperAdmin();
+        return;
+    }
+    else if (strcmp(role, "Staff") == 0) {
+        menuStaff();
+        return;
+    }
+    else if (strcmp(role, "Manager") == 0) {
+        menuManager();
+        return;
+    }
 }
 
 //=========================================//

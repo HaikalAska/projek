@@ -1,5 +1,4 @@
 #include "login.h"
-#include "Menu.h"
 #include "FrameTabel.h"
 
 int main() {
@@ -9,6 +8,5 @@ int main() {
     disableScroll();
     forceHideScrollbar();
     validLogin();
-    tampilanMenu();
     return 0;
 }

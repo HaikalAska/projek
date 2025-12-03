@@ -113,10 +113,33 @@ static void disableScroll()
 //==================================================//
 
 
+
+
+
+
 void forceHideScrollbar() {
     HWND consoleWindow = GetConsoleWindow();
     ShowScrollBar(consoleWindow, SB_BOTH, FALSE);
 }
+//======================================================//
+
+
+
+
+void waitEsc() {
+    char ch;
+
+    while (1) {
+        gotoxy(5, 18);
+        printf("Tekan Esc untuk Kembali");
+
+        ch = getch();
+        if (ch == 27) return;
+    }
+}
+
+
+
 
 
 
