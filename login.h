@@ -27,7 +27,7 @@ static void validLogin() {
     char staffID[] = "staff";
     char staffPW[] = "staff";
 
-    char managerID[] = "aanager";
+    char managerID[] = "manager";
     char managerPW[] = "manager";
 
 
@@ -37,7 +37,7 @@ static void validLogin() {
 
     while (percobaan < Maxpercobaan) {
 
-        fillBackground(0x70);
+        fillBackground(0x90);
         clearscreen();
         gotoxy(70, 10);
         printf("SELAMAT DATANG");
@@ -91,25 +91,15 @@ static void validLogin() {
         }
 
         {
-            printf("\n\n\n\n                     [OK] Login berhasil!\n");
-            printf("                     Tekan Enter untuk melanjutkan...");
+            gotoxy(65, 35);
+            printf("[OK] Login berhasil!");
+
+            gotoxy(60, 36);
+            printf("Tekan Enter untuk melanjutkan...");
             getchar();
             getchar();
             return;
         }
-
-
-        // Contoh akses berdasarkan role
-        if (strcmp(role, "Admin") == 0) {
-            printf("Halo Admin, kamu punya akses penuh.\n");
-        }
-        else if (strcmp(role, "Staff") == 0) {
-            printf("Halo Staff, kamu punya akses input dan layanan.\n");
-        }
-        else if (strcmp(role, "Manager") == 0) {
-            printf("Halo Manager, kamu bisa melihat laporan.\n");
-        }
-
     }
 
     clearscreen();

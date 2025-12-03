@@ -15,6 +15,7 @@ typedef struct {
 
 static void PesanTiket() {
     int pilihan;
+    char ch;
     clearscreen();
     printBorder(1, 1, 153, 43);
     FrameYangTengah(31, 1, 43);
@@ -26,9 +27,6 @@ static void PesanTiket() {
     wprintf(L"SELAMAT DATANG");
     gotoxy(9,11);
     wprintf(L"Pemesanan Tiket");
-    gotoxy(3,14);
-    wprintf(L"[2] Kembali");
-
 
 
     Destinasi list[] = {
@@ -49,11 +47,22 @@ static void PesanTiket() {
 
 
 
+    gotoxy(97,11);
+    printf("Data Penumpang");
+
+
 
     //NOTE GUA PENGEN PAS KEMBALI PENCET TOMBOL DI KYBOARD
-    gotoxy(3,18);
-    wprintf(L"Masukkan Pilihan : ");
-    scanf("%d", &pilihan);
+    while (1) {
+        gotoxy(5, 18);
+        printf("Tekan Esc untuk Kembali");
+
+        ch = getch();
+
+        if (ch == 27) {
+            return;
+        }
+    }
 
 
     gotoxy(65, 30);

@@ -77,6 +77,39 @@ void fillBackground(int colorPair) {
 
 
 
+//===============================================================================//
+//==============================BIAR AUTO FULLSCREEN============================//
+void trueFullscreen() {
+    keybd_event(VK_MENU, 0x38, 0, 0);
+    keybd_event(VK_RETURN, 0x1C, 0, 0);
+    keybd_event(VK_RETURN, 0x1C, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_MENU, 0x38, KEYEVENTF_KEYUP, 0);
+}
+//=============================================================================//
+
+
+
+
+
+//=================================================//
+//================BUAT DISABLE SCROLL=============//
+static void disableScroll()
+{
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(hOut, &csbi);
+
+    COORD size;
+    size.X = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    size.Y = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    SetConsoleScreenBufferSize(hOut, size);
+}
+//==================================================//
+
+
+
+
 
 
 //***********************************************************************//
@@ -191,5 +224,41 @@ void FrameYangHider(int x, int y, int width) {
     }
 }
 //====================================================//
+
+
+//
+//NAVIGASI
+static int menuNavigasi(int jumlahMenu, int startRow, int startCol) {
+    int pilihan = 0;
+    char ch;
+
+    while (1) {
+        // Tampilkan highlight
+        for (int i = 0; i < jumlahMenu; i++) {
+            gotoxy(startCol, startRow + (i * 2));
+
+            if (i == pilihan)
+                printf(">> ");   // highlight
+            else
+                printf("   ");   // normal
+        }
+
+        ch = getch();
+
+        if (ch == 72) {                 // Up
+            pilihan--;
+            if (pilihan < 0)
+                pilihan = jumlahMenu - 1;
+        }
+        else if (ch == 80) {            // Down
+            pilihan++;
+            if (pilihan >= jumlahMenu)
+                pilihan = 0;
+        }
+        else if (ch == 13) {            // Enter
+            return pilihan;
+        }
+    }
+}
 
 #endif
