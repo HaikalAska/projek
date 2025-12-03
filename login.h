@@ -17,7 +17,7 @@ static void inputPassword(char *pw);
 
 
 
-static void validLogin() {
+void validLogin() {
     char id[50];
     char pw[50];
     char role[50] = "";

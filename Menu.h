@@ -4,29 +4,7 @@
 #include "PesanTiket.h"
 
 
-static void tampilanMenu() {
-    char filename [50];
-    int pilihan;
-
-
-    while (1) {
-        clearscreen();
-        fillBackground(0x90);
-        printBorder(1, 1, 153, 43);
-        FrameYangTengah(31, 1, 43);
-        FrameYangHider(1,9,153);
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
-
-        gotoxy(8,5);
-        printf("Kelompok 5");
-    }
-
-    getchar();
-    getchar();
-};
-
-
-static void menuSuperAdmin() {
+void menuSuperAdmin() {
     int pilih;
 
     while (1) {
@@ -50,14 +28,21 @@ static void menuSuperAdmin() {
             case 1:
                 // fungsi KelolaStaff();
                 gotoxy(50,40); printf("program selesai");
-                return;
             case 2:
                 // fungsi Laporan();
                 break;
             case 3:
-                return;
+                break;
+
         }
+
+        gotoxy(3, 19); printf("====== Anda Log Out ======");
+        getchar();
+        getchar();
+    return;
+
     }
+
 }
 
 
@@ -90,8 +75,13 @@ static void menuStaff() {
                 // Refund();
                 break;
             case 3:
-                return;
+                break;
         }
+
+        gotoxy(3, 19); printf("====== Anda Log Out ======");
+        getchar();
+        getchar();
+        return;
     }
 }
 
@@ -126,8 +116,13 @@ static void menuManager() {
                 // Pendapatan();
                 break;
             case 3:
-                return;
+                break;
         }
+
+        gotoxy(3, 19); printf("====== Anda Log Out ======");
+        getchar();
+        getchar();
+        return;
     }
 }
 
