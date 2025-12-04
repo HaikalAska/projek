@@ -45,20 +45,13 @@ void validLogin() {
 
 
 
-        gotoxy(73, 26);
-        printf("Login");
-        gotoxy(45, 27);
-        printf("=============================================================");
-        gotoxy(45, 28);
-        printf("||                                                         ||");
-        gotoxy(45,29);
-        printf("||          ID :                                           ||");
-        gotoxy(45,30);
-        printf("||    Password :                                           ||");
-        gotoxy(45,31);
-        printf("||                                                         ||");
-        gotoxy(45,32);
-        printf("=============================================================");
+        gotoxy(73, 26);printf("Login");
+        gotoxy(45, 27);printf("=============================================================");
+        gotoxy(45, 28);printf("||                                                         ||");
+        gotoxy(45,29); printf("||          ID :                                           ||");
+        gotoxy(45,30); printf("||    Password :                                           ||");
+        gotoxy(45,31); printf("||                                                         ||");
+        gotoxy(45,32); printf("=============================================================");
         gotoxy(45,33); printf("[Tab] Untuk Melihat Password");
 
 

@@ -95,20 +95,22 @@ void trueFullscreen() {
 //================BUAT DISABLE SCROLL=============//
 static void disableScroll()
 {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    HWND console = GetConsoleWindow();
 
-    CONSOLE_SCREEN_BUFFER_INFOEX info;
-    info.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
-    GetConsoleScreenBufferInfoEx(hOut, &info);
+    LONG style = GetWindowLong(console, GWL_STYLE);
+    style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+    SetWindowLong(console, GWL_STYLE, style);
 
-    // Samakan buffer dengan window view
-    SHORT width  = info.srWindow.Right - info.srWindow.Left + 1;
-    SHORT height = info.srWindow.Bottom - info.srWindow.Top + 1;
+    HMONITOR monitor = MonitorFromWindow(console, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi = { sizeof(mi) };
+    GetMonitorInfo(monitor, &mi);
 
-    info.dwSize.X = width;
-    info.dwSize.Y = height;
-
-    SetConsoleScreenBufferInfoEx(hOut, &info);
+    SetWindowPos(console, HWND_TOP,
+        mi.rcMonitor.left,
+        mi.rcMonitor.top,
+        mi.rcMonitor.right - mi.rcMonitor.left,
+        mi.rcMonitor.bottom - mi.rcMonitor.top,
+        SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 }
 //==================================================//
 
@@ -267,30 +269,29 @@ static int menuNavigasi(int jumlahMenu, int startRow, int startCol) {
     char ch;
 
     while (1) {
-        // Tampilkan highlight
         for (int i = 0; i < jumlahMenu; i++) {
             gotoxy(startCol, startRow + (i * 2));
 
             if (i == pilihan)
-                printf(">> ");   // highlight
+                printf(">> ");
             else
-                printf("   ");   // normal
+                printf("   ");
         }
 
         ch = getch();
 
-        if (ch == 72) {                 // Up
+        if (ch == 72) {
             pilihan--;
             if (pilihan < 0)
                 pilihan = jumlahMenu - 1;
         }
-        else if (ch == 80) {            // Down
+        else if (ch == 80) {
             pilihan++;
             if (pilihan >= jumlahMenu)
                 pilihan = 0;
         }
-        else if (ch == 13) {            // Enter
-            return pilihan;
+        else if (ch == 13) {
+            return pilihan + 1;
         }
     }
 }

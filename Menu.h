@@ -29,17 +29,17 @@ void menuSuperAdmin() {
                 // fungsi KelolaStaff();
                 gotoxy(50,40); printf("program selesai");
             case 2:
-                // fungsi Laporan();
+                // fungsi Lapor an();
                 break;
             case 3:
-                break;
+                gotoxy(3, 19); printf("====== Anda Log Out ======");
+                getchar();
+                getchar();
+                return;
 
         }
 
-        gotoxy(3, 19); printf("====== Anda Log Out ======");
-        getchar();
-        getchar();
-    return;
+
 
     }
 
