@@ -22,8 +22,8 @@ void validLogin() {
     char pw[50];
     char role[50] = "";
 
-    char AdminID[] = "SuperAdmin";
-    char AdminPW[] = "SuperAdmin";
+    char AdminID[] = "123";
+    char AdminPW[] = "123";
 
     char staffID[] = "staff";
     char staffPW[] = "staff";

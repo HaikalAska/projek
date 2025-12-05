@@ -262,8 +262,8 @@ void FrameYangHider(int x, int y, int width) {
 //====================================================//
 
 
-//
-//NAVIGASI
+//============================================================//
+//================ NAVIGASI ================================//
 static int menuNavigasi(int jumlahMenu, int startRow, int startCol) {
     int pilihan = 0;
     char ch;
@@ -293,7 +293,50 @@ static int menuNavigasi(int jumlahMenu, int startRow, int startCol) {
         else if (ch == 13) {
             return pilihan + 1;
         }
+
     }
 }
+//============================================================//
+
+
+
+//==================================================================//
+//=====================NAVIGASI KANAN KIRI=========================//
+static int KAKINavigasi(int jumlahMenu, int startRow, int startCol, int spacing) {
+    int pilihan = 0;
+    char ch;
+
+    while (1) {
+
+        for (int i = 0; i < jumlahMenu; i++) {
+            gotoxy(startCol + i * spacing, startRow);
+
+            if (i == pilihan)
+                printf(">>");
+            else
+                printf("  ");
+        }
+
+        ch = getch();
+        if (ch == 0 || ch == 224) ch = getch();
+
+        if (ch == 75) {     // kiri
+            pilihan--;
+            if (pilihan < 0)
+                pilihan = jumlahMenu - 1;
+        }
+        else if (ch == 77) { // kanan
+            pilihan++;
+            if (pilihan >= jumlahMenu)
+                pilihan = 0;
+        }
+        else if (ch == 13) { // enter
+            return pilihan + 1;
+        }
+    }
+}
+
+
+
 
 #endif

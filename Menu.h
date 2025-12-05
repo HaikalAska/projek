@@ -2,6 +2,8 @@
 #define PROJEK_MENU_H
 #include "FrameTabel.h"
 #include "PesanTiket.h"
+#include "superadmin/KelolaStaff.h"
+
 
 
 void menuSuperAdmin() {
@@ -21,25 +23,26 @@ void menuSuperAdmin() {
         gotoxy(3, 11); printf("===== MENU SUPERADMIN =====\n");
         gotoxy(3, 13); printf("[1] Kelola Data Staff\n");
         gotoxy(3, 15);printf("[2] Lihat Laporan\n");
-        gotoxy(3, 17);printf("[3] Log Out\n");
-        pilih = menuNavigasi(3, 13, 3);
+        gotoxy(3, 17);printf("[3] Kelola Kategori\n");
+        gotoxy(3, 19);printf("[4] Log Out\n");
+        pilih = menuNavigasi(4, 13, 3);
 
         switch (pilih) {
             case 1:
-                // fungsi KelolaStaff();
-                gotoxy(50,40); printf("program selesai");
+                MenukelolaStaff();
             case 2:
                 // fungsi Lapor an();
                 break;
             case 3:
-                gotoxy(3, 19); printf("====== Anda Log Out ======");
-                getchar();
-                getchar();
-                return;
-
+                break;
+            case 4:
+               break;
         }
 
-
+        gotoxy(3, 19); printf("====== Anda Log Out ======");
+        getchar();
+        getchar();
+        return;
 
     }
 
