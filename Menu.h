@@ -4,9 +4,9 @@
 #include "PesanTiket.h"
 #include "superadmin/KelolaStaff.h"
 
+void validLogin();
 
-
-void menuSuperAdmin() {
+ void menuSuperAdmin() {
     int pilih;
 
     while (1) {
@@ -36,6 +36,7 @@ void menuSuperAdmin() {
             case 3:
                 break;
             case 4:
+                validLogin();
                break;
         }
 
@@ -78,6 +79,7 @@ static void menuStaff() {
                 // Refund();
                 break;
             case 3:
+                validLogin();
                 break;
         }
 
@@ -119,6 +121,7 @@ static void menuManager() {
                 // Pendapatan();
                 break;
             case 3:
+                validLogin();
                 break;
         }
 

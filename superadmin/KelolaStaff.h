@@ -5,6 +5,12 @@
 #include <string.h>
 
 #include "../FrameTabel.h"
+#include "create.h"
+#include "delete.h"
+#include "update.h"
+#include "../Menu.h"
+
+ void menuSuperAdmin();
 
 
 void MenukelolaStaff() {
@@ -22,9 +28,23 @@ void MenukelolaStaff() {
         gotoxy(75,10); printf("====== KELOLA DATA STAFF ======");
         gotoxy(75, 11); printf("create\n");
         gotoxy(88, 11);printf("delete\n");
-        gotoxy(100, 11  );printf("update\n");
-        pilih = KAKINavigasi(3, 11,72, 13);
-        switch (pilih) {}
+        gotoxy(100, 11);printf("update\n");
+        gotoxy(113, 11);printf("menu\n");
+        pilih = KAKINavigasi(4, 11,72, 13);
+        switch (pilih) {
+            case 1:
+                create();
+                break;
+            case 2:
+                delete();
+                break;
+            case 3:
+                update();
+                break;
+                case 4:
+                menuSuperAdmin();
+                break;
+        }
     }
 }
 

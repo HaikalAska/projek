@@ -32,6 +32,15 @@ static void clearscreen() {
     system("clear");
 #endif
 }
+
+void clearArea(int x, int yStart, int yEnd) {
+    for (int y = yStart; y <= yEnd; y++) {
+        gotoxy(x, y);
+        printf("                   ");
+
+    }
+}
+
 //============================================//
 
 
@@ -117,8 +126,8 @@ static void disableScroll()
 
 
 
-
-
+//================================================================//
+//=========================SCROLLBAR GA ADA====================//
 void forceHideScrollbar() {
     HWND consoleWindow = GetConsoleWindow();
     ShowScrollBar(consoleWindow, SB_BOTH, FALSE);
@@ -129,15 +138,12 @@ void forceHideScrollbar() {
 
 
 void waitEsc() {
-    char ch;
+    int n;
+    int ch = getch();
+    if (ch == 27) return;
+    else ungetc(ch, stdin);
+    scanf("%d", &n);
 
-    while (1) {
-        gotoxy(5, 18);
-        printf("Tekan Esc untuk Kembali");
-
-        ch = getch();
-        if (ch == 27) return;
-    }
 }
 
 

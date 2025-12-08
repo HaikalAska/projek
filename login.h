@@ -10,10 +10,17 @@
 #include "Menu.h"
 
 
+void menuSuperAdmin();
+void menuStaff();
+void menuManager();
+
+
 //==================================//
 static void setPointer(int row, int col);
 static void inputPassword(char *pw);
 //=================================//
+
+
 
 
 
@@ -36,6 +43,7 @@ void validLogin() {
     int trash;
 
     while (percobaan < Maxpercobaan) {
+
         fillBackground(0x90);
         clearscreen();
         gotoxy(70, 10);
