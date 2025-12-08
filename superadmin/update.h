@@ -18,7 +18,7 @@ void update() {
     fp = fopen("staff.dat", "rb");
     sampah = fopen("sampah.dat", "wb");
 
-    gotoxy(3,13); printf("username update :");
+    gotoxy(3,13); printf("ID update :");
     idx = 0;
     while (1) {
         char ch = _getch();
@@ -44,9 +44,9 @@ void update() {
     }
 
     while (fread(&data, sizeof(staff), 1, fp) == 1) {
-        if (strcmp(data.username, target) == 0) {
+        if (strcmp(data.id, target) == 0) {
             found = 1;
-            gotoxy(3, 15); printf("Username lama: %s", data.username);
+            gotoxy(3, 15); printf("Username lama: %s", data.id);
 
             gotoxy(3, 18); printf("Username Baru :");
             idx = 0;
@@ -58,7 +58,7 @@ void update() {
                     return;
                 }
                 else if (ch == 13) {
-                    data.username[idx] = '\0';
+                    data.id[idx] = '\0';
                     break;
                 }
                 else if (ch == 8 && idx > 0) {
@@ -66,7 +66,7 @@ void update() {
                     printf("\b \b");
                 }
                 else if (ch >= 32 && ch <= 126 && idx < 49) {
-                    data.username[idx++] = ch;
+                    data.id[idx++] = ch;
                     printf("%c", ch);
                 }
             }

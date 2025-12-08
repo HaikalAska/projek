@@ -18,7 +18,7 @@ FILE *fp, *sampah;
     scanf("%s", target);
 
     while (fread(&data, sizeof(staff), 1, fp) == 1) {
-        if (strcmp(data.username, target) != 0) {
+        if (strcmp(data.id, target) != 0) {
             fwrite(&data, sizeof(staff), 1, sampah);
         }
         else {
@@ -30,7 +30,7 @@ FILE *fp, *sampah;
 
     if (found) {
         remove( "staff.dat");
-        rename("staff.dat", "sampah.dat");
+        rename("sampah.dat", "staff.dat");
         gotoxy(3,15); printf("User '%s' berhasil dihapus!", target);
     } else {
         remove("sampah.dat");

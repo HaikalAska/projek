@@ -85,10 +85,6 @@ void buatkategori() {
     tampilanmenukategori();
 
     FILE *kategorifile = fopen("kategori.dat","ab");
-    if (!kategorifile) {
-        perror("Gagal membuka file");
-        return;
-    }
     char lagi = 'y';
     while (lagi == 'y' || lagi == 'Y') {
         kategori k;

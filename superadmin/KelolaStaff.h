@@ -8,6 +8,7 @@
 #include "create.h"
 #include "delete.h"
 #include "update.h"
+#include "read.h"
 #include "../Menu.h"
 
  void menuSuperAdmin();
@@ -24,6 +25,7 @@ void MenukelolaStaff() {
         FrameYangHider(1,9,153);
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(8,5); printf("Kelompok 5");
+        baca();
 
         gotoxy(75,10); printf("====== KELOLA DATA STAFF ======");
         gotoxy(75, 11); printf("create\n");

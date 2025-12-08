@@ -343,6 +343,42 @@ static int KAKINavigasi(int jumlahMenu, int startRow, int startCol, int spacing)
 }
 
 
+//border show data
+void tabelData(int startX, int startY, int maxId, int maxUsr, int maxPw, int rows) {
 
+    int totalW = 4 + maxId + maxUsr + maxPw + 10;
+
+    char line[300];
+    memset(line, '=', totalW);
+    line[totalW] = '\0';
+
+    int row = startY;
+
+    // ========== HEADER ==============
+    gotoxy(startX, row); printf("%s", line); row++;
+
+    gotoxy(startX, row);
+    printf("| %-3s | %-*s | %-*s | %-*s |",
+           "No",
+           maxId,  "ID",
+           maxUsr, "Username",
+           maxPw,  "Password");
+    row++;
+
+    gotoxy(startX, row); printf("%s", line);
+    row++;
+
+    // ========== SIAPIN KOTAK ISI DATA =============
+    for (int i = 0; i < rows; i++) {
+        gotoxy(startX, row);
+        printf("| %-3s | %-*s | %-*s | %-*s |",
+               "", maxId, "", maxUsr, "", maxPw, "");
+        row++;
+    }
+
+    // =========== FOOTER =============
+    gotoxy(startX, row);
+    printf("%s", line);
+}
 
 #endif

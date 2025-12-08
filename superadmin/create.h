@@ -9,6 +9,7 @@
 typedef struct {
     char username[50];
     char password[50];
+    char id[100];
 }staff;
 
 void create() {
@@ -27,9 +28,11 @@ void create() {
 
         gotoxy(3,14); printf("User %d", i + 1);
 
-        gotoxy(3,15); printf("Username: ");
+        gotoxy(3,15); printf("Id: ");
+        scanf("%s",data.id);
+        gotoxy(3,16); printf("Username: ");
         scanf("%s", data.username);
-        gotoxy(3,16); printf("Password: ");
+        gotoxy(3,17); printf("Password: ");
         scanf("%s", data.password);
         fwrite(&data, sizeof(staff), 1, fp);
     }
