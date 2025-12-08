@@ -3,6 +3,7 @@
 #include "FrameTabel.h"
 #include "PesanTiket.h"
 #include "superadmin/KelolaStaff.h"
+#include "kategori/kategori.h"
 
 void validLogin();
 
@@ -34,6 +35,7 @@ void validLogin();
                 // fungsi Lapor an();
                 break;
             case 3:
+                pilihkategori();
                 break;
             case 4:
                 validLogin();
