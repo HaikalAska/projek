@@ -167,13 +167,13 @@ void editkategori() {
 
             fwrite(&k, sizeof(kategori), 1, kategorifile);
 
-            gotoxy(75, 19); printf("Data berhasil diperbarui!\n");
+            gotoxy(36, 24); printf("Data berhasil diperbarui!\n");
             break;
         }
     }
 
     if (!found) {
-        gotoxy(75, 12); printf("Kategori dengan ID %d tidak ditemukan!\n", idCari);
+        gotoxy(36, 24); printf("Kategori dengan ID %d tidak ditemukan!\n", idCari);
     }
 
     fclose(kategorifile);
@@ -192,6 +192,7 @@ void hapuskategori() {
     FrameYangHider(1,9,153);
     tampilanlogin("GAMBARASCI.txt", 60, 3);
     gotoxy(8,5); printf("Kelompok 5");
+    BentukFrame(34, 11, 60, 9);
     tampilanmenukategori();
 
     FILE *kategorifile = fopen("kategori.dat", "rb");
@@ -211,7 +212,8 @@ void hapuskategori() {
     kategori k;
     int found = 0;
 
-    gotoxy(75, 10); printf("Masukkan ID kategori yang ingin dihapus: ");
+    gotoxy(51,12);printf("===== Hapus Kategori =====");
+    gotoxy(36, 14); printf("ID yang ingin dihapus : ");
     scanf("%d", &idHapus);
     getchar();
 
