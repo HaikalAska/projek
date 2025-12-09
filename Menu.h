@@ -5,36 +5,35 @@
 #include "superadmin/KelolaStaff.h"
 #include "kategori/menukategori.h"
 
+void validLogin();
 
-void menuSuperAdmin() {
+ void menuSuperAdmin() {
     int pilih;
 
     while (1) {
         clearscreen();
+        system("chcp 65001 > nul");
         fillBackground(0x90);
         printBorder(1, 1, 153, 43);
         FrameYangTengah(31, 1, 43);
         FrameYangHider(1,9,153);
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(8,5); printf("Kelompok 5");
+        gotoxy(3, 10);printf("NAVIGASI \xE2\x86\x91 \xE2\x86\x93");
+
+
 
         gotoxy(3, 11); printf("===== MENU SUPERADMIN =====\n");
-        gotoxy(3, 13); printf("[1] Kelola Data Staff\n");
-        gotoxy(3, 15);printf("[2] Lihat Laporan\n");
-        gotoxy(3, 17);printf("[3] Kelola Kategori\n");
-        gotoxy(3, 19);printf("[4] Log Out\n");
-        pilih = menuNavigasi(4, 13, 3);
+        gotoxy(3, 13); printf("[1] Kelola Data Staff\n");;
+        gotoxy(3, 15);printf("[2] Log Out\n");
+        pilih = menuNavigasi(2, 13, 3);
 
         switch (pilih) {
             case 1:
                 MenukelolaStaff();
+                break;
             case 2:
-                // fungsi Lapor an();
-                break;
-            case 3:
-                pilihkategori();
-                break;
-            case 4:
+                validLogin();
                break;
         }
 
@@ -66,8 +65,10 @@ static void menuStaff() {
         gotoxy(3, 11); printf("===== MENU STAFF =====\n");
         gotoxy(3, 13); printf("[1] Pemesanan Tiket\n");
         gotoxy(3, 15);printf("[2] Refund Tiket\n");
-        gotoxy(3, 17);printf("[3] Log Out\n");
-        pilih = menuNavigasi(3, 13, 3);
+        gotoxy(3, 17);printf("[3] Buat Promo\n");
+        gotoxy(3, 19);printf("[4] Kelola Kategori\n");
+        gotoxy(3, 21);printf("[5] Log Out\n");
+        pilih = menuNavigasi(5, 13, 3);
 
         switch (pilih) {
             case 1:
@@ -78,9 +79,15 @@ static void menuStaff() {
                 break;
             case 3:
                 break;
+            case 4:
+                pilihkategori();
+                break;
+            case 5:
+                validLogin();
+                break;
         }
 
-        gotoxy(3, 19); printf("====== Anda Log Out ======");
+        gotoxy(3, 22); printf("====== Anda Log Out ======");
         getchar();
         getchar();
         return;
@@ -118,6 +125,7 @@ static void menuManager() {
                 // Pendapatan();
                 break;
             case 3:
+                validLogin();
                 break;
         }
 
