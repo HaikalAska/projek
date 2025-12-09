@@ -3,7 +3,7 @@
 #include "FrameTabel.h"
 #include "PesanTiket.h"
 #include "superadmin/KelolaStaff.h"
-
+#include "kategori/menukategori.h"
 
 
 void menuSuperAdmin() {
@@ -17,8 +17,6 @@ void menuSuperAdmin() {
         FrameYangHider(1,9,153);
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(8,5); printf("Kelompok 5");
-
-
 
         gotoxy(3, 11); printf("===== MENU SUPERADMIN =====\n");
         gotoxy(3, 13); printf("[1] Kelola Data Staff\n");
@@ -34,6 +32,7 @@ void menuSuperAdmin() {
                 // fungsi Lapor an();
                 break;
             case 3:
+                pilihkategori();
                 break;
             case 4:
                break;

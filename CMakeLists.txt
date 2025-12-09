@@ -9,4 +9,9 @@ add_executable(projek
         Menu.h
         PesanTiket.h
         FrameTabel.h
+        kategori/create.h
+        kategori/read.h
+        kategori/update.h
+        kategori/delete.h
+        kategori/menukategori.h
 )
