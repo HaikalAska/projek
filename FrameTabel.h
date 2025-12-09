@@ -41,6 +41,16 @@ void clearArea(int x, int yStart, int yEnd) {
     }
 }
 
+
+//=========================================================//
+//==============CLEAR BAGIAN BEBERAPA TEKS DOANG=========//
+void clearLine(int row, int startCol, int endCol) {
+    gotoxy(startCol, row);
+    for (int i = startCol; i <= endCol; i++) {
+        printf(" ");
+    }
+}
+
 //============================================//
 
 
@@ -148,6 +158,58 @@ void waitEsc() {
 
 
 
+//=============================================//
+//==============Bagian Password===============//
+static void inputPassword(char *pw, int row, int col) {
+    int i = 0;
+    char ch;
+    int showPw = 0;
+
+    while (1) {
+        ch = getch();
+
+        //ENTER
+        if (ch == 13) {
+            pw[i] = '\0';
+            printf("\n");
+            break;
+        }
+
+        //ESC
+        else if (ch == 27) {
+            exit(0);
+        }
+
+        //BACKSPACE
+        else if (ch == 9) {             // TAB = toggle show/hide
+            showPw = !showPw;
+
+            // refresh tampilan
+            gotoxy(row, col);
+            for (int j = 0; j < i; j++) {
+                printf(showPw ? "%c" : "*", pw[j]);
+            }
+        }
+        else if (ch == 8) {
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch == 32) {
+            continue;
+        }
+        else {
+            pw[i++] = ch;
+
+            if (showPw)
+                printf("%c", ch);
+            else
+                printf("*");
+        }
+    }
+}
+//=============================================//
 
 
 
