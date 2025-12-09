@@ -26,7 +26,6 @@ static void inputID(char *id);
 
 
 void validLogin() {
-    system("chcp 65001 > nul");
     char id[50];
     char pw[50];
     char role[50] = "";
@@ -56,7 +55,6 @@ void validLogin() {
 
 
         gotoxy(73, 26);printf("Masuk");
-        gotoxy(45, 26);printf("\xE2\x86\x91 \xE2\x86\x93 \xE2\x86\x92 \xE2\x86\x90");
         gotoxy(45, 27);printf("=============================================================");
         gotoxy(45, 28);printf("||                                                         ||");
         gotoxy(45,29); printf("||  Id Pengguna:                                           ||");
