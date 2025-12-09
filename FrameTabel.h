@@ -12,6 +12,7 @@ static void tampilanlogin(char *filename, int startX, int startY) {
 
     while (fgets(line, sizeof(line), f)) {
         gotoxy(startX, startY + currentRow);
+
         printf("%s", line);
         currentRow++;
     }
@@ -32,6 +33,25 @@ static void clearscreen() {
     system("clear");
 #endif
 }
+
+void clearArea(int x, int yStart, int yEnd) {
+    for (int y = yStart; y <= yEnd; y++) {
+        gotoxy(x, y);
+        printf("                   ");
+
+    }
+}
+
+
+//=========================================================//
+//==============CLEAR BAGIAN BEBERAPA TEKS DOANG=========//
+void clearLine(int row, int startCol, int endCol) {
+    gotoxy(startCol, row);
+    for (int i = startCol; i <= endCol; i++) {
+        printf(" ");
+    }
+}
+
 //============================================//
 
 
@@ -117,8 +137,8 @@ static void disableScroll()
 
 
 
-
-
+//================================================================//
+//=========================SCROLLBAR GA ADA====================//
 void forceHideScrollbar() {
     HWND consoleWindow = GetConsoleWindow();
     ShowScrollBar(consoleWindow, SB_BOTH, FALSE);
@@ -129,19 +149,68 @@ void forceHideScrollbar() {
 
 
 void waitEsc() {
-    char ch;
+    int n;
+    int ch = getch();
+    if (ch == 27) return;
+    else ungetc(ch, stdin);
+    scanf("%d", &n);
 
-    while (1) {
-        gotoxy(5, 18);
-        printf("Tekan Esc untuk Kembali");
-
-        ch = getch();
-        if (ch == 27) return;
-    }
 }
 
 
 
+//=============================================//
+//==============Bagian Password===============//
+static void inputPassword(char *pw, int row, int col) {
+    int i = 0;
+    char ch;
+    int showPw = 0;
+
+    while (1) {
+        ch = getch();
+
+        //ENTER
+        if (ch == 13) {
+            pw[i] = '\0';
+            printf("\n");
+            break;
+        }
+
+        //ESC
+        else if (ch == 27) {
+            exit(0);
+        }
+
+        //BACKSPACE
+        else if (ch == 9) {             // TAB = toggle show/hide
+            showPw = !showPw;
+
+            // refresh tampilan
+            gotoxy(row, col);
+            for (int j = 0; j < i; j++) {
+                printf(showPw ? "%c" : "*", pw[j]);
+            }
+        }
+        else if (ch == 8) {
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch == 32) {
+            continue;
+        }
+        else {
+            pw[i++] = ch;
+
+            if (showPw)
+                printf("%c", ch);
+            else
+                printf("*");
+        }
+    }
+}
+//=============================================//
 
 
 
@@ -337,6 +406,42 @@ static int KAKINavigasi(int jumlahMenu, int startRow, int startCol, int spacing)
 }
 
 
+//border show data
+void tabelData(int startX, int startY, int maxId, int maxUsr, int maxPw, int rows) {
 
+    int totalW = 4 + maxId + maxUsr + maxPw + 10;
+
+    char line[300];
+    memset(line, '=', totalW);
+    line[totalW] = '\0';
+
+    int row = startY;
+
+    // ========== HEADER ==============
+    gotoxy(startX, row); printf("%s", line); row++;
+
+    gotoxy(startX, row);
+    printf("| %-3s | %-*s | %-*s | %-*s |",
+           "No",
+           maxId,  "ID",
+           maxUsr, "Username",
+           maxPw,  "Password");
+    row++;
+
+    gotoxy(startX, row); printf("%s", line);
+    row++;
+
+    // ========== SIAPIN KOTAK ISI DATA =============
+    for (int i = 0; i < rows; i++) {
+        gotoxy(startX, row);
+        printf("| %-3s | %-*s | %-*s | %-*s |",
+               "", maxId, "", maxUsr, "", maxPw, "");
+        row++;
+    }
+
+    // =========== FOOTER =============
+    gotoxy(startX, row);
+    printf("%s", line);
+}
 
 #endif

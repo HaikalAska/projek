@@ -6,12 +6,13 @@ set(CMAKE_C_STANDARD 23)
 add_executable(projek
 #        masterAdmin.c
         main.c
+        login.h
         Menu.h
         PesanTiket.h
         FrameTabel.h
-        kategori/create.h
-        kategori/read.h
-        kategori/update.h
-        kategori/delete.h
+        kategori/createkategori.h
+        kategori/readkategori.h
+        kategori/updatekategori.h
+        kategori/deletekategori.h
         kategori/menukategori.h
 )

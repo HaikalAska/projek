@@ -6,18 +6,22 @@
 #define PROJEK_MENUKATEGORI_H
 
 #include "../FrameTabel.h"
-#include "create.h"
-#include "delete.h"
-#include "update.h"
+#include "createkategori.h"
+#include "deletekategori.h"
+#include "updatekategori.h"
+#include "readkategori.h"
 
-static void buatkategori();
-static void editkategori();
-static void hapuskategori();
-
+void buatkategori();
+void editkategori();
+void hapuskategori();
+void readkategori(int page);
+void gimik();
 //=========================================
 //prosedur untuk menu pilihan pada kategori
 //=========================================
-static void pilihkategori() {
+int pagekategori = 1;
+
+void pilihkategori() {
     int pilih;
 
     while (1) {
@@ -28,14 +32,28 @@ static void pilihkategori() {
         FrameYangHider(1,9,153);
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(8,5); printf("Kelompok 5");
-        //BentukFrame(14, 13, 60, 10);
 
-        gotoxy(3,11); printf("===== DAFTAR KATEGORI =====");
-        gotoxy(5,13); printf("   Create");
-        gotoxy(5,15); printf("   Edit");
-        gotoxy(5,17); printf("   Delete");
-        gotoxy(5,19); printf("   Kembali");
-        pilih = menuNavigasi(4,13,5);
+        // === YANG PENTING ===
+        readkategori(pagekategori);
+
+        gotoxy(3,11); printf("== KELOLA DATA KATEGORI ==");
+        gotoxy(3,13); printf("   Buat");
+        gotoxy(3,15); printf("   Sunting");
+        gotoxy(3,17); printf("   Hapus");
+        gotoxy(3,19); printf("   Selanjutnya");
+        gotoxy(3,21); printf("   Sebelumnya");
+        gotoxy(3,23); printf("   Kembali");
+
+        pilih = menuNavigasi(6,13,3);
+
+        clearscreen();
+        fillBackground(0x90);
+        printBorder(1, 1, 153, 43);
+        FrameYangTengah(31, 1, 43);
+        FrameYangHider(1,9,153);
+        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        gotoxy(8,5); printf("Kelompok 5");
+        gimik();
 
         switch (pilih) {
             case 1:
@@ -47,11 +65,28 @@ static void pilihkategori() {
             case 3:
                 hapuskategori();
                 break;
-            case 4:
-                // menuSuperAdmin();
+            case 4: // next page
+                pagekategori++;
                 break;
+            case 5: // prev page
+                if (pagekategori > 1) pagekategori--;
+                break;
+            case 6:
+                return;
         }
     }
+}
+
+
+void gimik() {
+
+    gotoxy(3,11); printf("== KELOLA DATA KATEGORI ==");
+    gotoxy(3,13); printf("   Buat");
+    gotoxy(3,15); printf("   Sunting");
+    gotoxy(3,17); printf("   Hapus");
+    gotoxy(3,19); printf("   Selanjutnya");
+    gotoxy(3,21); printf("   Sebelumnya");
+    gotoxy(3,23); printf("   Kembali");
 }
 
 #endif //PROJEK_MENUKATEGORI_H
