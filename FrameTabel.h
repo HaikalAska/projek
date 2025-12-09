@@ -12,6 +12,7 @@ static void tampilanlogin(char *filename, int startX, int startY) {
 
     while (fgets(line, sizeof(line), f)) {
         gotoxy(startX, startY + currentRow);
+
         printf("%s", line);
         currentRow++;
     }

@@ -3,7 +3,7 @@
 #include "FrameTabel.h"
 #include "PesanTiket.h"
 #include "superadmin/KelolaStaff.h"
-
+#include "kategori/menukategori.h"
 
 void validLogin();
 
@@ -65,9 +65,9 @@ static void menuStaff() {
         gotoxy(3, 11); printf("===== MENU STAFF =====\n");
         gotoxy(3, 13); printf("[1] Pemesanan Tiket\n");
         gotoxy(3, 15);printf("[2] Refund Tiket\n");
-        gotoxy(3, 15);printf("[3] Buat Promo\n");
-        gotoxy(3, 17);printf("[4] Kelola Kategori\n");
-        gotoxy(3, 17);printf("[5] Log Out\n");
+        gotoxy(3, 17);printf("[3] Buat Promo\n");
+        gotoxy(3, 19);printf("[4] Kelola Kategori\n");
+        gotoxy(3, 21);printf("[5] Log Out\n");
         pilih = menuNavigasi(5, 13, 3);
 
         switch (pilih) {
@@ -80,13 +80,14 @@ static void menuStaff() {
             case 3:
                 break;
             case 4:
+                pilihkategori();
                 break;
             case 5:
                 validLogin();
                 break;
         }
 
-        gotoxy(3, 19); printf("====== Anda Log Out ======");
+        gotoxy(3, 22); printf("====== Anda Log Out ======");
         getchar();
         getchar();
         return;
