@@ -65,10 +65,10 @@ void pilihkategori() {
             case 3:
                 hapuskategori();
                 break;
-            case 4: // next page
+            case 4:
                 pagekategori++;
                 break;
-            case 5: // prev page
+            case 5:
                 if (pagekategori > 1) pagekategori--;
                 break;
             case 6:

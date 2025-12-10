@@ -18,34 +18,36 @@ void buatkategori() {
     char lanjut;
 
     do {
-        clearLine(11,35,60);
-        clearLine(13,35,60);
+        clearLine(12,37,60);
+        clearLine(14,35,60);
         clearLine(15,35,60);
-        clearLine(19,35,60);
-        clearLine(21,35,60);
+        clearLine(16,35,60);
+        clearLine(21,35,80);
+        clearLine(18,35,60);
+        BentukFrame(35,11,60,10);
 
         FILE *kategorifile = fopen("kategori.dat", "ab");
         kategori k;
-
-        gotoxy(35,11);
+        gotoxy(53,12); printf("=== Buat Kategori ===");
+        gotoxy(37,14);
         printf("Id           : ");
         scanf("%s", k.id);
 
-        gotoxy(35,13);
+        gotoxy(37,15);
         printf("Kategori     : ");
         scanf("%s", k.nama);
 
-        gotoxy(35,15);
+        gotoxy(37,16);
         printf("Deskripsi    : ");
         scanf("%s", k.deskripsi);
 
         fwrite(&k, sizeof(kategori), 1, kategorifile);
         fclose(kategorifile);
 
-        gotoxy(35,19);
-        printf("Kategori telah dibuat");
+        gotoxy(53,21);
+        printf("Kategori telah dibuat!!");
 
-        gotoxy(35,21);
+        gotoxy(37,18);
         printf("Tambah lagi? (y/n) : ");
         scanf(" %c", &lanjut);
 

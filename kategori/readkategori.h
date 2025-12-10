@@ -5,6 +5,8 @@
 #ifndef PROJEK_READKATEGORI_H
 #define PROJEK_READKATEGORI_H
 
+#include "createkategori.h"
+
 void generateDummyKategori50() {
     FILE *fp = fopen("kategori.dat", "wb");
     if (fp == NULL) return;

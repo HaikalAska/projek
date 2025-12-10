@@ -15,4 +15,9 @@ add_executable(projek
         kategori/updatekategori.h
         kategori/deletekategori.h
         kategori/menukategori.h
+        Promo/createpromo.h
+        Promo/readpromo.h
+        Promo/updatepromo.h
+        Promo/deletepromo.h
+        Promo/menupromo.h
 )
