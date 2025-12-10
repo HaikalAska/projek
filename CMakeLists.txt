@@ -9,4 +9,9 @@ add_executable(projek
         Menu.h
         PesanTiket.h
         FrameTabel.h
+        Rute/rute.h
+        Rute/createRute.h
+        Rute/readRute.h
+        Rute/updateRute.h
+        Rute/deleteRute.h
 )

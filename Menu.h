@@ -3,6 +3,7 @@
 #include "FrameTabel.h"
 #include "PesanTiket.h"
 #include "superadmin/KelolaStaff.h"
+#include "Rute/rute.h"
 
 
 
@@ -31,7 +32,7 @@ void menuSuperAdmin() {
             case 1:
                 MenukelolaStaff();
             case 2:
-                // fungsi Lapor an();
+                menuAdminRute();
                 break;
             case 3:
                 break;
@@ -75,7 +76,7 @@ static void menuStaff() {
                 PesanTiket();
                 break;
             case 2:
-                // Refund();
+                menuAdminRute();
                 break;
             case 3:
                 break;
