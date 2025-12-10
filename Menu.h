@@ -37,8 +37,8 @@ void validLogin();
                break;
         }
 
-        gotoxy(3, 19); printf("====== Anda Log Out ======");
-        getchar();
+
+        gotoxy(3, 25); printf("====== Anda Log Out ======");
         getchar();
         return;
 
@@ -67,8 +67,9 @@ static void menuStaff() {
         gotoxy(3, 15);printf("[2] Refund Tiket\n");
         gotoxy(3, 17);printf("[3] Buat Promo\n");
         gotoxy(3, 19);printf("[4] Kelola Kategori\n");
-        gotoxy(3, 21);printf("[5] Log Out\n");
-        pilih = menuNavigasi(5, 13, 3);
+        gotoxy(3, 21);printf("[5] Buat Rute\n");
+        gotoxy(3, 23);printf("[6] Log Out\n");
+        pilih = menuNavigasi(6, 13, 3);
 
         switch (pilih) {
             case 1:
@@ -83,12 +84,14 @@ static void menuStaff() {
                 pilihkategori();
                 break;
             case 5:
+                //buatrute();
+                break;
+                case 6:
                 validLogin();
                 break;
         }
 
-        gotoxy(3, 22); printf("====== Anda Log Out ======");
-        getchar();
+        gotoxy(3, 25); printf("====== Anda Log Out ======");
         getchar();
         return;
     }
@@ -129,8 +132,8 @@ static void menuManager() {
                 break;
         }
 
-        gotoxy(3, 19); printf("====== Anda Log Out ======");
-        getchar();
+
+        gotoxy(3, 25); printf("====== Anda Log Out ======");
         getchar();
         return;
     }

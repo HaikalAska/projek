@@ -13,7 +13,7 @@
  void menuSuperAdmin();
 
 
-void MenukelolaStaff() {
+void  MenukelolaStaff() {
     int pilih;
 
     while (1) {
@@ -33,7 +33,8 @@ void MenukelolaStaff() {
         gotoxy(82, 11);printf("Hapus\n");
         gotoxy(94, 11);printf("Perbarui\n");
         gotoxy(106, 11);printf("Halaman\n");
-        pilih = KAKINavigasi(4, 11,68, 12);
+        gotoxy(118, 11);printf("50Dummy\n");
+        pilih = KAKINavigasi(5, 11,68, 12);
         switch (pilih) {
             case 1:
                 create();
@@ -46,6 +47,9 @@ void MenukelolaStaff() {
                 break;
                 case 4:
                 menuSuperAdmin();
+                break;
+            case 5:
+                buatdummy_ke_file();
                 break;
         }
     }

@@ -53,32 +53,24 @@ void delete(){
     // Tampilkan detail data dalam box
     staff terpilih = staffList[pilihan - 1];
 
-    clearscreen();
-    system("chcp 65001 > nul");
-    fillBackground(0x90);
-    printBorder(1, 1, 153, 43);
-    FrameYangTengah(31, 1, 43);
-    FrameYangHider(1,9,153);
-    tampilanlogin("GAMBARASCI.txt", 60, 3);
-    gotoxy(8,5); printf("Kelompok 5");
 
-    gotoxy(50, 14); printf("Pilih No Urut: %d", pilihan);
+    gotoxy(62, 29); printf("Pilih No Urut: %d", pilihan);
 
     // Buat box
-    printBorder(49, 15, 45, 8);
-    gotoxy(50, 16);  printf("===================DATA====================");
-    gotoxy(50, 17);  printf("Nama        : %s", terpilih.username);
-    gotoxy(50, 18); printf("Password    : %s", terpilih.password);
-    gotoxy(50, 19); printf("Tgl Lahir   : %s", terpilih.tgl);
-    gotoxy(50, 20); printf("No Telpon   : %s", terpilih.notlpn);
-    gotoxy(50, 21); printf("Gender      : %s", terpilih.gender);
+    printBorder(60, 30, 35, 10);
+    gotoxy(62, 31);  printf("==============DATA==============");
+    gotoxy(62, 32);  printf("Nama        : %s", terpilih.username);
+    gotoxy(62, 33); printf("Password    : %s", terpilih.password);
+    gotoxy(62, 34); printf("Tgl Lahir   : %s", terpilih.tgl);
+    gotoxy(62, 35); printf("No Telpon   : %s", terpilih.notlpn);
+    gotoxy(62, 36); printf("Gender      : %s", terpilih.gender);
 
     // Konfirmasi penghapusan
-    gotoxy(50, 23); printf("Yakin ingin menghapus data ini? (y/n): ");
+    gotoxy(60, 40); printf("Yakin ingin menghapus data ini? (y/n): ");
     scanf(" %c", &konfirmasi);
 
     if (tolower(konfirmasi) != 'y') {
-        gotoxy(50, 24); printf("Penghapusan dibatalkan!");
+        gotoxy(62, 40); printf("Penghapusan dibatalkan!");
         getchar();
         getchar();
         return;
@@ -101,10 +93,10 @@ void delete(){
     if (found) {
         remove("staff.dat");
         rename("sampah.dat", "staff.dat");
-        gotoxy(50, 24); printf("Data '%s' berhasil dihapus!", terpilih.username);
+        gotoxy(62, 41); printf("Data '%s' berhasil dihapus!", terpilih.username);
     } else {
         remove("sampah.dat");
-        gotoxy(50, 24); printf("Terjadi kesalahan saat menghapus!");
+        gotoxy(62, 40); printf("Terjadi kesalahan saat menghapus!");
     }
 
     getchar();
