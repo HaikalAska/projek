@@ -9,18 +9,7 @@
 #include "../FrameTabel.h"
 
 void update() {
-    clearscreen();
-    system("chcp 65001 > nul");
-    fillBackground(0x90);
-    printBorder(1, 1, 153, 43);
-    FrameYangTengah(31, 1, 43);
-    FrameYangHider(1,9,153);
-    tampilanlogin("GAMBARASCI.txt", 60, 3);
-    gotoxy(8,5); printf("Kelompok 5");
-    gotoxy(75,10); printf("======MENU PERUBAHAN======");
-
-
-    int startY_input = 14;
+    int startY_input = 29;
     int startX_input = 50;
     FILE *fp, *sampah;
     staff data;
@@ -30,16 +19,13 @@ void update() {
     int found = 0;
     int idx;
 
-
-    gotoxy(48, startY_input); printf("Pilih No Urut: ");
+    // --- Input Nomor Urut ---
+    gotoxy(3, startY_input); printf("Pilih No Urut: ");
 
     idx = 0;
     while (1) {
         char ch = _getch();
-
-        if (ch == 27) {
-            return;
-        }
+        if (ch == 27) return;
         else if (ch == 13) {
             strNo[idx] = '\0';
             targetNo = atoi(strNo);
@@ -70,21 +56,22 @@ void update() {
         return;
     }
 
-
     while (fread(&data, sizeof(staff), 1, fp) == 1) {
 
         if (currentNo == targetNo) {
             found = 1;
 
-            gotoxy(33,11); printf("[ESC] Keluar");
-            gotoxy(33,10); printf("[ENTER] Memilih");
+            // --- Tampilan Navigasi & Border ---
+            gotoxy(33,11); printf("[ESC] Batal ");
+            gotoxy(33,10); printf("[ENTER] Edit ");
             gotoxy(100, 14);printf("NAVIGASI \xE2\x86\x91 \xE2\x86\x93");
 
-
-            printBorder(48, 15, 35, 10);
+            // Tampilkan Data Lama (Kiri)
+            printBorder(48, 30, 30, 10);
             gotoxy(startX_input, startY_input + 2); printf("=== Data Lama ===");
             gotoxy(startX_input, startY_input + 3); printf("Nama      : %s", data.username);
 
+            // Masking Password Lama
             char maskedPw[50];
             int pwLen = strlen(data.password);
             for(int i = 0; i < pwLen; i++) maskedPw[i] = '*';
@@ -95,122 +82,87 @@ void update() {
             gotoxy(startX_input, startY_input + 6); printf("No Telpon : %s", data.notlpn);
             gotoxy(startX_input, startY_input + 7); printf("Gender    : %s", data.gender);
 
+            // Tampilkan Form Input Baru (Kanan)
+            printBorder(98, 30, 35, 10);
+            gotoxy(100, 31); printf("=== MASUKKAN DATA BARU ===");
 
-            printBorder(98, 15, 35, 10);
-            gotoxy(100, 16); printf("=== MASUKKAN DATA BARU ===");
-
-
-            gotoxy(103,17); printf("Nama      : ");
-            gotoxy(103, 18); printf("Password  : ");
-            gotoxy(103, 19); printf("Tgl Lahir : ");
-            gotoxy(103, 20); printf("No Telpon : ");
-            gotoxy(103, 21); printf("Gender    : ");
-            gotoxy(103, 22); printf("[Selesai]");
+            gotoxy(103,32); printf("Nama      : "); // Tampilkan data saat ini dulu
+            gotoxy(103,33); printf("Password  : ");
+            gotoxy(103,34); printf("Tgl Lahir : ");
+            gotoxy(103,35); printf("No Telpon : ");
+            gotoxy(103,36); printf("Gender    : ");
+            gotoxy(103,37); printf("[ SIMPAN PERUBAHAN ]");
 
             int selectedField = 0;
             int editing = 1;
 
+            // ==========================================
+            // LOGIKA NAVIGASI (LOOPING)
+            // ==========================================
             while (editing) {
-
+                // Gambar Kursor Navigasi
                 for (int i = 0; i < 6; i++) {
-                    gotoxy(100, 17 + i);
-                    if (i == selectedField) {
-                        printf(">>");
-                    } else {
-                        printf("  ");
-                    }
+                    gotoxy(100, 32 + i);
+                    if (i == selectedField) printf(">>");
+                    else printf("  ");
                 }
 
                 int ch = _getch();
 
-
+                // Handle Arrow Keys (Atas/Bawah)
                 if (ch == 0 || ch == 224) {
                     int arrow = _getch();
-
-                    if (arrow == 72) {
+                    if (arrow == 72) { // UP
                         selectedField--;
                         if (selectedField < 0) selectedField = 5;
                     }
-                    else if (arrow == 80) {
+                    else if (arrow == 80) { // DOWN
                         selectedField++;
                         if (selectedField > 5) selectedField = 0;
                     }
                 }
-
+                // Handle ENTER (Pilih Field untuk Diedit)
                 else if (ch == 13) {
+
+                    // Jika pilih [SIMPAN PERUBAHAN]
                     if (selectedField == 5) {
-                        editing = 0;
+                        editing = 0; // Keluar dari loop editing
                         break;
                     }
 
-
+                    // Koordinat input (sesuaikan agar rapi)
                     int inputX = 114;
-                    int inputY = 17 + selectedField;
 
-                    // Clear area input
-                    gotoxy(inputX, inputY);
-                    printf("                  ");
-                    gotoxy(inputX, inputY);
+                    // --- SWITCH CASE UNTUK MEMANGGIL FUNGSI INPUT ---
+                    switch(selectedField) {
+                        case 0: // Nama
+                            gotoxy(inputX, 32);
+                            inputID(data.username);
+                            break;
 
-                    idx = 0;
+                        case 1: // Password
+                            gotoxy(inputX, 33);
+                            // Asumsi inputPassword butuh (buffer, x, y)
+                            PWesc(data.password, inputX, 33);
+                            break;
 
+                        case 2: // Tgl Lahir
+                            gotoxy(inputX, 34);
+                            inputTanggal(data.tgl);
+                            break;
 
-                    if (selectedField == 0) {
-                        while (1) {
-                            char c = _getch();
-                            if (c == 13) { data.username[idx] = '\0'; break; }
-                            else if (c == 27) break;
-                            else if (c == 8 && idx > 0) { idx--; printf("\b \b"); }
-                            else if (c >= 32 && c <= 126 && idx < 49) { data.username[idx++] = c; printf("%c", c); }
-                        }
-                    }
-                    else if (selectedField == 1) {
-                        while (1) {
-                            char c = _getch();
-                            if (c == 13) { data.password[idx] = '\0'; break; }
-                            else if (c == 27) break;
-                            else if (c == 8 && idx > 0) { idx--; printf("\b \b"); }
-                            else if (c >= 32 && c <= 126 && idx < 49) { data.password[idx++] = c; printf("*"); }
-                        }
-                    }
-                    else if (selectedField == 2) {
-                        while (1) {
-                            char c = _getch();
-                            if (c == 13) { data.tgl[idx] = '\0'; break; }
-                            else if (c == 27) break;
-                            else if (c == 8 && idx > 0) { idx--; printf("\b \b"); }
-                            else if (((c >= '0' && c <= '9') || c == '-') && idx < 49) { data.tgl[idx++] = c; printf("%c", c); }
-                        }
-                    }
-                    else if (selectedField == 3) {
-                        while (1) {
-                            char c = _getch();
-                            if (c == 13) { data.notlpn[idx] = '\0'; break; }
-                            else if (c == 27) break;
-                            else if (c == 8 && idx > 0) { idx--; printf("\b \b"); }
-                            else if (c >= '0' && c <= '9' && idx < 49) { data.notlpn[idx++] = c; printf("%c", c); }
-                        }
-                    }
-                    else if (selectedField == 4) {
-                        while (1) {
-                            char c = _getch();
-                            if (c == 13) { data.gender[idx] = '\0'; break; }
-                            else if (c == 27) break;
-                            else if (c == 8 && idx > 0) { idx--; printf("\b \b"); }
-                            else if (c >= 32 && c <= 126 && idx < 49) { data.gender[idx++] = c; printf("%c", c); }
-                        }
+                        case 3: // No Telpon
+                            gotoxy(inputX, 35);
+                            inputNoTelp(data.notlpn, inputX, 35);
+                            break;
+
+                        case 4: // Gender
+                            // Panggil fungsi inputGender yang sudah dimodifikasi (buffer, x, y)
+                            inputGender(data.gender, inputX, 36);
+                            break;
                     }
                 }
-
-                else if (ch == 'w' || ch == 'W') {
-                    selectedField--;
-                    if (selectedField < 0) selectedField = 5;
-                }
-                else if (ch == 's' || ch == 'S') {
-                    selectedField++;
-                    if (selectedField > 5) selectedField = 0;
-                }
-
+                // Handle ESC (Batal Update seluruhnya)
                 else if (ch == 27) {
                     fclose(fp);
                     fclose(sampah);
@@ -219,11 +171,14 @@ void update() {
                 }
             }
 
+            // Pastikan Role tetap Staff
+            strcpy(data.Role, "Staff");
 
+            // Simpan data yang sudah diedit ke file sampah
             fwrite(&data, sizeof(staff), 1, sampah);
 
         } else {
-
+            // Salin data yang tidak diedit (bukan targetNo)
             fwrite(&data, sizeof(staff), 1, sampah);
         }
 
@@ -233,7 +188,6 @@ void update() {
     fclose(fp);
     fclose(sampah);
 
-
     if (found) {
         remove("staff.dat");
         rename("sampah.dat", "staff.dat");
@@ -241,7 +195,7 @@ void update() {
     }
     else {
         remove("sampah.dat");
-        gotoxy(startX_input, startY_input + 18); printf("Nomor urut %d tidak ditemukan!", targetNo);
+        gotoxy(35, 30); printf("Nomor urut %d tidak ditemukan!", targetNo);
     }
 
     _getch();

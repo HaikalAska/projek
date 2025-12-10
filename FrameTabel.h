@@ -161,7 +161,7 @@ void waitEsc() {
 
 //=============================================//
 //==============Bagian Password===============//
-static void inputPassword(char *pw, int row, int col) {
+static void PWesc(char *pw, int row, int col) {
     int i = 0;
     char ch;
     int showPw = 0;
@@ -177,8 +177,9 @@ static void inputPassword(char *pw, int row, int col) {
         }
 
         //ESC
-        else if (ch == 27) {
-            exit(0);
+        else if (ch == 27) {  // ESC
+            pw[0] = '\0';
+            return;
         }
 
         //BACKSPACE
@@ -214,6 +215,138 @@ static void inputPassword(char *pw, int row, int col) {
 
 
 
+
+
+
+
+
+
+
+//=====================================================//
+//===================USERNAME======================//
+static void Nama(char *id) {
+    int i = 0;
+    char ch;
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {                 // ENTER
+            id[i] = '\0';
+            break;
+        }
+        else if (ch == 27) {  // ESC
+            id[0] = '\0';
+            return;
+        }
+        else if (ch == 8) {             // BACKSPACE
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch == 32) {
+            continue;
+        }
+        else {                          // INPUT NORMAL
+            id[i++] = ch;
+            printf("%c", ch);
+        }
+    }
+}
+
+//POINTER
+static void setPointer(int row, int col){
+    printf("\033[%d;%dH", row, col);
+}
+//===========================================================//
+//=====================TANGGAL==============================//
+static void inputTanggal(char *tanggal) {
+    int i = 0;
+    char ch;
+    char display[12] = ""; // DD-MM-YYYY + null terminator
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {  // ENTER
+            // Hanya bisa enter jika sudah 10 karakter (DD-MM-YYYY)
+            if (i == 10) {
+                display[i] = '\0';
+                strcpy(tanggal, display);
+                break;
+            }
+        }
+        else if (ch == 27) {  // ESC
+            tanggal[0] = '\0';
+            break;
+        }
+        else if (ch == 8) {  // BACKSPACE
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+
+                // Hapus tanda '-' otomatis jika backspace dari posisi setelah '-'
+                if (i == 2 || i == 5) {
+                    i--;
+                    printf("\b \b");
+                }
+            }
+        }
+        else if (ch >= '0' && ch <= '9') {  // Hanya terima angka
+            if (i < 10) {  // Maksimal 10 karakter
+                // Validasi digit pertama hari (0-3)
+                if (i == 0 && ch > '3') {
+                    continue;  // Abaikan jika > 3
+                }
+                // Validasi digit kedua hari (jika digit pertama 3, hanya boleh 0-1)
+                if (i == 1) {
+                    int digit1 = display[0] - '0';
+                    int digit2 = ch - '0';
+                    int hari = digit1 * 10 + digit2;
+                    if (hari < 1 || hari > 31) {
+                        continue;  // Abaikan jika hari tidak valid
+                    }
+                }
+                // Validasi digit pertama bulan (0-1)
+                if (i == 3 && ch > '1') {
+                    continue;  // Abaikan jika > 1
+                }
+                // Validasi digit kedua bulan (jika digit pertama 1, hanya boleh 0-2)
+                if (i == 4) {
+                    int digit1 = display[3] - '0';
+                    int digit2 = ch - '0';
+                    int bulan = digit1 * 10 + digit2;
+                    if (bulan < 1 || bulan > 12) {
+                        continue;  // Abaikan jika bulan tidak valid
+                    }
+                }
+
+                display[i++] = ch;
+                printf("%c", ch);
+
+                // Auto tambah '-' setelah 2 digit pertama (DD)
+                if (i == 2) {
+                    display[i++] = '-';
+                    printf("-");
+                }
+                // Auto tambah '-' setelah 2 digit kedua (MM)
+                else if (i == 5) {
+                    display[i++] = '-';
+                    printf("-");
+                }
+            }
+        }
+        // Abaikan input selain angka
+    }
+}
+
+
+
+
+
+
+//===============================================================//
 
 
 
