@@ -10,10 +10,18 @@
 #include "Menu.h"
 
 
+void menuSuperAdmin();
+void menuStaff();
+void menuManager();
+
+
 //==================================//
 static void setPointer(int row, int col);
-static void inputPassword(char *pw);
+static void inputPassword(char *pw,int row,int col);
+static void inputID(char *id);
 //=================================//
+
+
 
 
 
@@ -36,6 +44,7 @@ void validLogin() {
     int trash;
 
     while (percobaan < Maxpercobaan) {
+
         fillBackground(0x90);
         clearscreen();
         gotoxy(70, 10);
@@ -45,22 +54,24 @@ void validLogin() {
 
 
 
-        gotoxy(73, 26);printf("Login");
+        gotoxy(73, 26);printf("Masuk");
         gotoxy(45, 27);printf("=============================================================");
         gotoxy(45, 28);printf("||                                                         ||");
-        gotoxy(45,29); printf("||          ID :                                           ||");
-        gotoxy(45,30); printf("||    Password :                                           ||");
+        gotoxy(45,29); printf("||  Id Pengguna:                                           ||");
+        gotoxy(45,30); printf("||  Kata Sandi :                                           ||");
         gotoxy(45,31); printf("||                                                         ||");
         gotoxy(45,32); printf("=============================================================");
         gotoxy(45,33); printf("[Tab] Untuk Melihat Password");
+        gotoxy(86,33); printf("[ESC] Keluar Program");
+
 
 
 
         setPointer(30, 62);
-        scanf("%s", id);
+        inputID(id);
 
         setPointer(31, 62);
-        inputPassword(pw);
+        inputPassword(pw, 61, 30);
 
 
         if (strcmp(id, AdminID) == 0 && strcmp(pw, AdminPW) == 0) {
@@ -74,12 +85,12 @@ void validLogin() {
         }
         else {
             percobaan++;
-            printf("\n\n\n\n                    ID atau Password salah!\n");
-            printf("                    Sisa percobaan: %d\n", Maxpercobaan - percobaan);
+            printf("\n\n\n\n\t\t\t\t\t                        ID atau Password salah!\n");
+            printf("\t\t\t\t\t\t                   Sisa percobaan: %d\n", Maxpercobaan - percobaan);
 
             if (percobaan < Maxpercobaan) {
-                printf("                    Tekan Enter untuk coba lagi...");
-                while ((trash = getchar()) != '\n');
+                printf("\t\t\t\t\t                     Tekan Enter untuk coba lagi...");
+                //while ((trash = getchar()) != '\n');
                 getchar();
             }
             continue;
@@ -123,50 +134,40 @@ static void setPointer(int row, int col){
 //=======================================//
 
 
-//=============================================//
-//==============Bagian Password===============//
-static void inputPassword(char *pw) {
+
+
+//===================================================//
+//======================ID==========================//
+static void inputID(char *id) {
     int i = 0;
     char ch;
-    int showPw = 0;
 
     while (1) {
         ch = getch();
 
-        if (ch == 13) {
-            pw[i] = '\0';
-            printf("\n");
+        if (ch == 13) {                 // ENTER
+            id[i] = '\0';
             break;
         }
-        else if (ch == 9) {
-            showPw = !showPw;
-
-            printf("\r");
-
-            gotoxy(45, 30);
-            printf("||    Password :");
-            for (int j = 0; j < i; j++) {
-                if (showPw)
-                    printf("%c", pw[j]);
-                else
-                    printf("*");
-            }
+        else if (ch == 27) {            // ESC
+            exit(0);
         }
-        else if (ch == 8) {
+        else if (ch == 8) {             // BACKSPACE
             if (i > 0) {
                 i--;
                 printf("\b \b");
             }
         }
-        else {
-            pw[i++] = ch;
-            if (showPw)
-                printf("%c", ch);
-            else
-                printf("*");
+        else if (ch == 32) {
+            continue;
+        }
+        else {                          // INPUT NORMAL
+            id[i++] = ch;
+            printf("%c", ch);
         }
     }
 }
-//=============================================//
+
+//==================================================//
 
 #endif
