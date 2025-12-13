@@ -20,21 +20,27 @@ void  MenukelolaStaff() {
         clearscreen();
         system("chcp 65001 > nul");
         fillBackground(0x90);
-        printBorder(1, 1, 153, 43);
-        FrameYangTengah(31, 1, 43);
-        FrameYangHider(1,9,153);
+        bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
+        bentukframe(34, 1, 121, 10); //ASCI
+        bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
-        gotoxy(8,5); printf("Kelompok 5");
-        gotoxy(35, 10);printf("NAVIGASI \xE2\x86\x90 \xE2\x86\x92");
+        gotoxy(11,5); printf("Kelompok 5");
         baca();
+        bentukframe(3, 29, 27, 10);
+        gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
+        gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
+        gotoxy(4, 34);printf("[ENTER] Pilih");
+        gotoxy(4, 36);printf("[Esc] Keluar");
 
-        gotoxy(75,10); printf("====== KELOLA DATA STAFF ======");
-        gotoxy(70, 11); printf("Buat\n");
-        gotoxy(82, 11);printf("Hapus\n");
-        gotoxy(94, 11);printf("Perbarui\n");
-        gotoxy(106, 11);printf("Halaman\n");
-        gotoxy(118, 11);printf("50Dummy\n");
-        pilih = KAKINavigasi(5, 11,68, 12);
+
+        bentukframe(3, 10, 27, 14);
+        gotoxy(4,11); printf("=== KELOLA DATA STAFF ===");
+        gotoxy(6, 13); printf("Buat\n");
+        gotoxy(6, 15);printf("Hapus\n");
+        gotoxy(6, 17);printf("Perbarui\n");
+        gotoxy(6, 19);printf("Halaman\n");
+        gotoxy(6, 21);printf("50Dummy\n");
+        pilih = menuNavigasi(5, 13,2);
         switch (pilih) {
             case 1:
                 create();

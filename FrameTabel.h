@@ -34,11 +34,12 @@ static void clearscreen() {
 #endif
 }
 
-void clearArea(int x, int yStart, int yEnd) {
-    for (int y = yStart; y <= yEnd; y++) {
-        gotoxy(x, y);
-        printf("                   ");
-
+void clearArea(int x, int y, int width, int height) {
+    for (int i = 0; i < height; i++) {
+        gotoxy(x, y + i);
+        for (int j = 0; j < width; j++) {
+            printf(" ");
+        }
     }
 }
 
@@ -46,11 +47,17 @@ void clearArea(int x, int yStart, int yEnd) {
 //=========================================================//
 //==============CLEAR BAGIAN BEBERAPA TEKS DOANG=========//
 void clearLine(int row, int startCol, int endCol) {
+    int length = endCol - startCol + 1;
     gotoxy(startCol, row);
-    for (int i = startCol; i <= endCol; i++) {
+
+    for (int i = 0; i < length; i++) {
         printf(" ");
     }
 }
+
+
+
+
 
 //============================================//
 
@@ -161,99 +168,355 @@ void waitEsc() {
 
 //=============================================//
 //==============Bagian Password===============//
-static void PWesc(char *pw, int row, int col) {
-    int i = 0;
-    char ch;
-    int showPw = 0;
+    static void PWesc(char *pw, int row, int col) {
+        int i = 0;
+        char ch;
+        int showPw = 0;
 
-    while (1) {
-        ch = getch();
+        gotoxy(col, row);
 
-        //ENTER
-        if (ch == 13) {
-            pw[i] = '\0';
-            printf("\n");
-            break;
-        }
+        while (1) {
+            ch = getch();
 
-        //ESC
-        else if (ch == 27) {  // ESC
-            pw[0] = '\0';
-            return;
-        }
+            if (ch == 13) {
+                pw[i] = '\0';
 
-        //BACKSPACE
-        else if (ch == 9) {             // TAB = toggle show/hide
-            showPw = !showPw;
+                if (i == 0) {
+                    printf(" [Password tidak boleh kosong!]");
+                    Sleep(800);
 
-            // refresh tampilan
-            gotoxy(row, col);
-            for (int j = 0; j < i; j++) {
-                printf(showPw ? "%c" : "*", pw[j]);
+                    gotoxy(col, row);
+                    printf("                               ");
+                    gotoxy(col, row);
+                    continue;
+                }
+
+                if (i < 5) {
+                    printf(" [Minimal 5 karakter!]");
+                    Sleep(800);
+
+                    gotoxy(col, row);
+                    printf("                               ");
+                    gotoxy(col, row);
+
+                    for (int j = 0; j < i; j++) {
+                        if (showPw) {
+                            printf("%c", pw[j]);
+                        } else {
+                            printf("*");
+                        }
+                    }
+
+                    continue;
+                }
+
+                return;
             }
-        }
-        else if (ch == 8) {
-            if (i > 0) {
-                i--;
-                printf("\b \b");
+            else if (ch == 27) {
+                pw[0] = '\0';
+                return;
             }
-        }
-        else if (ch == 32) {
-            continue;
-        }
-        else {
-            pw[i++] = ch;
+            else if (ch == 9) {
+                showPw = !showPw;
 
-            if (showPw)
-                printf("%c", ch);
-            else
-                printf("*");
+                int currentCol = col + i;
+
+                gotoxy(col, row);
+
+                for (int j = 0; j < i; j++) {
+                    if (showPw) {
+                        printf("%c", pw[j]);
+                    } else {
+                        printf("*");
+                    }
+                }
+
+                for (int j = i; j < 20; j++) {
+                    printf(" ");
+                }
+
+                gotoxy(currentCol, row);
+                continue;
+            }
+            else if (ch == 8) {
+                if (i > 0) {
+                    i--;
+                    printf("\b \b");
+                }
+            }
+            else if (ch >= 33 && ch <= 126) {
+                if (i < 49) {
+                    pw[i] = ch;
+
+                    if (showPw) {
+                        printf("%c", ch);
+                    } else {
+                        printf("*");
+                    }
+                    i++;
+                }
+            }
         }
     }
-}
 //=============================================//
 
 
 
-
-
-
-
-
-
-
-//=====================================================//
-//===================USERNAME======================//
-static void Nama(char *id) {
+//===============================================================//
+//==========================INPUT NO TELPON=====================//
+static void inputNoTelp(char *notlpn, int x, int y) {
     int i = 0;
     char ch;
+    char display[14] = "08"; // Awalan 08 + 11 digit + null terminator
+
+    // Tampilkan awalan 08
+    gotoxy(x, y);
+    printf("08");
+    i = 2;
 
     while (1) {
         ch = getch();
 
-        if (ch == 13) {                 // ENTER
-            id[i] = '\0';
+        if (ch == 13) {  // ENTER - Konfirmasi
+            if (i == 12) {  // Hanya bisa enter jika sudah 13 digit
+                display[i] = '\0';
+                strcpy(notlpn, display);
+                break;
+            }
+        }
+        else if (ch == 27) {  // ESC - Batal
+            notlpn[0] = '\0';
             break;
         }
-        else if (ch == 27) {  // ESC
-            id[0] = '\0';
+        else if (ch == 8) {  // BACKSPACE - Hapus
+            if (i > 2) {  // Hanya bisa hapus setelah "08"
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch >= '0' && ch <= '9') {  // Input angka
+            if (i < 12) {  // Maksimal 13 digit total
+                display[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+        // Abaikan input selain angka
+    }
+}
+
+
+
+//=====================================================//
+//========================GENDER======================//
+static void inputGender(char *gender, int x, int y) {
+    char ch;
+
+    gotoxy(x, y);
+    printf("L/P : ");
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 27) {  // ESC - Batal
+            gender[0] = '\0';
+            break;
+        }
+        else if (ch == 'L' || ch == 'l') {  // Input Laki-laki
+            strcpy(gender, "Laki-laki");
+            printf("L (Laki-laki)");
+
+            // Tunggu konfirmasi
+            while (1) {
+                ch = getch();
+                if (ch == 13) {  // ENTER - Konfirmasi
+                    return;
+                }
+                else if (ch == 8) {  // BACKSPACE - Hapus dan input ulang
+                    printf("\b\b\b\b\b\b\b\b\b\b\b\b\b             ");
+                    printf("\b\b\b\b\b\b\b\b\b\b\b\b\b");
+                    break;
+                }
+                else if (ch == 27) {  // ESC - Batal
+                    gender[0] = '\0';
+                    return;
+                }
+            }
+        }
+        else if (ch == 'P' || ch == 'p') {  // Input Perempuan
+            strcpy(gender, "Perempuan");
+            printf("P (Perempuan)");
+
+            // Tunggu konfirmasi
+            while (1) {
+                ch = getch();
+                if (ch == 13) {  // ENTER - Konfirmasi
+                    return;
+                }
+                else if (ch == 8) {  // BACKSPACE - Hapus dan input ulang
+                    printf("\b\b\b\b\b\b\b\b\b\b\b\b\b             ");
+                    printf("\b\b\b\b\b\b\b\b\b\b\b\b\b");
+                    break;
+                }
+                else if (ch == 27) {  // ESC - Batal
+                    gender[0] = '\0';
+                    return;
+                }
+            }
+        }
+        // Abaikan input selain L/P
+    }
+}
+//===============================================================================================//
+
+
+static void inputStatus(char *status, int x, int y) {
+    char ch;
+    int inputX = x + 6;
+
+    gotoxy(x, y);
+    printf("A/N : ");
+    gotoxy(inputX, y);
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 27) {
+            status[0] = '\0';
             return;
         }
-        else if (ch == 8) {             // BACKSPACE
+        else if (ch == 'A' || ch == 'a') {
+            strcpy(status, "Aktif");
+            printf("A (Aktif)");
+
+            while (1) {
+                ch = getch();
+                if (ch == 13) return;
+                else if (ch == 8) {
+                    clearArea(inputX, y, 20, 1);
+                    gotoxy(inputX, y);
+                    break;
+                }
+                else if (ch == 27) {
+                    status[0] = '\0';
+                    return;
+                }
+            }
+        }
+        else if (ch == 'N' || ch == 'n') {
+            strcpy(status, "Nonaktif");
+            printf("N (Nonaktif)");
+
+            while (1) {
+                ch = getch();
+                if (ch == 13) return;
+                else if (ch == 8) {
+                    clearArea(inputX, y, 20, 1);
+                    gotoxy(inputX, y);
+                    break;
+                }
+                else if (ch == 27) {
+                    status[0] = '\0';
+                    return;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+//===================================================//
+//=================NAMA=============================//
+static void INPUTNama(char *nama) {
+    int i = 0;
+    char ch;
+
+    // Simpan posisi awal kursor
+    int startX, startY;
+
+    // Dapatkan posisi kursor saat ini (jika punya fungsi getCursorPos)
+    // Jika tidak punya, kita simpan secara manual
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {  // ENTER
+            nama[i] = '\0';
+
+            // Validasi: harus ada minimal 1 huruf
+            int hasLetter = 0;
+            for (int j = 0; j < i; j++) {
+                if ((nama[j] >= 'a' && nama[j] <= 'z') ||
+                    (nama[j] >= 'A' && nama[j] <= 'Z')) {
+                    hasLetter = 1;
+                    break;
+                }
+            }
+
+            if (hasLetter && i > 0) {
+                break;
+            } else {
+
+                int cursorPos = i;
+
+                // Tampilkan peringatan
+                printf(" [Nama harus mengandung huruf!]");
+
+                Sleep(800);
+                for (int k = 0; k < 31; k++) {
+                    printf("\b \b");
+                }
+                for (int k = 0; k < cursorPos; k++) {
+                    printf("%c", nama[k]);
+                }
+                for (int k = 0; k < cursorPos; k++) {
+                }
+            }
+        }
+        else if (ch == 27) {  // ESC
+            nama[0] = '\0';
+            break;
+        }
+        else if (ch == 8) {  // BACKSPACE
             if (i > 0) {
                 i--;
                 printf("\b \b");
             }
         }
-        else if (ch == 32) {
-            continue;
+        else if (ch == 32) {  // SPASI - BOLEH
+            if (i < 49 && i > 0) {  // Spasi tidak boleh di awal
+                // Cek karakter sebelumnya bukan spasi
+                if (nama[i-1] != ' ') {
+                    nama[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
         }
-        else {                          // INPUT NORMAL
-            id[i++] = ch;
-            printf("%c", ch);
+        else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+                 ch == '.' || ch == '-' || ch == '\'') {  // Tambah karakter valid
+            if (i < 49) {
+                nama[i++] = ch;
+                printf("%c", ch);
+            }
         }
     }
+    nama[i] = '\0';
 }
+//======================================================================//
+
+
+
+
+
+
+
+
+
 
 //POINTER
 static void setPointer(int row, int col){
@@ -327,13 +590,13 @@ static void inputTanggal(char *tanggal) {
 
                 // Auto tambah '-' setelah 2 digit pertama (DD)
                 if (i == 2) {
-                    display[i++] = '-';
-                    printf("-");
+                    display[i++] = '/';
+                    printf("/");
                 }
                 // Auto tambah '-' setelah 2 digit kedua (MM)
                 else if (i == 5) {
-                    display[i++] = '-';
-                    printf("-");
+                    display[i++] = '/';
+                    printf("/");
                 }
             }
         }
@@ -387,26 +650,28 @@ void printBlock(wchar_t wc) {
 
 //===================================================================//
 //============================BENTUK FRAME============================//
-void BentukFrame(int x, int y, int width, int height) {
-    gotoxy(x, y);
-    printf("╔");
-    for (int i = 0; i < width - 2; i++)
-        printf("═");
-    printf("╗");
+void bentukframe(int posX, int posY, int width, int height) {
+    SetConsoleOutputCP(65001);
 
-    for (int i = 1; i < height - 1; i++) {
-        gotoxy(x, y + i);
-        printf("║");
-        for (int j = 0; j < width - 2; j++)
+    gotoxy(posX, posY);
+    printf("╭");
+    for (int i = 0; i < width - 2; i++)
+        printf("─");
+    printf("╮");
+
+    for (int y = 1; y < height - 1; y++) {
+        gotoxy(posX, posY + y);
+        printf("│");
+        for (int x = 0; x < width - 2; x++)
             printf(" ");
-        printf("║");
+        printf("│");
     }
 
-    gotoxy(x, y + height - 1);
-    printf("╚");
+    gotoxy(posX, posY + height - 1);
+    printf("╰");
     for (int i = 0; i < width - 2; i++)
-        printf("═");
-    printf("╝");
+        printf("─");
+    printf("╯");
 }
 //===================================================================//
 
@@ -466,36 +731,40 @@ void FrameYangHider(int x, int y, int width) {
 
 //============================================================//
 //================ NAVIGASI ================================//
-static int menuNavigasi(int jumlahMenu, int startRow, int startCol) {
-    int pilihan = 0;
-    char ch;
+int menuNavigasi(int jumlahMenu, int startY, int spacing) {
+    int pilih = 1;
+    int key;
 
     while (1) {
-        for (int i = 0; i < jumlahMenu; i++) {
-            gotoxy(startCol, startRow + (i * 2));
-
-            if (i == pilihan)
-                printf(">> ");
-            else
-                printf("   ");
+        // Tampilkan highlight
+        for (int i = 1; i <= jumlahMenu; i++) {
+            gotoxy(3, startY + (i-1) * spacing);
+            if (i == pilih) {
+                printf(">> ");  // Highlight
+            } else {
+                printf("│ ");
+            }
         }
 
-        ch = getch();
+        key = getch();
 
-        if (ch == 72) {
-            pilihan--;
-            if (pilihan < 0)
-                pilihan = jumlahMenu - 1;
+        if (key == 27) {  // ESC
+            return 0;  // Return 0 untuk signal ESC
         }
-        else if (ch == 80) {
-            pilihan++;
-            if (pilihan >= jumlahMenu)
-                pilihan = 0;
+        else if (key == 224) {  // Arrow keys
+            key = getch();
+            if (key == 72) {  // UP
+                pilih--;
+                if (pilih < 1) pilih = jumlahMenu;
+            }
+            else if (key == 80) {  // DOWN
+                pilih++;
+                if (pilih > jumlahMenu) pilih = 1;
+            }
         }
-        else if (ch == 13) {
-            return pilihan + 1;
+        else if (key == 13) {  // ENTER
+            return pilih;
         }
-
     }
 }
 //============================================================//

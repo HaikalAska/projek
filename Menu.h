@@ -1,9 +1,9 @@
 #ifndef PROJEK_MENU_H
 #define PROJEK_MENU_H
 #include "FrameTabel.h"
-#include "PesanTiket.h"
+
 #include "superadmin/KelolaStaff.h"
-#include "kategori/menukategori.h"
+
 
 void validLogin();
 
@@ -11,22 +11,25 @@ void validLogin();
     int pilih;
 
     while (1) {
-        clearscreen();
         system("chcp 65001 > nul");
         fillBackground(0x90);
-        printBorder(1, 1, 153, 43);
-        FrameYangTengah(31, 1, 43);
-        FrameYangHider(1,9,153);
+        bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
+        bentukframe(34, 1, 121, 10); //ASCI
+        bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
-        gotoxy(8,5); printf("Kelompok 5");
-        gotoxy(3, 10);printf("NAVIGASI \xE2\x86\x91 \xE2\x86\x93");
+        gotoxy(11,5); printf("Kelompok 5");
+        bentukframe(3, 29, 27, 8);
+        gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
+        gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
+        gotoxy(4, 34);printf("[ENTER] Pilih");
 
 
 
-        gotoxy(3, 11); printf("===== MENU SUPERADMIN =====\n");
+        bentukframe(3, 10, 27, 8);
+        gotoxy(4, 11); printf("==== MENU SUPERADMIN ====\n");
         gotoxy(3, 13); printf("[1] Kelola Data Staff\n");;
-        gotoxy(3, 15);printf("[2] Log Out\n");
-        pilih = menuNavigasi(2, 13, 3);
+        gotoxy(3, 15);printf("    Log Out\n");
+        pilih = menuNavigasi(2, 13, 2);
 
         switch (pilih) {
             case 1:
@@ -36,11 +39,6 @@ void validLogin();
                 validLogin();
                break;
         }
-
-
-        gotoxy(3, 25); printf("====== Anda Log Out ======");
-        getchar();
-        return;
 
     }
 
@@ -52,28 +50,32 @@ static void menuStaff() {
     int pilih;
 
     while (1) {
-        clearscreen();
+        system("chcp 65001 > nul");
         fillBackground(0x90);
-        printBorder(1, 1, 153, 43);
-        FrameYangTengah(31, 1, 43);
-        FrameYangHider(1,9,153);
+        bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
+        bentukframe(34, 1, 121, 10); //ASCI
+        bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(8,5); printf("Kelompok 5");
+        bentukframe(3, 29, 27, 10);
+        gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
+        gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
+        gotoxy(4, 34);printf("[ENTER] Pilih");
+        gotoxy(4, 36);printf("[Esc] Keluar");
 
 
 
-        gotoxy(3, 11); printf("===== MENU STAFF =====\n");
-        gotoxy(3, 13); printf("[1] Pemesanan Tiket\n");
-        gotoxy(3, 15);printf("[2] Refund Tiket\n");
-        gotoxy(3, 17);printf("[3] Buat Promo\n");
-        gotoxy(3, 19);printf("[4] Kelola Kategori\n");
-        gotoxy(3, 21);printf("[5] Buat Rute\n");
-        gotoxy(3, 23);printf("[6] Log Out\n");
-        pilih = menuNavigasi(6, 13, 3);
+        bentukframe(3, 10, 27, 14);
+        gotoxy(10, 11); printf(" MENU STAFF \n");
+        gotoxy(3, 13); printf("    Pemesanan Tiket\n");
+        gotoxy(3, 15);printf("    Buat Kendaraan\n");
+        gotoxy(3, 17);printf("    Buat Rute\n");
+        gotoxy(3, 19);printf("    Log Out\n");
+        pilih = menuNavigasi(4, 13, 2);
 
         switch (pilih) {
             case 1:
-                PesanTiket();
+
                 break;
             case 2:
                 // Refund();
@@ -81,19 +83,9 @@ static void menuStaff() {
             case 3:
                 break;
             case 4:
-                pilihkategori();
-                break;
-            case 5:
-                //buatrute();
-                break;
-                case 6:
                 validLogin();
                 break;
         }
-
-        gotoxy(3, 25); printf("====== Anda Log Out ======");
-        getchar();
-        return;
     }
 }
 
@@ -106,9 +98,9 @@ static void menuManager() {
     while (1) {
         clearscreen();
         fillBackground(0x90);
-        printBorder(1, 1, 153, 43);
-        FrameYangTengah(31, 1, 43);
-        FrameYangHider(1,9,153);
+        bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
+        bentukframe(34, 1, 121, 10); //ASCI
+        bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(8,5); printf("Kelompok 5");
 
@@ -116,18 +108,14 @@ static void menuManager() {
 
         gotoxy(3, 11);printf("===== MENU MANAGER =====\n");
         gotoxy(3, 13);printf("[1] Lihat Laporan\n");
-        gotoxy(3, 15);printf("[2] Lihat Pendapatan\n");
-        gotoxy(3, 17);printf("[3] Log Out\n");
-        pilih = menuNavigasi(3, 13, 3);
+        gotoxy(3, 15);printf("[2] Log Out\n");
+        pilih = menuNavigasi(2, 13, 2);
 
         switch (pilih) {
             case 1:
                 // Laporan();
                 break;
             case 2:
-                // Pendapatan();
-                break;
-            case 3:
                 validLogin();
                 break;
         }

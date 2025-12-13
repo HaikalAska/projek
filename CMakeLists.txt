@@ -10,9 +10,10 @@ add_executable(projek
         Menu.h
         PesanTiket.h
         FrameTabel.h
-        kategori/createkategori.h
-        kategori/readkategori.h
-        kategori/updatekategori.h
-        kategori/deletekategori.h
-        kategori/menukategori.h
+        penumpang/kelolaPenumpang.h
+        penumpang/createpenumpang.h
+        superadmin/create.h
+        superadmin/delete.h
+        superadmin/read.h
+        superadmin/update.h
 )

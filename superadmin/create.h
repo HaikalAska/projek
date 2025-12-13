@@ -8,14 +8,11 @@
 
 int getStaffCount();
 static void inputID(char *id);
-int inputTglWithEsc(char *buffer, int maxLen);
-int inputTelpWithEsc(char *buffer, int maxLen);
 int pwESC(char *pw, int col, int row);
-int inputRoleWithEsc(char *role);
-static void inputGender(char *gender, int x, int y);
-static void inputNoTelp(char *notlpn, int x, int y);
+static void inputUsername(char *username, int row, int col);
 
 typedef struct {
+    char nama[50];
     char username[50];
     char password[50];
     char id[100];
@@ -23,101 +20,136 @@ typedef struct {
     char gender[100];
     char Role[30];
     char notlpn[20];
+    char status [10];
 }staff;
 
 void create() {
     char n;
 
     do {
-        clearLine(14, 3, 30);
-        clearLine(15, 3, 30);
-        clearLine(16, 3, 30);
-        clearLine(17, 3, 30);
-        clearLine(18, 3, 30);
-        clearLine(19, 3, 30);
-        clearLine(20, 3, 30);
-        clearLine(22, 3, 30);
-        clearLine(24, 3, 30);
-
-        gotoxy(3,8);
-        printf("[Esc] Keluar");
-
+        bentukframe(35, 27, 108, 16);
+        gotoxy(80, 27);printf("=== BUAT STAFF ===");
+        // Buka file untuk append
         FILE *fp = fopen("staff.dat", "ab");
         if (!fp) return;
 
         staff data;
 
+        // Generate ID otomatis
         int count = getStaffCount() + 1;
         sprintf(data.id, "STF%03d", count);
-        clearArea(3, 14, 20);
-        gotoxy(3,14); printf("ID Otomatis  : %s", data.id);
+        gotoxy(37, 28);
+        printf("ID Otomatis  : %s", data.id);
 
-        // Input Nama dengan deteksi ESC
-        gotoxy(3,15); printf("Nama         : ");
-        setPointer(16, 19);
-        Nama(data.username);
-        // Cek jika ESC ditekan (username kosong)
+
+
+        // input nama
+        gotoxy(37, 29); printf("Nama         : ");
+        setPointer(30, 53);
+        INPUTNama(data.nama);  // Tambah parameter row dan col
+        if (strlen(data.nama) == 0) {
+            fclose(fp);
+            break;
+        }
+
+        // Input username
+        gotoxy(37, 30);
+        printf("Username     : ");
+        // Clear area input nama
+        clearArea(53, 33, 30, 1);
+        setPointer(31, 53);
+        inputUsername(data.username,30,52);
         if (strlen(data.username) == 0) {
             fclose(fp);
             return;
         }
 
-        // Input Password dengan deteksi ESC
-        gotoxy(3,16); printf("Kata Sandi   : ");
-        PWesc(data.password, 18, 16);  // row=16, col=20 (posisi setelah label)
-        // Cek jika ESC ditekan (password kosong)
+        // Input Password
+        gotoxy(37, 31);
+        printf("Kata Sandi   : ");
+        // Clear area input password
+        PWesc(data.password, 31, 52);
         if (strlen(data.password) == 0) {
             fclose(fp);
             return;
         }
 
-        // Input Tanggal Lahir dengan deteksi ESC
-        gotoxy(3, 17); printf("Tanggal Lahir: ");
-        setPointer(18, 19);
+        // Input Tanggal Lahir
+        gotoxy(37, 32);
+        printf("Tanggal Lahir: ");
+        // Clear area input tanggal
+        setPointer(33, 53);
         inputTanggal(data.tgl);
-        if (strlen(data.tgl) == 0) {  // Jika ESC ditekan
+        if (strlen(data.tgl) == 0) {
             fclose(fp);
             return;
         }
 
-        // Input Kelamin dengan deteksi ESC
-        gotoxy(3,18); printf("Kelamin      : ");
-        inputGender(data.gender,12,18);
-        if (strlen(data.gender) == 0) {  // Jika ESC ditekan
+        // Input Kelamin
+        gotoxy(37, 33);
+        printf("Kelamin      : ");
+        // Clear area input gender
+        inputGender(data.gender, 46, 33);
+        if (strlen(data.gender) == 0) {
             fclose(fp);
             return;
         }
 
-        // Input No Telepon dengan deteksi ESC
-        gotoxy(3, 19); printf("No. Telepon  : ");
-        inputNoTelp(data.notlpn, 18, 19);
-        if (strlen(data.notlpn) == 0) {  // Jika ESC ditekan
+        // Input No Telepon
+        gotoxy(37, 34);
+        printf("No. Telepon  : ");
+        // Clear area input telepon
+        inputNoTelp(data.notlpn, 52, 34);
+        if (strlen(data.notlpn) == 0) {
             fclose(fp);
             return;
         }
 
-        // Otomatis set Role = "Staff" karena ini di menu Staff
+        // Set Role otomatis sebagai Staff
         strcpy(data.Role, "Staff");
-        gotoxy(3,20); printf("Role         : Staff");
+        gotoxy(37, 35);
+        printf("Role         : Staff");
 
+
+
+        strcpy(data.status, "Aktif");
+        gotoxy(37, 36);
+        printf("Status       : %s ", data.status);
+
+
+
+        // Simpan data ke file
         fwrite(&data, sizeof(staff), 1, fp);
         fclose(fp);
 
-        gotoxy(3,22);
+        // Konfirmasi sukses
+        gotoxy(37, 37);
         printf("Data berhasil dibuat!");
-        gotoxy(3,24);
+
+        // Clear area konfirmasi
+        gotoxy(37, 38);
         printf("Tambah lagi? (y/n): ");
 
+
+        // Input konfirmasi
         while (1) {
             n = _getch();
-            if (n == 27) return;
+            if (n == 27) {
+                clearArea(35, 28, 50, 12); // Clear semua sebelum keluar
+                return;
+            }
             if (n == 'y' || n == 'Y' || n == 'n' || n == 'N') {
-                printf("%c", n);
-                break;
+                clearArea(35, 28, 50, 12); // Clear semua sebelum ulang
+                if (n == 'n' || n == 'N') {
+                    return;
+                } else {
+                    break;
+                }
             }
         }
 
     } while (n == 'y' || n == 'Y');
+
 }
 
 int getStaffCount() {
@@ -135,6 +167,121 @@ int getStaffCount() {
 
 
 
+
+
+
+
+
+//========================================================================//
+//===================CEK JIKA ADA DUPLIKAT USERNAME======================//
+static int cekUsernameDuplicate(char *username) {
+    FILE *fp = fopen("staff.dat", "rb");
+    if (!fp) return 0;
+
+    staff temp;
+    while (fread(&temp, sizeof(staff), 1, fp)) {
+        if (strcmp(temp.username, username) == 0) {
+            fclose(fp);
+            return 1;
+        }
+    }
+
+    fclose(fp);
+    return 0;
+}
+//=====================================================================//
+
+
+
+
+
+//=====================================================//
+//===================USERNAME======================//
+static void inputUsername(char *username, int row, int col) {
+    int i = 0;
+    char ch;
+    char temp[50];
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {  // ENTER
+            temp[i] = '\0';
+
+            if (i == 0) {
+                printf(" [Username tidak boleh kosong!]");
+                Sleep(800);
+
+                // Kembali ke posisi awal
+                gotoxy(col, row);
+                printf("                               ");
+                gotoxy(col, row);
+
+                i = 0;
+                continue;
+            }
+
+            // Cek duplicate
+            if (cekUsernameDuplicate(temp)) {
+                printf(" [Username sudah ada! Gunakan yang lain]");
+                Sleep(800);
+
+                // Kembali ke posisi awal
+                gotoxy(col, row);
+                printf("                                                ");
+                gotoxy(col, row);
+
+                // Tampilkan kembali text yang sudah diketik
+                for (int k = 0; k < i; k++) {
+                    printf("%c", temp[k]);
+                }
+
+                // Reset
+                i = 0;
+                temp[0] = '\0';
+
+                // Clear lagi
+                gotoxy(col, row);
+                printf("                                                ");
+                gotoxy(col, row);
+                continue;
+            }
+
+
+            strcpy(username, temp);
+            break;
+        }
+        else if (ch == 27) {  // ESC
+            username[0] = '\0';
+            break;
+        }
+        else if (ch == 8) {  // BACKSPACE
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch == 32) {  // BLOKIR SPASI
+            continue;
+        }
+        else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+                 (ch >= '0' && ch <= '9') || ch == '.' || ch == '_') {
+            if (i < 49) {
+                temp[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+    }
+}
+//==============================================================================//
+
+
+
+
+
+
+
+
 //============================================//
 //=========DATA DUMMY========================//
 void buatdummy_ke_file() {
@@ -142,17 +289,27 @@ void buatdummy_ke_file() {
     staff data;
     int max_data = 50;
 
-    char *names[] = {"Budianto", "Ani_Yuniar", "Cahyo", "Dian_Sari", "Eko_Prabowo", "Fajar_Rizky", "Gita_S"};
+    char *names[] = {"Budi Santoso", "Ani Yulianti", "Cahyo Pratama", "Dian Permatasari",
+                     "Eko Wijaya", "Fajar Rizki", "Gita Ayu", "Hendra Gunawan",
+                     "Indah Lestari", "Joko Susilo", "Kartika Dewi", "Lukman Hakim",
+                     "Maya Sari", "Nur Hidayat", "Oki Setiawan", "Putri Amanda",
+                     "Rizky Ramadhan", "Sari Indah", "Tono Wibowo", "Utari Puspita",
+                     "Wahyu Nugroho", "Yuni Astuti", "Zainal Arifin", "Agus Supriyadi",
+                     "Bayu Aji", "Citra Ningrum", "Dedi Hartono", "Evi Marlina",
+                     "Fandi Ahmad", "Gusti Ayu"};
     char *genders[] = {"Laki-laki", "Perempuan"};
-    char *passwords[] = {"pass123", "rahasiaku", "admin", "qwert", "secure123", "testpw"};
-    char *tgl_lahir[] = {"12/03/1995", "21/08/1998", "05/11/2000", "15/01/1990", "03/07/1985"};
-    char *roles[] = {"Staff", "Manager", "Admin"};
+    char *passwords[] = {"pass123", "rahasiaku", "admin", "qwert",
+                         "secure123", "testpw", "password123", "staff2024",
+                         "admin123", "user123"};
+    char *tgl_lahir[] = {"12/03/1995", "21/08/1998", "05/11/2000",
+                         "15/01/1990", "03/07/1985", "19/09/1992",
+                         "28/04/1997", "14/12/1989", "23/06/1994",
+                         "08/10/1987"};
 
     int num_names = sizeof(names) / sizeof(names[0]);
     int num_genders = sizeof(genders) / sizeof(genders[0]);
     int num_passwords = sizeof(passwords) / sizeof(passwords[0]);
     int num_tgl = sizeof(tgl_lahir) / sizeof(tgl_lahir[0]);
-    int num_roles = sizeof(roles) / sizeof(roles[0]);
 
     fp = fopen("staff.dat", "wb");
     if (fp == NULL) {
@@ -160,138 +317,75 @@ void buatdummy_ke_file() {
         return;
     }
 
-    gotoxy(40,38);printf("Membuat data dummy dan menulis ke staff.dat...\n");
+    printf("         MEMBUAT DATA DUMMY STAFF\n");
 
     for (int i = 0; i < max_data; i++) {
         int name_idx = i % num_names;
         int gender_idx = i % num_genders;
         int pw_idx = i % num_passwords;
         int tgl_idx = i % num_tgl;
-        int role_idx = i % num_roles;
 
-        sprintf(data.username, "%s_%02d", names[name_idx], i + 1);
+        // Generate ID otomatis
+        sprintf(data.id, "STF%03d", i + 1);
+
+        // ISI NAMA LENGKAP
+        strcpy(data.nama, names[name_idx]);
+
+        // Jika nama sudah terpakai, tambahkan angka
+        if (i >= num_names) {
+            char temp[100];
+            sprintf(temp, "%s %d", names[name_idx], (i/num_names) + 1);
+            strcpy(data.nama, temp);
+        }
+
+        // GENERATE USERNAME dari nama (lowercase, tanpa spasi)
+        char temp_username[100];
+        strcpy(temp_username, names[name_idx]);
+
+        // Lowercase
+        for (int j = 0; temp_username[j]; j++) {
+            temp_username[j] = tolower(temp_username[j]);
+        }
+
+        // Hapus spasi - ambil kata pertama aja
+        char *space = strchr(temp_username, ' ');
+        if (space) *space = '\0';
+
+        // Tambah angka biar unik
+        sprintf(data.username, "%s%d", temp_username, i + 1);
+
+
+        int role_dist = i % 10;
+        if (role_dist < 7) {
+            strcpy(data.Role, "Staff");
+        } else if (role_dist < 9) {
+            strcpy(data.Role, "Manager");
+        } else {
+            strcpy(data.Role, "Admin");
+        }
+
+        // Data lainnya
         strcpy(data.password, passwords[pw_idx]);
         strcpy(data.gender, genders[gender_idx]);
         strcpy(data.tgl, tgl_lahir[tgl_idx]);
-        strcpy(data.Role, roles[role_idx]);
-        sprintf(data.notlpn, "0812%07d", 1000000 + i);
+        sprintf(data.notlpn, "08%d%07d", 12 + (i % 8), 1000000 + i);
 
-        if (fwrite(&data, sizeof(staff), 1, fp) != 1) {
-            printf("Peringatan: Gagal menulis data dummy ke-%d.\n", i + 1);
-        }
+
+        strcpy(data.status, (i % 5 == 0) ? "Nonaktif" : "Aktif");
+
+
+        fwrite(&data, sizeof(staff), 1, fp);
     }
 
     fclose(fp);
-    gotoxy(40,39);printf("Selesai. %d entri data dummy berhasil disimpan di staff.dat.\n", max_data);
+
+    printf("\n[✓] Berhasil membuat %d data dummy staff\n", max_data);
+    printf("Tekan tombol apapun untuk kembali...");
     getch();
 }
+//==============================================================================//
 
 
 
-
-
-//=====================================================//
-//========================GENDER======================//
-static void inputGender(char *gender, int x, int y) {
-    char ch;
-
-    gotoxy(x,y); printf("L/P : ");
-
-    while (1) {
-        ch = getch();
-
-        if (ch == 27) {  // ESC
-            gender[0] = '\0';
-            break;
-        }
-        else if (ch == 'L' || ch == 'l') {  // Input L
-            strcpy(gender, "Laki-laki");
-            printf("L (Laki-laki)");
-
-            // Tunggu Enter untuk confirm
-            while (1) {
-                ch = getch();
-                if (ch == 13) {  // ENTER
-                    return;
-                }
-                else if (ch == 8) {  // BACKSPACE - hapus pilihan
-                    printf("\b\b\b\b\b\b\b\b\b\b\b\b\b             \b\b\b\b\b\b\b\b\b\b\b\b\b");
-                    break;
-                }
-                else if (ch == 27) {  // ESC
-                    gender[0] = '\0';
-                    return;
-                }
-            }
-        }
-        else if (ch == 'P' || ch == 'p') {  // Input P
-            strcpy(gender, "Perempuan");
-            printf("P (Perempuan)");
-
-            // Tunggu Enter untuk confirm
-            while (1) {
-                ch = getch();
-                if (ch == 13) {  // ENTER
-                    return;
-                }
-                else if (ch == 8) {  // BACKSPACE - hapus pilihan
-                    printf("\b\b\b\b\b\b\b\b\b\b\b\b\b             \b\b\b\b\b\b\b\b\b\b\b\b\b");
-                    break;
-                }
-                else if (ch == 27) {  // ESC
-                    gender[0] = '\0';
-                    return;
-                }
-            }
-        }
-        // Abaikan input selain L/P
-    }
-}
-//===============================================================================================//
-
-
-
-//===============================================================//
-//==========================INPUT NO TELPON=====================//
-static void inputNoTelp(char *notlpn, int x, int y) {
-    int i = 0;
-    char ch;
-    char display[14] = "08"; // Awalan 08 + 11 digit + null terminator
-
-    // Tampilkan awalan 08
-    gotoxy(x,y);printf("08");
-    i = 2;
-
-    while (1) {
-        ch = getch();
-
-        if (ch == 13) {  // ENTER
-            // Hanya bisa enter jika sudah 13 digit
-            if (i == 12) {
-                display[i] = '\0';
-                strcpy(notlpn, display);
-                break;
-            }
-        }
-        else if (ch == 27) {  // ESC
-            notlpn[0] = '\0';
-            break;
-        }
-        else if (ch == 8) {  // BACKSPACE
-            // Hanya bisa hapus setelah "08"
-            if (i > 2) {
-                i--;
-                printf("\b \b");
-            }
-        }
-        else if (ch >= '0' && ch <= '9') {  // Hanya terima angka
-            if (i < 12) {  // Maksimal 13 digit
-                display[i++] = ch;
-                printf("%c", ch);
-            }
-        }
-        // Abaikan input selain angka
-    }
-}
 
 #endif

@@ -4,36 +4,41 @@
 #include <conio.h>
 #include <string.h>
 #include "../FrameTabel.h"
-#include "update.h"
+#include "create.h"
 
 // --- Konstanta untuk Paging ---
-#define MAX_ROWS_PER_PAGE 10
+#define MAX_ROWS_PER_PAGE 8
+
 
 void baca() {
+
     FILE *fp;
     staff all_staff[1000];
     int total_staff = 0;
 
-    int startX = 35;
-    int row_start = 12;
+    int startX = 37;
+    int startY = 12;
 
+    // Lebar kolom
     int wNo = 3;
-    int wUsr = 15;
-    int wPw = 10;
-    int wGen = 13;
-    int wTgl = 12;
+    int wUsr = 16;      // Username
+    int wNama = 17;     // Nama
+    int wPw = 6;
+    int wGen = 10;
+    int wTgl = 11;
     int wTelp = 13;
+    int wStatus = 12;
 
-    // VARIABEL PAGING
     int current_page = 1;
     int total_pages = 1;
     char key;
-    char second_key; // Tambahan untuk menampung kode kedua dari tombol panah
 
-    // --- BACA SEMUA DATA DARI FILE DAN HITUNG LEBAR KOLOM ---
+    bentukframe(34, 11, 121, 35);
+
     fp = fopen("staff.dat", "rb");
     if (!fp) {
-        gotoxy(startX, row_start); printf("File staff.dat tidak ditemukan!");
+        gotoxy(startX, startY);
+        printf("File staff.dat tidak ditemukan!");
         getch();
         return;
     }
@@ -43,105 +48,100 @@ void baca() {
         if (total_staff < 1000) {
             all_staff[total_staff++] = data;
         }
-
-        // Hitung lebar kolom
-        if (strlen(data.username) > wUsr) wUsr = strlen(data.username);
-        if (strlen(data.password) > wPw)  wPw  = strlen(data.password);
-        if (strlen(data.gender)   > wGen) wGen = strlen(data.gender);
-        if (strlen(data.tgl)      > wTgl) wTgl = strlen(data.tgl);
-        if (strlen(data.notlpn)   > wTelp) wTelp = strlen(data.notlpn);
     }
     fclose(fp);
 
-    // Hitung total halaman
     if (total_staff > 0) {
         total_pages = (total_staff + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
     }
 
-    // Total width tabel
-    int totalWidth = 1 + (wNo+3) + (wUsr+3) + (wPw+3) + (wGen+3) + (wTgl+3) + (wTelp+3);
-    char line[255];
-    memset(line, '=', totalWidth);
+    int totalWidth = 1 + (wNo+2) + (wUsr+2) + (wNama+2) + (wPw+2) +
+                     (wGen+2) + (wTgl+2) + (wTelp+2) + (wStatus+2);
+
+    char line[200];
+    memset(line, '-', totalWidth);
     line[totalWidth] = '\0';
 
-    // --- LOOP UTAMA UNTUK MENAMPILKAN DAN PAGING ---
     do {
-        // Hapus area tabel lama
-        for (int i = row_start; i < row_start + MAX_ROWS_PER_PAGE + 5; i++) {
-             gotoxy(startX, i); printf("%*s", totalWidth + 5, " ");
-        }
+        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 10);
 
-        int row = row_start;
+        gotoxy(80, 13);
+        printf("=== DAFTAR STAFF ===");
 
-        // Header tabel (sama seperti sebelumnya)
-        // ... (Kode Header Tabel)
+        int row = startY + 2;
+
         gotoxy(startX, row++);
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("| %-*s | %-*s | %-*s | %-*s | %-*s | %-*s |",
-               wNo,  "No",
-               wUsr, "Nama Lengkap",
-               wPw,  "Kata Sandi",
-               wGen, "Jenis Kelamin",
-               wTgl, "Tgl Lahir",
-               wTelp,"No Telepon"
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+               wNo+1,    "No",
+               wUsr+1,   "Username",
+               wNama+1,  "Nama",
+               wPw+1,    "Pass",
+               wGen+1,   "Gender",
+               wTgl+1,   "Tgl Lahir",
+               wTelp+1,  "Telepon",
+               wStatus+1,"Status"
         );
 
         gotoxy(startX, row++);
         printf("%s", line);
 
-        // Hitung indeks awal dan akhir untuk halaman saat ini
         int start_index = (current_page - 1) * MAX_ROWS_PER_PAGE;
         int end_index = start_index + MAX_ROWS_PER_PAGE;
-        if (end_index > total_staff) {
-            end_index = total_staff;
-        }
+        if (end_index > total_staff) end_index = total_staff;
 
-        // Isi tabel untuk halaman saat ini
         for (int i = start_index; i < end_index; i++) {
             staff current_staff = all_staff[i];
-            char maskedPassword[255];
+
+            char maskedPw[7];
             int pwLen = strlen(current_staff.password);
-            for (int j = 0; j < pwLen && j < 254; j++) {
-                maskedPassword[j] = '*';
-            }
-            maskedPassword[pwLen] = '\0';
+            int showLen = (pwLen > 5) ? 5 : pwLen;
+            memset(maskedPw, '*', showLen);
+            maskedPw[showLen] = '\0';
 
             gotoxy(startX, row++);
-            printf("| %-*d | %-*s | %-*s | %-*s | %-*s | %-*s |",
-                   wNo,  i + 1,
-                   wUsr, current_staff.username,
-                   wPw,  maskedPassword,
-                   wGen, current_staff.gender,
-                   wTgl, current_staff.tgl,
-                   wTelp,current_staff.notlpn
+            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+                   wNo+1,    i + 1,
+                   wUsr+1,   current_staff.username,     // USERNAME
+                   wNama+1,  current_staff.nama,         // NAMA
+                   wPw+1,    maskedPw,
+                   wGen+1,   current_staff.gender,
+                   wTgl+1,   current_staff.tgl,
+                   wTelp+1,  current_staff.notlpn,
+                   wStatus+1, current_staff.status
             );
         }
 
-        // Garis penutup tabel
         gotoxy(startX, row++);
         printf("%s", line);
 
-        // Informasi Paging diubah
-        gotoxy(startX, 27);
-        printf("[SPASI] -> %d dari %d <- [BACKSPACE].untuk navigasi, ENTER (Keluar).",
-               current_page, total_pages);
 
-        // --- TUNGGU INPUT KEYBOARD DAN LOGIC PAGING BARU ---
+
+        bentukframe(3, 11, 27, 12);
+        gotoxy(6, 13);
+        printf("[SPASI] Lanjut");
+        gotoxy(6, 15);
+        printf("[BACKSPACE] Kembali");
+        gotoxy(6, 17);
+        printf("[ENTER] Keluar");
+        gotoxy(6, 19);
+        printf("Halaman: %d/%d", current_page, total_pages);
+        gotoxy(6, 21),
+        printf("Total  : %d data", total_staff);
+
         key = getch();
 
-        if (key == ' ') { // Spasi (ASCII 32) -> Next Page
-            if (current_page < total_pages) {
-                current_page++;
-            }
-        } else if (key == '\b' || key == 8) { // Backspace (ASCII 8) -> Previous Page
-            if (current_page > 1) {
-                current_page--;
-            }
+        if (key == ' ') {
+            if (current_page < total_pages) current_page++;
+        } else if (key == 8) {
+            if (current_page > 1) current_page--;
         }
 
-    } while (key != 13); // Loop selama key BUKAN ENTER (ASCII 13)
+    } while (key != 13);
+    /*clearLine(24, 33, 90);
+    clearLine(25, 33, 90);*/
 }
 
 #endif

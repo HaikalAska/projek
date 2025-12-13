@@ -30,19 +30,32 @@ static int cekLoginDariFile(char *username, char *pw, char *role);
 
 static int cekLoginDariFile(char *username, char *pw, char *role) {
     FILE *file = fopen("staff.dat", "rb");
-
     staff s;
+
+    if (file == NULL)
+        return 0;
+
     while (fread(&s, sizeof(staff), 1, file)) {
-        if (strcmp(s.username, username) == 0 && strcmp(s.password, pw) == 0) {
-            strcpy(role, "Staff");
-            fclose(file);
-            return 1;
-        }
+        // Cocok username + password
+        if (strcmp(s.username, username) == 0 &&
+            strcmp(s.password, pw) == 0) {
+
+            // 🔒 CEK STATUS
+            if (strcmp(s.status, "Aktif") == 0) {
+                strcpy(role, "Staff");
+                fclose(file);
+                return 1;   // Login berhasil
+            } else {
+                fclose(file);
+                return -1;  // Akun NONAKTIF
+            }
+            }
     }
 
     fclose(file);
-    return 0;
+    return 0; // Username / password salah
 }
+
 
 void validLogin() {
     char username[50];
@@ -50,8 +63,8 @@ void validLogin() {
     char role[50] = "";
 
     // Hardcoded super admin
-    char AdminID[] = "123";
-    char AdminPW[] = "123";
+    char AdminID[] = "1";
+    char AdminPW[] = "12";
 
     char ManagerID[] = "Manager";
     char ManagerPW[] = "Manager";
@@ -63,18 +76,16 @@ void validLogin() {
 
         fillBackground(0x90);
         clearscreen();
-        gotoxy(70, 10);
-        printf("SELAMAT DATANG");
+        bentukframe(69, 9, 16, 3);
+        gotoxy(70, 10); printf("SELAMAT DATANG");
 
+
+        bentukframe(41, 14, 67, 20);
         tampilanlogin("GAMBARASCI.txt", 42, 15);
-
         gotoxy(73, 26);printf("Masuk");
-        gotoxy(45, 27);printf("=============================================================");
-        gotoxy(45, 28);printf("||                                                         ||");
-        gotoxy(45,29); printf("||  Username   :                                           ||");
-        gotoxy(45,30); printf("||  Kata Sandi :                                           ||");
-        gotoxy(45,31); printf("||                                                         ||");
-        gotoxy(45,32); printf("=============================================================");
+        bentukframe(45, 27, 60, 6);
+        gotoxy(47,29); printf("  Username   : ");
+        gotoxy(47,30); printf("  Kata Sandi : ");
         gotoxy(45,33); printf("[Tab] Untuk Melihat Password");
         gotoxy(86,33); printf("[ESC] Keluar Program");
 
@@ -85,24 +96,40 @@ void validLogin() {
         inputPassword(pw, 61, 30);
 
 
-        if (cekLoginDariFile(username, pw, role)) {
+        // PANGGIL FUNGSI CEK LOGIN
+        int hasil = cekLoginDariFile(username, pw, role);
+
+        if (hasil == 1) {
+            // Login berhasil, akun aktif
             break;
         }
-        // Backup: cek super admin hardcoded
+        else if (hasil == -1) {
+            // Akun nonaktif
+            percobaan++;
+            gotoxy(55,36);printf("Akun Anda tidak aktif! Hubungi Admin.");
+            gotoxy(65,37);printf("Sisa percobaan: %d", Maxpercobaan - percobaan);
+            if (percobaan < Maxpercobaan) {
+                gotoxy(60,38);printf("Tekan Enter untuk coba lagi...");
+                getchar();
+            }
+            continue;
+        }
+        // Cek admin hardcoded
         else if (strcmp(username, AdminID) == 0 && strcmp(pw, AdminPW) == 0) {
             strcpy(role, "Admin");
             break;
-        }else if (strcmp(username, ManagerID) == 0 && strcmp(pw, ManagerPW) == 0) {
+        }
+        else if (strcmp(username, ManagerID) == 0 && strcmp(pw, ManagerPW) == 0) {
             strcpy(role, "Manager");
             break;
         }
         else {
+            // Username/password salah
             percobaan++;
-            printf("\n\n\n\n\t\t\t\t\t                     Username atau Password salah!\n");
-            printf("\t\t\t\t\t\t                   Sisa percobaan: %d\n", Maxpercobaan - percobaan);
-
+            gotoxy(60,36);printf("Username atau Password salah!");
+            gotoxy(65,37);printf("Sisa percobaan: %d", Maxpercobaan - percobaan);
             if (percobaan < Maxpercobaan) {
-                printf("\t\t\t\t\t                     Tekan Enter untuk coba lagi...");
+                gotoxy(60,38);printf("Tekan Enter untuk coba lagi...");
                 getchar();
             }
             continue;
@@ -110,8 +137,9 @@ void validLogin() {
     }
 
     if (percobaan == Maxpercobaan) {
-        clearscreen();
-        printf("Batas percobaan habis, program keluar...\n");
+        bentukframe(47, 20, 55, 12);
+        gotoxy(64,22);printf("Batas percobaan habis\n");
+        gotoxy(64,28); printf("Silakan lapor ke Admin\n");
         getchar();
         getchar();
         exit(0);
@@ -167,7 +195,7 @@ static void inputID(char *id) {
     }
 }
 
-//=============================================//
+//==========================================================//
 //==============Bagian Password KHUSUS LOGIN===============//
 static void inputPassword(char *pw, int row, int col) {
     int i = 0;

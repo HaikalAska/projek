@@ -8,6 +8,9 @@
 #include "read.h"
 #include "../FrameTabel.h"
 
+int cekPasswordLama(int targetNo);
+void inputPasswordBaru(char *passwordBaru, int row, int col);
+
 void update() {
     int startY_input = 29;
     int startX_input = 50;
@@ -20,7 +23,7 @@ void update() {
     int idx;
 
     // --- Input Nomor Urut ---
-    gotoxy(3, startY_input); printf("Pilih No Urut: ");
+    gotoxy(3, 25); printf("Pilih No Urut: ");
 
     idx = 0;
     while (1) {
@@ -62,114 +65,186 @@ void update() {
             found = 1;
 
             // --- Tampilan Navigasi & Border ---
-            gotoxy(33,11); printf("[ESC] Batal ");
-            gotoxy(33,10); printf("[ENTER] Edit ");
-            gotoxy(100, 14);printf("NAVIGASI \xE2\x86\x91 \xE2\x86\x93");
+            bentukframe(3, 29, 27, 10);
+            gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
+            gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
+            gotoxy(4, 34);printf("[ENTER] Pilih");
+            gotoxy(4, 36);printf("[Esc] Keluar");
 
             // Tampilkan Data Lama (Kiri)
-            printBorder(48, 30, 30, 10);
-            gotoxy(startX_input, startY_input + 2); printf("=== Data Lama ===");
-            gotoxy(startX_input, startY_input + 3); printf("Nama      : %s", data.username);
+            bentukframe(48, 29, 45, 12);
+            gotoxy(65, 30); printf("Data Lama");
+            gotoxy(startX_input, startY_input + 3); printf("Username  : %s", data.username);
+            gotoxy(startX_input, startY_input + 4); printf("Nama      : %s", data.nama);
 
             // Masking Password Lama
             char maskedPw[50];
             int pwLen = strlen(data.password);
             for(int i = 0; i < pwLen; i++) maskedPw[i] = '*';
             maskedPw[pwLen] = '\0';
-            gotoxy(startX_input, startY_input + 4); printf("Password  : %s", maskedPw);
+            gotoxy(startX_input, startY_input + 5); printf("Password  : %s", maskedPw);
 
-            gotoxy(startX_input, startY_input + 5); printf("Tgl Lahir : %s", data.tgl);
-            gotoxy(startX_input, startY_input + 6); printf("No Telpon : %s", data.notlpn);
-            gotoxy(startX_input, startY_input + 7); printf("Gender    : %s", data.gender);
+            gotoxy(startX_input, startY_input + 6); printf("Tgl Lahir : %s", data.tgl);
+            gotoxy(startX_input, startY_input + 7); printf("No Telpon : %s", data.notlpn);
+            gotoxy(startX_input, startY_input + 8); printf("Gender    : %s", data.gender);
+            gotoxy(startX_input, startY_input + 9); printf("Status    : %s", data.status);
 
             // Tampilkan Form Input Baru (Kanan)
-            printBorder(98, 30, 35, 10);
-            gotoxy(100, 31); printf("=== MASUKKAN DATA BARU ===");
+           bentukframe(95, 29, 55, 12);
+gotoxy(112, 30); printf("Data Baru");
 
-            gotoxy(103,32); printf("Nama      : "); // Tampilkan data saat ini dulu
-            gotoxy(103,33); printf("Password  : ");
-            gotoxy(103,34); printf("Tgl Lahir : ");
-            gotoxy(103,35); printf("No Telpon : ");
-            gotoxy(103,36); printf("Gender    : ");
-            gotoxy(103,37); printf("[ SIMPAN PERUBAHAN ]");
+// Tampilan Form
+    gotoxy(97,32); printf("Nama      : ");
+            gotoxy(97,33); printf("Username  : ");
+    gotoxy(97,34); printf("Password  : ");
+    gotoxy(97,35); printf("Tgl Lahir : ");
+    gotoxy(97,36); printf("No Telpon : ");
+    gotoxy(97,37); printf("Gender    : ");
+    gotoxy(97,38); printf("Status    : ");
+    gotoxy(97,39); printf("[ SIMPAN PERUBAHAN ]");
 
-            int selectedField = 0;
-            int editing = 1;
+int selectedField = 0;
+int editing = 1;
+int totalFields = 7; // 0-6 field input, 7 tombol simpan
 
-            // ==========================================
-            // LOGIKA NAVIGASI (LOOPING)
-            // ==========================================
-            while (editing) {
-                // Gambar Kursor Navigasi
-                for (int i = 0; i < 6; i++) {
-                    gotoxy(100, 32 + i);
-                    if (i == selectedField) printf(">>");
-                    else printf("  ");
-                }
+while (editing) {
+    // Gambar Kursor Navigasi
+    for (int i = 0; i <= totalFields; i++) {
+        gotoxy(95, 32 + i);
+        if (i == selectedField) {
+            printf(">>");
+        } else {
+            printf("│ ");
+        }
+    }
 
-                int ch = _getch();
+    int ch = _getch();
 
-                // Handle Arrow Keys (Atas/Bawah)
-                if (ch == 0 || ch == 224) {
-                    int arrow = _getch();
-                    if (arrow == 72) { // UP
-                        selectedField--;
-                        if (selectedField < 0) selectedField = 5;
-                    }
-                    else if (arrow == 80) { // DOWN
-                        selectedField++;
-                        if (selectedField > 5) selectedField = 0;
-                    }
-                }
-                // Handle ENTER (Pilih Field untuk Diedit)
-                else if (ch == 13) {
+    // Handle Arrow Keys
+    if (ch == 0 || ch == 224) {
+        int arrow = _getch();
+        if (arrow == 72) { // UP
+            selectedField--;
+            if (selectedField < 0) selectedField = totalFields;
+        }
+        else if (arrow == 80) { // DOWN
+            selectedField++;
+            if (selectedField > totalFields) selectedField = 0;
+        }
+    }
+    // Handle ENTER
+    else if (ch == 13) {
+        // Jika pilih tombol SIMPAN
+        if (selectedField == totalFields) {
+            editing = 0;
+            break;
+        }
 
-                    // Jika pilih [SIMPAN PERUBAHAN]
-                    if (selectedField == 5) {
-                        editing = 0; // Keluar dari loop editing
-                        break;
-                    }
+        int inputX = 109; // Koordinat X untuk input
 
-                    // Koordinat input (sesuaikan agar rapi)
-                    int inputX = 114;
+        // Clear previous input area
+        clearArea(inputX, 32 + selectedField, 25, 1);
 
-                    // --- SWITCH CASE UNTUK MEMANGGIL FUNGSI INPUT ---
-                    switch(selectedField) {
-                        case 0: // Nama
-                            gotoxy(inputX, 32);
-                            inputID(data.username);
-                            break;
-
-                        case 1: // Password
-                            gotoxy(inputX, 33);
-                            // Asumsi inputPassword butuh (buffer, x, y)
-                            PWesc(data.password, inputX, 33);
-                            break;
-
-                        case 2: // Tgl Lahir
-                            gotoxy(inputX, 34);
-                            inputTanggal(data.tgl);
-                            break;
-
-                        case 3: // No Telpon
-                            gotoxy(inputX, 35);
-                            inputNoTelp(data.notlpn, inputX, 35);
-                            break;
-
-                        case 4: // Gender
-                            // Panggil fungsi inputGender yang sudah dimodifikasi (buffer, x, y)
-                            inputGender(data.gender, inputX, 36);
-                            break;
-                    }
-                }
-                // Handle ESC (Batal Update seluruhnya)
-                else if (ch == 27) {
+        switch(selectedField) {
+            case 0: // Username
+                setPointer(33, inputX);
+                INPUTNama(data.nama);
+                if (strlen(data.nama) == 0) {
                     fclose(fp);
                     fclose(sampah);
                     remove("sampah.dat");
                     return;
                 }
-            }
+                break;
+
+
+            case 1: // Nama
+                setPointer(34, 109);
+                inputUsername(data.username, 33, 108);
+                if (strlen(data.username) == 0) {
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+
+
+            case 2: // Password
+                gotoxy(97, 34);
+                printf("Password Lama : ");
+                if (cekPasswordLama(targetNo) == 1) {
+                    clearArea(97, 34, 40, 1);
+                    gotoxy(97, 34);
+                    printf("Password Baru : ");
+                    inputPasswordBaru(data.password, 34, 113);
+
+                    // User cancel
+                    if (strlen(data.password) == 0) {
+                        fclose(fp);
+                        fclose(sampah);
+                        remove("sampah.dat");
+                        return;
+                    }
+                } else {
+                    // Password salah atau user cancel
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+
+            case 3: // Tgl Lahir
+                setPointer(35, inputX);
+                inputTanggal(data.tgl);
+                if (strlen(data.tgl) == 0) {
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+
+            case 4: // No Telpon
+                inputNoTelp(data.notlpn, inputX, 36);
+                if (strlen(data.notlpn) == 0) {
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+
+            case 5: // Gender
+                inputGender(data.gender, 104, 37);
+                if (strlen(data.gender) == 0) {
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+
+            case 6: // Status
+                inputStatus(data.status, 104, 38);
+                if (strlen(data.status) == 0) {
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+        }
+    }
+    // Handle ESC
+    else if (ch == 27) {
+        fclose(fp);
+        fclose(sampah);
+        remove("sampah.dat");
+        return;
+    }
+}
 
             // Pastikan Role tetap Staff
             strcpy(data.Role, "Staff");
@@ -199,6 +274,56 @@ void update() {
     }
 
     _getch();
+}
+
+
+
+//===========================================================//
+//============BAGIAN VALIDASI PASSWORD====================//
+int cekPasswordLama(int targetNo) {
+    FILE *fp;
+    staff data;
+    char inputPwLama[200] = "";
+    char passwordBenar[200] = "";
+
+    fp = fopen("staff.dat", "rb");
+    if (fp == NULL) return 0;
+
+
+    fseek(fp, (targetNo - 1) * sizeof(staff), SEEK_SET);
+
+    if (fread(&data, sizeof(staff), 1, fp) != 1) {
+        fclose(fp);
+        return 0;
+    }
+
+    strcpy(passwordBenar, data.password);
+    fclose(fp);
+
+    while (1) {
+        clearArea(113, 34, 25, 3);
+        clearArea(97, 41, 25, 3);
+
+        gotoxy(97, 34);
+        printf("Password Lama : ");
+        PWesc(inputPwLama, 34, 113);
+
+        if (strlen(inputPwLama) == 0)
+            return 0;
+
+        if (strcmp(inputPwLama, passwordBenar) == 0)
+            return 1;
+
+        gotoxy(97, 41);
+        printf("✗ Password salah!");
+        Sleep(1000);
+    }
+}
+
+
+void inputPasswordBaru(char *passwordBaru, int row, int col) {
+    clearArea(col, row, 30, 1);
+    PWesc(passwordBaru, row, col);
 }
 
 #endif //PROJEK_UPDATE_H
