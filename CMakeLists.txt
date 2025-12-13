@@ -8,10 +8,7 @@ add_executable(projek
         main.c
         login.h
         Menu.h
-        PesanTiket.h
         FrameTabel.h
-        penumpang/kelolaPenumpang.h
-        penumpang/createpenumpang.h
         superadmin/create.h
         superadmin/delete.h
         superadmin/read.h
