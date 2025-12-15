@@ -369,6 +369,71 @@ static void inputGender(char *gender, int x, int y) {
 //===============================================================================================//
 
 
+
+
+
+//==============================================================================================//
+//========================VALIDASI ROLE======================================================//
+static void inputRole(char *role, int x, int y) {
+    char ch;
+
+    gotoxy(x, y);
+    printf("S/M : ");
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 27) {  // ESC - Batal
+            role[0] = '\0';
+            break;
+        }
+        else if (ch == 'S' || ch == 's') {  // Input Staff
+            strcpy(role, "Staff");
+            printf("S (Staff)");
+
+            // Tunggu konfirmasi
+            while (1) {
+                ch = getch();
+                if (ch == 13) {  // ENTER - Konfirmasi
+                    return;
+                }
+                else if (ch == 8) {  // BACKSPACE - Hapus dan input ulang
+                    // Hapus "S (Staff)" = 9 karakter
+                    for (int i = 0; i < 9; i++) printf("\b \b");
+                    break;
+                }
+                else if (ch == 27) {  // ESC - Batal
+                    role[0] = '\0';
+                    return;
+                }
+            }
+        }
+        else if (ch == 'M' || ch == 'm') {  // Input Manager
+            strcpy(role, "Manager");
+            printf("M (Manager)");
+
+            // Tunggu konfirmasi
+            while (1) {
+                ch = getch();
+                if (ch == 13) {  // ENTER - Konfirmasi
+                    return;
+                }
+                else if (ch == 8) {  // BACKSPACE - Hapus dan input ulang
+                    // Hapus "M (Manager)" = 11 karakter
+                    for (int i = 0; i < 11; i++) printf("\b \b");
+                    break;
+                }
+                else if (ch == 27) {  // ESC - Batal
+                    role[0] = '\0';
+                    return;
+                }
+            }
+        }
+        // Abaikan input selain S/M
+    }
+}
+//========================================================//
+
 static void inputStatus(char *status, int x, int y) {
     char ch;
     int inputX = x + 6;

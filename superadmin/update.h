@@ -88,6 +88,7 @@ void update() {
             gotoxy(startX_input, startY_input + 7); printf("No Telpon : %s", data.notlpn);
             gotoxy(startX_input, startY_input + 8); printf("Gender    : %s", data.gender);
             gotoxy(startX_input, startY_input + 9); printf("Status    : %s", data.status);
+            gotoxy(startX_input, startY_input + 10); printf("Role      : %s", data.Role);
 
             // Tampilkan Form Input Baru (Kanan)
            bentukframe(95, 29, 55, 12);
@@ -101,6 +102,7 @@ gotoxy(112, 30); printf("Data Baru");
     gotoxy(97,36); printf("No Telpon : ");
     gotoxy(97,37); printf("Gender    : ");
     gotoxy(97,38); printf("Status    : ");
+    gotoxy(97,38); printf("Role      : ");
     gotoxy(97,39); printf("[ SIMPAN PERUBAHAN ]");
 
 int selectedField = 0;
@@ -229,6 +231,15 @@ while (editing) {
             case 6: // Status
                 inputStatus(data.status, 104, 38);
                 if (strlen(data.status) == 0) {
+                    fclose(fp);
+                    fclose(sampah);
+                    remove("sampah.dat");
+                    return;
+                }
+                break;
+                case 7: // Status
+                inputRole(data.Role, 104, 39);
+                if (strlen(data.Role) == 0) {
                     fclose(fp);
                     fclose(sampah);
                     remove("sampah.dat");

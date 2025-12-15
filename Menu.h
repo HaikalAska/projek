@@ -7,7 +7,7 @@
 
 void validLogin();
 
- void menuSuperAdmin() {
+void menuSuperAdmin() {
     int pilih;
 
     while (1) {
@@ -37,13 +37,11 @@ void validLogin();
                 break;
             case 2:
                 validLogin();
-               break;
+                break;
         }
 
     }
-
 }
-
 
 
 static void menuStaff() {
@@ -113,7 +111,6 @@ static void menuManager() {
 
         switch (pilih) {
             case 1:
-                // Laporan();
                 break;
             case 2:
                 validLogin();

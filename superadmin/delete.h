@@ -60,7 +60,11 @@ void delete(){
     gotoxy(52, 27);  printf("====DATA %d===", pilihan);
     gotoxy(38, 28);  printf("Username    : %s", terpilih.username);
     gotoxy(38, 29);  printf("Nama        : %s", terpilih.nama);
-    gotoxy(38, 30); printf("Password    : %s", terpilih.password);
+    char maskedPw[50];
+    int pwLen = strlen(terpilih.password);
+    memset(maskedPw, '*', pwLen);
+    maskedPw[pwLen] = '\0';
+    gotoxy(38, 30); printf("Password    : %s", maskedPw);
     gotoxy(38, 31); printf("Tgl Lahir   : %s", terpilih.tgl);
     gotoxy(38, 32); printf("No Telpon   : %s", terpilih.notlpn);
     gotoxy(38, 33); printf("Gender      : %s", terpilih.gender);

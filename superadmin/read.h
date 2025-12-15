@@ -21,13 +21,14 @@ void baca() {
 
     // Lebar kolom
     int wNo = 3;
-    int wUsr = 16;      // Username
+    int wUsr = 12;      // Username
     int wNama = 17;     // Nama
     int wPw = 6;
     int wGen = 10;
     int wTgl = 11;
-    int wTelp = 13;
-    int wStatus = 12;
+    int wTelp = 11;
+    int wStatus = 10;
+    int wRole = 10;
 
     int current_page = 1;
     int total_pages = 1;
@@ -56,7 +57,7 @@ void baca() {
     }
 
     int totalWidth = 1 + (wNo+2) + (wUsr+2) + (wNama+2) + (wPw+2) +
-                     (wGen+2) + (wTgl+2) + (wTelp+2) + (wStatus+2);
+                 (wGen+2) + (wTgl+2) + (wTelp+2) + (wRole+2) + (wStatus+1);
 
     char line[200];
     memset(line, '-', totalWidth);
@@ -74,7 +75,7 @@ void baca() {
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1,    "No",
                wUsr+1,   "Username",
                wNama+1,  "Nama",
@@ -82,6 +83,7 @@ void baca() {
                wGen+1,   "Gender",
                wTgl+1,   "Tgl Lahir",
                wTelp+1,  "Telepon",
+               wRole+1,  "Role",
                wStatus+1,"Status"
         );
 
@@ -102,7 +104,7 @@ void baca() {
             maskedPw[showLen] = '\0';
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1,    i + 1,
                    wUsr+1,   current_staff.username,     // USERNAME
                    wNama+1,  current_staff.nama,         // NAMA
@@ -110,6 +112,7 @@ void baca() {
                    wGen+1,   current_staff.gender,
                    wTgl+1,   current_staff.tgl,
                    wTelp+1,  current_staff.notlpn,
+                   wRole+1,  current_staff.Role,         // ROLE
                    wStatus+1, current_staff.status
             );
         }
