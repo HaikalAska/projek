@@ -47,7 +47,7 @@ void validLogin();
 
 
 
- void menuStaff() {
+ static void menuStaff() {
     int pilih;
 
     while (1) {
