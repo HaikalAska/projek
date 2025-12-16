@@ -3,6 +3,7 @@
 #include "FrameTabel.h"
 
 #include "superadmin/KelolaStaff.h"
+#include "pemesanantiket.h"
 
 
 void validLogin();
@@ -73,7 +74,7 @@ static void menuStaff() {
 
         switch (pilih) {
             case 1:
-
+                pemesanantiket();
                 break;
             case 2:
                 // Refund();
