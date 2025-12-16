@@ -106,9 +106,14 @@ void create() {
         }
 
         // Set Role otomatis sebagai Staff
-        strcpy(data.Role, "Staff");
         gotoxy(37, 35);
-        printf("Role         : Staff");
+        printf("Role         : ");
+        // Clear area input gender
+        inputRole(data.Role, 46, 35);
+        if (strlen(data.gender) == 0) {
+            fclose(fp);
+            return;
+        }
 
 
 

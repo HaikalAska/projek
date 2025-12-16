@@ -3,7 +3,6 @@
 #include "FrameTabel.h"
 
 #include "superadmin/KelolaStaff.h"
-#include "rute/menurute.h"
 
 
 void validLogin();
@@ -47,7 +46,7 @@ void validLogin();
 
 
 
-void menuStaff() {
+static void menuStaff() {
     int pilih;
 
     while (1) {
@@ -82,7 +81,6 @@ void menuStaff() {
                 // Refund();
                 break;
             case 3:
-                menurute();
                 break;
             case 4:
                 validLogin();

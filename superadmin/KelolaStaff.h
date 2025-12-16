@@ -33,14 +33,13 @@ void  MenukelolaStaff() {
         gotoxy(4, 36);printf("[Esc] Keluar");
 
 
-        bentukframe(3, 10, 27, 14);
+        bentukframe(3, 10, 27, 13);
         gotoxy(4,11); printf("=== KELOLA DATA STAFF ===");
         gotoxy(6, 13); printf("Buat\n");
         gotoxy(6, 15);printf("Hapus\n");
         gotoxy(6, 17);printf("Perbarui\n");
-        gotoxy(6, 19);printf("Halaman\n");
-        gotoxy(6, 21);printf("50Dummy\n");
-        pilih = menuNavigasi(5, 13,2);
+        gotoxy(6, 19);printf("Kembali\n");
+        pilih = menuNavigasi(4, 13,2);
         switch (pilih) {
             case 1:
                 create();
@@ -53,9 +52,6 @@ void  MenukelolaStaff() {
                 break;
                 case 4:
                 menuSuperAdmin();
-                break;
-            case 5:
-                buatdummy_ke_file();
                 break;
         }
     }
