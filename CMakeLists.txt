@@ -13,5 +13,9 @@ add_executable(projek
         superadmin/delete.h
         superadmin/read.h
         superadmin/update.h
-        pemesanantiket.h
+        Kendaraan/menuKendaraan.h
+        Kendaraan/createKendaraan.h
+        Kendaraan/readKendaraan.h
+        Kendaraan/updateKendaraan.h
+        Kendaraan/deleteKendaraan.h
 )
