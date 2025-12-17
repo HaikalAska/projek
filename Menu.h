@@ -71,6 +71,7 @@ static void menuStaff() {
         gotoxy(3, 13); printf("    Pemesanan Tiket\n");
         gotoxy(3, 15);printf("    Buat Kendaraan\n");
         gotoxy(3, 17);printf("    Buat Rute\n");
+        gotoxy(3, 17);printf("    Buat Jawal\n");
         gotoxy(3, 19);printf("    Log Out\n");
         pilih = menuNavigasi(4, 13, 2);
 
@@ -84,6 +85,9 @@ static void menuStaff() {
             case 3:
                 break;
             case 4:
+
+                break;
+            case 5:
                 validLogin();
                 break;
         }
