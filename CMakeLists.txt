@@ -14,4 +14,11 @@ add_executable(projek
         superadmin/read.h
         superadmin/update.h
         pemesanantiket.h
+        tiket/createtiket.h
+        tiket/readtiket.h
+        jadwal/createjadwal.h
+        jadwal/readjadwal.h
+        jadwal/updatejadwal.h
+        jadwal/deletejadwal.h
+        jadwal/menujadwal.h
 )
