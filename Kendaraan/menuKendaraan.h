@@ -12,7 +12,6 @@
 #include "../login.h"
 #include "../Menu.h"
 
-void menuStaff();
 
 void menukendaraan() {
     int pilih;
@@ -61,7 +60,6 @@ void menukendaraan() {
                 updateKendaraan();
                 break;
             case 4:
-                menuStaff();
                 break;
             case 5:
                 // buatDummyKendaraan();
