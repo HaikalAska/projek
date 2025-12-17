@@ -7,6 +7,7 @@
 
 #include "../FrameTabel.h"
 
+
 // ================= STRUKTUR DATA ================= //
 typedef struct {
     char id[20];
@@ -14,6 +15,7 @@ typedef struct {
     char no_hp[20];
     char email[50];
     char rute[10];
+    char metode[10];
 } penumpang;
 
 // ================= DEKLARASI ================= //
@@ -79,7 +81,7 @@ void inputEmail(char *email, int row, int col) {
                 i += len;
                 auto_domain = 1;
 
-                // ⛔ Langsung hentikan input
+
                 temp[i] = '\0';
                 strcpy(email, temp);
                 break;
@@ -196,6 +198,15 @@ void createPenumpang() {
         setPointer(31, 52);
         inputEmail(data.email, 32, 52);
         if (strlen(data.email) == 0) {
+            fclose(fp);
+            return;
+        }
+
+        //================METODE BAYAR=========================//
+        gotoxy(37, 33); printf("Metode       : ");
+        setPointer(31, 52);
+        inputPaymentMethod(data.metode, 33, 52);
+        if (strlen(data.metode) == 0) {
             fclose(fp);
             return;
         }

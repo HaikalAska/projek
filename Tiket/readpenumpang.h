@@ -5,7 +5,7 @@
 #include <conio.h>
 #include <string.h>
 #include "../FrameTabel.h"
-#include "createpenumpang.h"
+#include "createTiket.h"
 
 // ===== Paging =====
 #define MAX_ROWS_PER_PAGE 8

@@ -578,7 +578,67 @@ static void INPUTNama(char *nama) {
 
 
 
+//====================METODE======================================================//
+//================================================================================//
+static void inputPaymentMethod(char *method, int x, int y) {
+    char ch;
 
+    gotoxy(x, y);
+    printf("C/L : ");
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 27) {  // ESC - Batal
+            method[0] = '\0';
+            break;
+        }
+        else if (ch == 'C' || ch == 'c') {  // Input Cash
+            strcpy(method, "Cash");
+            printf("C (Cash)");
+
+            // Tunggu konfirmasi
+            while (1) {
+                ch = getch();
+                if (ch == 13) {  // ENTER - Konfirmasi
+                    return;
+                }
+                else if (ch == 8) {  // BACKSPACE - Hapus dan input ulang
+                    // Hapus "C (Cash)" = 8 karakter
+                    for (int i = 0; i < 8; i++) printf("\b \b");
+                    break;
+                }
+                else if (ch == 27) {  // ESC - Batal
+                    method[0] = '\0';
+                    return;
+                }
+            }
+        }
+        else if (ch == 'L' || ch == 'l') {  // Input Cashless
+            strcpy(method, "Cashless");
+            printf("L (Cashless)");
+
+            // Tunggu konfirmasi
+            while (1) {
+                ch = getch();
+                if (ch == 13) {  // ENTER - Konfirmasi
+                    return;
+                }
+                else if (ch == 8) {  // BACKSPACE - Hapus dan input ulang
+                    // Hapus "L (Cashless)" = 13 karakter
+                    for (int i = 0; i < 13; i++) printf("\b \b");
+                    break;
+                }
+                else if (ch == 27) {  // ESC - Batal
+                    method[0] = '\0';
+                    return;
+                }
+            }
+        }
+        // Abaikan input selain C/L
+    }
+}
+//=================================================================================//
 
 
 

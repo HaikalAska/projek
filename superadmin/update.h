@@ -91,7 +91,7 @@ void update() {
             gotoxy(startX_input, startY_input + 10); printf("Role      : %s", data.Role);
 
             // Tampilkan Form Input Baru (Kanan)
-           bentukframe(95, 29, 55, 12);
+           bentukframe(95, 29, 55, 13);
 gotoxy(112, 30); printf("Data Baru");
 
 // Tampilan Form
@@ -102,12 +102,12 @@ gotoxy(112, 30); printf("Data Baru");
     gotoxy(97,36); printf("No Telpon : ");
     gotoxy(97,37); printf("Gender    : ");
     gotoxy(97,38); printf("Status    : ");
-    gotoxy(97,38); printf("Role      : ");
-    gotoxy(97,39); printf("[ SIMPAN PERUBAHAN ]");
+    gotoxy(97,39); printf("Role      : ");
+    gotoxy(97,40); printf("[ SIMPAN PERUBAHAN ]");
 
 int selectedField = 0;
 int editing = 1;
-int totalFields = 7; // 0-6 field input, 7 tombol simpan
+int totalFields = 8; // 0-6 field input, 7 tombol simpan
 
 while (editing) {
     // Gambar Kursor Navigasi

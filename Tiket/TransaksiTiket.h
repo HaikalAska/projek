@@ -5,9 +5,7 @@
 #include <stdlib.h>
 
 #include "../FrameTabel.h"
-#include "createpenumpang.h"
- #include "deletepenumpang.h"
- #include "updatepenumpang.h"
+#include "createTiket.h"
 // #include "dummy_penumpang.h"
 #include "readpenumpang.h"
 #include "../pemesanantiket.h"
@@ -29,7 +27,7 @@ void menupenumpang() {
 
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(11,5); printf("Kelompok 5");
-        readpenumpang();
+
         // ===== MENU NAVIGASI (IDENTIK STAFF) =====
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
@@ -39,30 +37,19 @@ void menupenumpang() {
 
         // ===== MENU UTAMA (IDENTIK STAFF) =====
         bentukframe(3, 10, 27, 14);
-        gotoxy(4,11); printf("=== KELOLA DATA PENUMPANG ===");
+        gotoxy(5,11); printf(" KELOLA DATA PENUMPANG ");
         gotoxy(6,13); printf("Buat");
-        gotoxy(6,15); printf("Hapus");
-        gotoxy(6,17); printf("Perbarui");
-        gotoxy(6,19); printf("kembali");
-       // gotoxy(6,21); printf("50Dummy");
+        gotoxy(6,15); printf("kembali");
+        // gotoxy(6,21); printf("50Dummy");
 
-        pilih = menuNavigasi(4, 13, 2);
+        pilih = menuNavigasi(2, 13, 2);
 
         switch (pilih) {
         case 1:
             createPenumpang();
             break;
         case 2:
-             deletePenumpang();
-            break;
-        case 3:
-             updatePenumpang();
-            break;
-        case 4:
-            pemesanantiket();   // == HALAMAN ==
-            return;
-        case 5:
-            buatdummy_penumpang_ke_file();
+                pemesanantiket();
             break;
         }
     }

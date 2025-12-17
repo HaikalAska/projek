@@ -4,6 +4,7 @@
 
 #include "superadmin/KelolaStaff.h"
 #include "pemesanantiket.h"
+#include "rute/menurute.h"
 
 
 void validLogin();
@@ -79,11 +80,15 @@ static void menuStaff() {
                 pemesanantiket();
                 break;
             case 2:
-                // Refund();
+               // menukendaraan();
                 break;
             case 3:
+                menurute();
                 break;
             case 4:
+                //jadwal();
+                break;
+                case 5:
                 validLogin();
                 break;
         }
