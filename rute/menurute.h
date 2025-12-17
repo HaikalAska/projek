@@ -1,19 +1,19 @@
-#ifndef PROJEK_KELOLASTAFF_H
-#define PROJEK_KELOLASTAFF_H
-#include <stdio.h>
-#include <stdlib.h>
+//
+// Created by ASUS on 12/14/2025.
+//
 
-#include "../FrameTabel.h"
-#include "create.h"
-#include "delete.h"
-#include "update.h"
-#include "read.h"
+#ifndef PROJEK_MENURUTE_H
+#define PROJEK_MENURUTE_H
 
+#include "createrute.h"
+#include "../Menu.h"
+#include "readrute.h"
+#include "updaterute.h"
+#include "deleterute.h"
 
- void menuSuperAdmin();
+void menuStaff();
 
-
-void  MenukelolaStaff() {
+void  menurute() {
     int pilih;
 
     while (1) {
@@ -25,7 +25,7 @@ void  MenukelolaStaff() {
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(11,5); printf("Kelompok 5");
-        baca();
+        bacaRute();
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
@@ -33,28 +33,32 @@ void  MenukelolaStaff() {
         gotoxy(4, 36);printf("[Esc] Keluar");
 
 
-        bentukframe(3, 10, 27, 13);
-        gotoxy(4,11); printf("=== KELOLA DATA STAFF ===");
+        bentukframe(3, 10, 27, 14);
+        gotoxy(4,11); printf("=== KELOLA DATA RUTE ===");
         gotoxy(6, 13); printf("Buat\n");
         gotoxy(6, 15);printf("Hapus\n");
         gotoxy(6, 17);printf("Perbarui\n");
-        gotoxy(6, 19);printf("Kembali\n");
-        pilih = menuNavigasi(4, 13,2);
+        gotoxy(6, 19);printf("Halaman\n");
+        gotoxy(6, 21);printf("50Dummy\n");
+        pilih = menuNavigasi(5, 13,2);
         switch (pilih) {
             case 1:
-                create();
+                buatrute();
                 break;
             case 2:
-                delete();
+                deleterute();
                 break;
             case 3:
-                update();
+                 updaterute();
                 break;
-                case 4:
-                menuSuperAdmin();
+            case 4:
+                menuStaff();
+                break;
+            case 5:
+                buatDummyRute();
                 break;
         }
     }
 }
 
-#endif //PROJEK_KELOLASTAFF_H
+#endif //PROJEK_MENURUTE_H

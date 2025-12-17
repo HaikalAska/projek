@@ -36,24 +36,26 @@ static int cekLoginDariFile(char *username, char *pw, char *role) {
         return 0;
 
     while (fread(&s, sizeof(staff), 1, file)) {
-        // Cocok username + password
         if (strcmp(s.username, username) == 0 &&
             strcmp(s.password, pw) == 0) {
 
-            // 🔒 CEK STATUS
             if (strcmp(s.status, "Aktif") == 0) {
-                strcpy(role, "Staff");
+                if (strcmp(s.Role, "Manager") == 0) {
+                    strcpy(role, "Manager");
+                } else {
+                    strcpy(role, "Staff");
+                }
                 fclose(file);
-                return 1;   // Login berhasil
+                return 1;
             } else {
                 fclose(file);
-                return -1;  // Akun NONAKTIF
+                return -1;
             }
-            }
+        }
     }
 
     fclose(file);
-    return 0; // Username / password salah
+    return 0;
 }
 
 
@@ -62,12 +64,8 @@ void validLogin() {
     char pw[50];
     char role[50] = "";
 
-    // Hardcoded super admin
     char AdminID[] = "1";
     char AdminPW[] = "12";
-
-    char ManagerID[] = "Manager";
-    char ManagerPW[] = "Manager";
 
     int percobaan = 0;
     int Maxpercobaan = 3;
@@ -96,15 +94,12 @@ void validLogin() {
         inputPassword(pw, 61, 30);
 
 
-        // PANGGIL FUNGSI CEK LOGIN
         int hasil = cekLoginDariFile(username, pw, role);
 
         if (hasil == 1) {
-            // Login berhasil, akun aktif
             break;
         }
         else if (hasil == -1) {
-            // Akun nonaktif
             percobaan++;
             gotoxy(55,36);printf("Akun Anda tidak aktif! Hubungi Admin.");
             gotoxy(65,37);printf("Sisa percobaan: %d", Maxpercobaan - percobaan);
@@ -114,17 +109,11 @@ void validLogin() {
             }
             continue;
         }
-        // Cek admin hardcoded
         else if (strcmp(username, AdminID) == 0 && strcmp(pw, AdminPW) == 0) {
             strcpy(role, "Admin");
             break;
         }
-        else if (strcmp(username, ManagerID) == 0 && strcmp(pw, ManagerPW) == 0) {
-            strcpy(role, "Manager");
-            break;
-        }
         else {
-            // Username/password salah
             percobaan++;
             gotoxy(60,36);printf("Username atau Password salah!");
             gotoxy(65,37);printf("Sisa percobaan: %d", Maxpercobaan - percobaan);
@@ -164,7 +153,6 @@ void validLogin() {
     }
 }
 
-//INPUT ID KHUSUS LOGIN//
 static void inputID(char *id) {
     int i = 0;
     char ch;
@@ -172,14 +160,14 @@ static void inputID(char *id) {
     while (1) {
         ch = getch();
 
-        if (ch == 13) {                 // ENTER
+        if (ch == 13) {
             id[i] = '\0';
             break;
         }
-        else if (ch == 27) {            // ESC
+        else if (ch == 27) {
             exit(0);
         }
-        else if (ch == 8) {             // BACKSPACE
+        else if (ch == 8) {
             if (i > 0) {
                 i--;
                 printf("\b \b");
@@ -188,15 +176,13 @@ static void inputID(char *id) {
         else if (ch == 32) {
             continue;
         }
-        else {                          // INPUT NORMAL
+        else {
             id[i++] = ch;
             printf("%c", ch);
         }
     }
 }
 
-//==========================================================//
-//==============Bagian Password KHUSUS LOGIN===============//
 static void inputPassword(char *pw, int row, int col) {
     int i = 0;
     char ch;
@@ -205,23 +191,19 @@ static void inputPassword(char *pw, int row, int col) {
     while (1) {
         ch = getch();
 
-        //ENTER
         if (ch == 13) {
             pw[i] = '\0';
             printf("\n");
             break;
         }
 
-        //ESC
         else if (ch == 27) {
             exit(0);
         }
 
-        //BACKSPACE
-        else if (ch == 9) {             // TAB = toggle show/hide
+        else if (ch == 9) {
             showPw = !showPw;
 
-            // refresh tampilan
             gotoxy(row, col);
             for (int j = 0; j < i; j++) {
                 printf(showPw ? "%c" : "*", pw[j]);
