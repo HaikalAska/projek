@@ -27,6 +27,7 @@ void create() {
     char n;
 
     do {
+
         bentukframe(35, 27, 108, 16);
         gotoxy(80, 27);printf("=== BUAT STAFF ===");
         // Buka file untuk append
@@ -35,6 +36,9 @@ void create() {
 
         staff data;
 
+
+        /*clearLine(9,4,30);
+        gotoxy(4, 9); printf("Super Admin>Buat\n");*/
         // Generate ID otomatis
         int count = getStaffCount() + 1;
         sprintf(data.id, "STF%03d", count);
