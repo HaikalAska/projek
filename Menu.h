@@ -74,8 +74,8 @@ void menuStaff() {
         gotoxy(3, 15);printf("    Buat Kendaraan\n");
         gotoxy(3, 17);printf("    Buat Rute\n");
         gotoxy(3, 19);printf("    BuatJadwal\n");
-        gotoxy(3, 121);printf("    Log Out\n");
-        pilih = menuNavigasi(4, 13, 2);
+        gotoxy(3, 21);printf("    Log Out\n");
+        pilih = menuNavigasi(5, 13, 2);
 
         switch (pilih) {
             case 1:
@@ -87,10 +87,10 @@ void menuStaff() {
                 menurute();
                 break;
             case 4:
-                validLogin();
+                menujadwal();
                 break;
             case 5:
-                menujadwal();
+                validLogin();
                 break;
         }
     }

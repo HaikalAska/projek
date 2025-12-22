@@ -2,9 +2,6 @@
 // Created by ASUS on 12/16/2025.
 //
 
-#ifndef PROJEK_DELETEJADWAL_H
-#define PROJEK_DELETEJADWAL_H
-
 #ifndef PROJEK_DELETE_JADWAL_H
 #define PROJEK_DELETE_JADWAL_H
 
@@ -66,7 +63,6 @@ void deleteJadwal() {
     bentukframe(35, 27, 60, 14);
     gotoxy(55, 27); printf("=== DETAIL JADWAL ===");
 
-    gotoxy(37, 28); printf("ID Jadwal    : %s", pilih.id);
     gotoxy(37, 29); printf("Tanggal      : %s", pilih.tanggal);
     gotoxy(37, 30); printf("Kota Awal    : %s", pilih.kotaAsal);
     gotoxy(37, 31); printf("Kota Akhir   : %s", pilih.kotaTujuan);
@@ -120,6 +116,3 @@ void deleteJadwal() {
 }
 
 #endif
-
-
-#endif //PROJEK_DELETEJADWAL_H

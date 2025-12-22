@@ -1,20 +1,84 @@
-//
-// Created by ASUS on 12/16/2025.
-//
+#ifndef PROJEK_UPDATE_JADWAL_H
+#define PROJEK_UPDATE_JADWAL_H
 
-#ifndef PROJEK_UPDATEJADWAL_H
-#define PROJEK_UPDATEJADWAL_H
+#include "../FrameTabel.h"
+#include "createJadwal.h"
+#include "../rute/createrute.h"
 
-void updatejadwal() {
-    FILE *fp, *temp;
-    jadwal j;
+void inputJams(char jam[], int x, int y) {
+    char ch;
+    int pos = 0;
+
+    while (pos < 5) {
+        ch = _getch();
+
+        // BACKSPACE
+        if (ch == 8) {
+            if (pos > 0) {
+                pos--;
+                gotoxy(x + pos, y);
+                printf(" ");
+                gotoxy(x + pos, y);
+            }
+            continue;
+        }
+
+        // JAM PULUHAN (0–2)
+        if (pos == 0 && ch >= '0' && ch <= '2') {
+            gotoxy(x + pos, y);
+            jam[pos++] = ch;
+            printf("%c", ch);
+        }
+
+        // JAM SATUAN
+        else if (pos == 1) {
+            if ((jam[0] == '2' && ch <= '3') ||
+                (jam[0] != '2' && ch <= '9')) {
+                gotoxy(x + pos, y);
+                jam[pos++] = ch;
+                printf("%c", ch);
+                }
+        }
+
+        // AUTO :
+        else if (pos == 2) {
+            gotoxy(x + pos, y);
+            jam[pos++] = ':';
+            printf(":");
+        }
+
+        // MENIT PULUHAN (0–5)
+        else if (pos == 3 && ch >= '0' && ch <= '5') {
+            gotoxy(x + pos, y);
+            jam[pos++] = ch;
+            printf("%c", ch);
+        }
+
+        // MENIT SATUAN (0–9)
+        else if (pos == 4 && ch >= '0' && ch <= '9') {
+            gotoxy(x + pos, y);
+            jam[pos++] = ch;
+            printf("%c", ch);
+        }
+    }
+
+    jam[5] = '\0';
+}
+
+
+void updateJadwal() {
+
+    int startY = 29;
+    int startX = 50;
+
+    FILE *fp, *tmp;
+    jadwal data;
     int targetNo = 0, currentNo = 1, found = 0;
     char strNo[10];
     int idx = 0;
 
-    // ================= INPUT NOMOR URUT =================
-    gotoxy(3, 25);
-    printf("Pilih No Urut Jadwal: ");
+    // ================= INPUT NOMOR =================
+    gotoxy(3, 25); printf("Pilih No Urut: ");
 
     while (1) {
         char ch = _getch();
@@ -25,107 +89,183 @@ void updatejadwal() {
             break;
         }
         if (ch == 8 && idx > 0) {
-            idx--;
-            printf("\b \b");
+            idx--; printf("\b \b");
         }
-        if (ch >= '0' && ch <= '9' && idx < 9) {
+        else if (ch >= '0' && ch <= '9' && idx < 9) {
             strNo[idx++] = ch;
             printf("%c", ch);
         }
     }
 
-    fp   = fopen("jadwal.dat", "rb");
-    temp = fopen("temp.dat", "wb");
-    if (fp == NULL || temp == NULL) {
-        return;
-    }
+    if (targetNo <= 0) return;
 
+    fp  = fopen("jadwal.dat", "rb");
+    tmp = fopen("sampah.dat", "wb");
+    if (!fp || !tmp) return;
 
-    // ================= PROSES UPDATE =================
-    while (fread(&j, sizeof(jadwal), 1, fp)) {
+    while (fread(&data, sizeof(jadwal), 1, fp)) {
 
         if (currentNo == targetNo) {
             found = 1;
 
-            // ========= DATA LAMA =========
-            bentukframe(35, 27, 50, 14);
-            gotoxy(55, 28); printf("DATA LAMA");
+            // ============ MENU NAVIGASI ============
+            bentukframe(3, 29, 27, 10);
+            gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
+            gotoxy(4,32); printf("NAVIGASI [↑ ↓]");
+            gotoxy(4,34); printf("[ENTER] Pilih");
+            gotoxy(4,36); printf("[ESC] Keluar");
 
-            gotoxy(37,30); printf("Tanggal      : %s", j.tanggal);
-            gotoxy(37,31); printf("Kota Asal    : %s", j.kotaAsal);
-            gotoxy(37,32); printf("Kota Tujuan  : %s", j.kotaTujuan);
-            gotoxy(37,33); printf("Jam Berangkat: %s", j.jamBerangkat);
-            gotoxy(37,34); printf("Harga        : %.0f", j.harga);
-            gotoxy(37,35); printf("Kategori     : %s", j.kategori);
-            gotoxy(37,36); printf("Armada       : %s", j.armada);
+            // ============ DATA LAMA ============
+            bentukframe(37, 29, 45, 12);
+            gotoxy(54, 30); printf("Data Lama");
 
-            // ========= DATA BARU =========
-            bentukframe(90, 27, 60, 16);
-            gotoxy(115, 28); printf("DATA BARU");
+            gotoxy(40, startY + 3);  printf("Tanggal       : %s", data.tanggal);
+            gotoxy(40, startY + 4);  printf("Kota Asal     : %s", data.kotaAsal);
+            gotoxy(40, startY + 5);  printf("Kota Tujuan   : %s", data.kotaTujuan);
+            gotoxy(40, startY + 6);  printf("Jam Berangkat : %s", data.jamBerangkat);
+            char hargaLama[25];
+            formatHarga((int)data.harga, hargaLama);
 
-            // TANGGAL
-            gotoxy(92,30); printf("Tanggal      : ");
-            inputTanggals(j.tanggal, 108, 30);
+            gotoxy(40, startY + 7);
+            printf("Harga         : %s", hargaLama);
 
-            // PILIH RUTE
-            Rute r;
-            gotoxy(92,31); printf("Pilih Rute   : ");
-            _getch();
-            if (!pilihRuteDanTampil(&r)) goto batal;
+            gotoxy(40, startY + 8);  printf("Armada        : %s", data.armada);
+            gotoxy(40, startY + 9);  printf("Kategori      : %s", data.kategori);
 
-            // TAMPILKAN HASIL RUTE
-            char hargaStr[25];
-            formatHarga((int)r.harga, hargaStr);
+            // ============ DATA BARU ============
+            bentukframe(83, 29, 55, 12);
+            gotoxy(100, 30); printf("Data Baru");
 
-            gotoxy(92,32); printf("Kota Awal    : %-20s", r.kotaAsal);
-            gotoxy(92,33); printf("Kota Tujuan  : %-20s", r.kotaTujuan);
-            gotoxy(92,34); printf("Jam Berangkat: %-10s", r.jamBerangkat);
-            gotoxy(92,35); printf("Harga        : %-15s", hargaStr);
+            gotoxy(86,32); printf("Tanggal       : ");
+            gotoxy(86,33); printf("Kota Asal     : ");
+            gotoxy(86,34); printf("Kota Tujuan   : ");
+            gotoxy(86,35); printf("Jam Berangkat : ");
+            gotoxy(86,36); printf("Harga         : ");
+            gotoxy(86,37); printf("Armada        : ");
+            gotoxy(86,38); printf("Kategori      : ");
+            gotoxy(86,39); printf("[ SIMPAN PERUBAHAN ]");
 
-            // SIMPAN DARI RUTE
-            strcpy(j.kotaAsal, r.kotaAsal);
-            strcpy(j.kotaTujuan, r.kotaTujuan);
-            strcpy(j.jamBerangkat, r.jamBerangkat);
-            j.harga = r.harga;
+            int selected = 0;
+            int total = 7;
+            int edit = 1;
 
-            // KATEGORI
-            gotoxy(92,36); printf("Kategori     : ");
-            inputKategori(j.kategori, 107, 36);
+            while (edit) {
 
-            // ARMADA
-            gotoxy(92,37); printf("Nama Armada  : ");
-            gotoxy(107,37);
-            scanf(" %[^\n]", j.armada);
+                for (int i = 0; i <= total; i++) {
+                    gotoxy(83, 32 + i);
+                    printf(i == selected ? ">>" : "│ ");
+                }
 
-            fwrite(&j, sizeof(jadwal), 1, temp);
+                int ch = _getch();
+
+                if (ch == 0 || ch == 224) {
+                    ch = _getch();
+                    if (ch == 72) selected--;
+                    if (ch == 80) selected++;
+                    if (selected < 0) selected = total;
+                    if (selected > total) selected = 0;
+                }
+
+                else if (ch == 13) {
+
+                    int inputX = 102; // FIX POSISI INPUT
+
+                    switch (selected) {
+
+                        case 0:
+                            clearArea(inputX, 32, 15, 1);
+                            inputTanggals(data.tanggal, inputX, 32);
+                            break;
+
+                        case 1:
+                            clearArea(inputX, 33, 20, 1);
+                            gotoxy(inputX, 33);
+                            fgets(data.kotaAsal, sizeof(data.kotaAsal), stdin);
+                            data.kotaAsal[strcspn(data.kotaAsal, "\n")] = 0;
+                            break;
+
+                        case 2:
+                            clearArea(inputX, 34, 20, 1);
+                            gotoxy(inputX, 34);
+                            fgets(data.kotaTujuan, sizeof(data.kotaTujuan), stdin);
+                            data.kotaTujuan[strcspn(data.kotaTujuan, "\n")] = 0;
+                            break;
+
+                        case 3:
+                            clearArea(inputX, 35, 8, 1);
+                            inputJams(data.jamBerangkat, inputX, 35);
+                            break;
+
+
+                        case 4: {
+                            int hargaInput;
+                            char hargaFmt[25];
+
+                            clearArea(inputX, 36, 20, 1);
+                            gotoxy(inputX, 36);
+
+                            scanf("%d", &hargaInput);
+                            fflush(stdin);
+
+                            data.harga = (float)hargaInput;
+
+                            formatHarga(hargaInput, hargaFmt);
+
+                            gotoxy(inputX, 36);
+                            printf("%s", hargaFmt);
+                            break;
+                        }
+
+                        case 5:
+                            clearArea(inputX, 37, 20, 1);
+                            gotoxy(inputX, 37);
+                            fgets(data.armada, sizeof(data.armada), stdin);
+                            data.armada[strcspn(data.armada, "\n")] = 0;
+                            break;
+
+                        case 6:
+                            clearArea(inputX, 38, 20, 1);
+                            inputKategori(data.kategori, inputX, 38);
+                            break;
+
+                        case 7:
+                            edit = 0;
+                            break;
+                    }
+                }
+
+
+
+                else if (ch == 27) {
+                    fclose(fp);
+                    fclose(tmp);
+                    remove("sampah.dat");
+                    return;
+                }
+            }
+
+            fwrite(&data, sizeof(jadwal), 1, tmp);
         }
         else {
-            fwrite(&j, sizeof(jadwal), 1, temp);
+            fwrite(&data, sizeof(jadwal), 1, tmp);
         }
 
         currentNo++;
     }
 
     fclose(fp);
-    fclose(temp);
+    fclose(tmp);
 
     if (found) {
         remove("jadwal.dat");
-        rename("temp.dat", "jadwal.dat");
-        gotoxy(40, 45); printf("Jadwal berhasil diperbarui!");
+        rename("sampah.dat", "jadwal.dat");
+        gotoxy(86, startY + 18); printf("Data Berhasil Di Update!");
     } else {
-        remove("temp.dat");
-        gotoxy(40, 45); printf("Nomor jadwal tidak ditemukan!");
+        remove("sampah.dat");
+        gotoxy(35, 30); printf("Nomor urut tidak ditemukan!");
     }
 
-    getch();
-    return;
-
-batal:
-    fclose(fp);
-    fclose(temp);
-    remove("temp.dat");
+    _getch();
 }
 
-
-#endif //PROJEK_UPDATEJADWAL_H
+#endif

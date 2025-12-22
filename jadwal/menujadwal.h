@@ -9,6 +9,7 @@
 #include "readjadwal.h"
 #include "deletejadwal.h"
 #include "updatejadwal.h"
+// #include "../Menu.h"
 
 void  menujadwal() {
     int pilih;
@@ -35,9 +36,8 @@ void  menujadwal() {
         gotoxy(6, 13); printf("Buat\n");
         gotoxy(6, 15);printf("Hapus\n");
         gotoxy(6, 17);printf("Perbarui\n");
-        gotoxy(6, 19);printf("Halaman\n");
-        gotoxy(6, 21);printf("50Dummy\n");
-        pilih = menuNavigasi(5, 13,2);
+        gotoxy(6, 19);printf("Kembali\n");
+        pilih = menuNavigasi(4, 13,2);
         switch (pilih) {
             case 1:
                 buatjadwal();
@@ -46,13 +46,10 @@ void  menujadwal() {
                 deleteJadwal();
                 break;
             case 3:
-                updatejadwal();
+                updateJadwal();
                 break;
             case 4:
                 menuStaff();
-                break;
-            case 5:
-                buatdummyjadwal();
                 break;
         }
     }
