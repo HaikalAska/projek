@@ -23,7 +23,7 @@ void baca() {
     int wNo = 3;
     int wUsr = 12;      // Username
     int wNama = 17;     // Nama
-    int wPw = 6;
+    int wPw = 10;
     int wGen = 10;
     int wTgl = 11;
     int wTelp = 11;
@@ -77,13 +77,13 @@ void baca() {
         gotoxy(startX, row++);
         printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1,    "No",
-               wUsr+1,   "Username",
+               wUsr+1,   "Nama Pengguna",
                wNama+1,  "Nama",
-               wPw+1,    "Pass",
-               wGen+1,   "Gender",
+               wPw+1,    "Kata Sandi",
+               wGen+1,   "Kelamin",
                wTgl+1,   "Tgl Lahir",
                wTelp+1,  "Telepon",
-               wRole+1,  "Role",
+               wRole+1,  "Jabatan",
                wStatus+1,"Status"
         );
 
@@ -128,7 +128,7 @@ void baca() {
         gotoxy(6, 15);
         printf("[BACKSPACE] Kembali");
         gotoxy(6, 17);
-        printf("[ENTER] Keluar");
+        printf("[ENTER] Lanjut");
         gotoxy(6, 19);
         printf("Halaman: %d/%d", current_page, total_pages);
         gotoxy(6, 21),
