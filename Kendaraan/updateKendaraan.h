@@ -191,6 +191,8 @@ void updateKendaraan() {
             gotoxy(startX, startY + 4); printf("Kapasitas : %s", data.kapasitas);
             gotoxy(startX, startY + 5); printf("Fasilitas : %s", data.fasilitas);
             gotoxy(startX, startY + 6); printf("Armada    : %s", data.nama_armada);
+            gotoxy(startX, startY + 7); printf("Tahun     : %s", data.tahun);
+
 
             // ===== DATA BARU =====
             bentukframe(95, 29, 55, 10);
@@ -200,10 +202,11 @@ void updateKendaraan() {
             gotoxy(99, 33); printf("Kapasitas : ");
             gotoxy(99, 34); printf("Fasilitas : ");
             gotoxy(99, 35); printf("Armada    : ");
-            gotoxy(99, 36); printf("[ SIMPAN PERUBAHAN ]");
+            gotoxy(99, 36); printf("Tahun     : ");
+            gotoxy(99, 37); printf("[ SIMPAN PERUBAHAN ]");
 
             int selected = 0;
-            int totalField = 4;
+            int totalField = 5;
             int editing = 1;
 
             while (editing) {
@@ -268,6 +271,12 @@ void updateKendaraan() {
                             gotoxy(112, 35);
                             INPUTNama(data.nama_armada);
                             break;
+                        case 4:
+                            clearArea(112, 36, 10, 1);
+                            gotoxy(112, 36);
+                            inputTahun(data.tahun);
+                            break;
+
                     }
 
 

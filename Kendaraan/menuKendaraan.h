@@ -45,9 +45,10 @@ void menukendaraan() {
         gotoxy(6, 15); printf("Hapus Kendaraan");
         gotoxy(6, 17); printf("Perbarui Data");
         gotoxy(6, 19); printf("Kembali");
+        //gotoxy(6, 21); printf("Generate Dummy Data");
         //gotoxy(6, 19); printf("Lihat Data");
 
-        pilih = menuNavigasi(4, 13, 2);
+        pilih = menuNavigasi(4, 13, 3);
 
         switch (pilih) {
             case 1:
@@ -60,9 +61,10 @@ void menukendaraan() {
                 updateKendaraan();
                 break;
             case 4:
+                readKendaraan();
                 break;
             case 5:
-                // buatDummyKendaraan();
+                buatDummyKendaraan();
                 break;
         }
     }

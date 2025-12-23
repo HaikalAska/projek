@@ -15,6 +15,7 @@ typedef struct {
     char kapasitas[10];
     char fasilitas[100];
     char nama_armada[50];
+    char tahun[5];
 } Kendaraan;
 
 // ================= INPUT ANGKA (UNTUK KAPASITAS) =================
@@ -223,16 +224,6 @@ static void inputKategoriKendaraan(char *kategori) {
                 strcpy(temp, "Executive");
                 break;
 
-            case 'p':
-            case 'P':
-                strcpy(temp, "Pariwisata");
-                break;
-
-            case 'm':
-            case 'M':
-                strcpy(temp, "Mania");
-                break;
-
             default:
                 continue; // tombol lain (termasuk Tab) diabaikan
         }
@@ -247,6 +238,39 @@ static void inputKategoriKendaraan(char *kategori) {
 
         // Tampilkan pilihan baru
         gotoxy(52,29); printf("%-30s", temp);
+    }
+}
+
+void inputTahun(char *tahun) {
+    int i = 0;
+    char ch;
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) { // ENTER
+            if (i != 4) {
+                printf(" [Harus 4 digit]");
+                Sleep(800);
+                printf("\r                 \r");
+                i = 0;
+                continue;
+            }
+            tahun[i] = '\0';
+            break;
+        }
+        else if (ch == 27) { // ESC
+            tahun[0] = '\0';
+            break;
+        }
+        else if (ch == 8 && i > 0) { // BACKSPACE
+            i--;
+            printf("\b \b");
+        }
+        else if (ch >= '0' && ch <= '9' && i < 4) {
+            tahun[i++] = ch;
+            printf("%c", ch);
+        }
     }
 }
 
@@ -305,6 +329,16 @@ void createKendaraan() {
             return;
         }
 
+        // ===== TAHUN =====
+        gotoxy(37, 33); printf("Tahun        : ");
+        setPointer(34, 53);
+        inputTahun(data.tahun);
+        if (strlen(data.tahun) == 0) {
+            fclose(fp);
+            return;
+        }
+
+
         // ===== SIMPAN =====
         fwrite(&data, sizeof(Kendaraan), 1, fp);
         fclose(fp);
@@ -339,11 +373,10 @@ void buatDummyKendaraan() {
 
     // ===== CONTOH DATA =====
     char *kategori[] = {
-        "Bus Ekonomi",
-        "Bus Bisnis",
-        "Bus Executive",
-        "Mini Bus",
-        "Bus Pariwisata"
+        "Ekonomi",
+        "Bisnis",
+        "Executive",
+
     };
 
     char *kapasitas[] = {
