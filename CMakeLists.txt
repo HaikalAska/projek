@@ -19,6 +19,7 @@ add_executable(projek
         jadwal/updatejadwal.h
         jadwal/deletejadwal.h
         jadwal/menujadwal.h
+        rute/menurute.h
 )
 
 
