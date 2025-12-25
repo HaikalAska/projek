@@ -57,7 +57,9 @@ void updaterute() {
 
             gotoxy(39, 30); printf("Kota Asal    : %s", data.kotaAsal);
             gotoxy(39, 31); printf("Kota Tujuan  : %s", data.kotaTujuan);
-            gotoxy(39, 32); printf("Harga        : %.2f", data.harga);
+            char hargaStr[30];
+            formatHarga((int)data.harga, hargaStr);
+            gotoxy(39, 32); printf("Harga        : %s", hargaStr);
             gotoxy(39, 33); printf("Berangkat    : %s", data.jamBerangkat);
             gotoxy(39, 34); printf("Tiba         : %s", data.jamTiba);
 
@@ -65,75 +67,86 @@ void updaterute() {
             bentukframe(85, 27, 55, 12);
             gotoxy(109, 28); printf("DATA BARU");
 
-            gotoxy(87,30); printf("Kota Asal    : ");
-            gotoxy(87,31); printf("Kota Tujuan  : ");
-            gotoxy(87,32); printf("Harga        : ");
-            gotoxy(87,33); printf("Berangkat    : ");
-            gotoxy(87,34); printf("Tiba         : ");
-            gotoxy(87,35); printf("[ SIMPAN PERUBAHAN ]");
+            gotoxy(90,30); printf("Kota Asal    : ");
+            gotoxy(90,31); printf("Kota Tujuan  : ");
+            gotoxy(90,32); printf("Harga        : ");
+            gotoxy(90,33); printf("Berangkat    : ");
+            gotoxy(90,34); printf("Tiba         : ");
+            gotoxy(90,35); printf("[ SIMPAN ]");
 
             int selectedField = 0;
             int totalFields = 5; // 0-4 input, 5 simpan
             int editing = 1;
 
             while (editing) {
-                // Cursor Navigasi
+
+                // Penanda >>
                 for (int i = 0; i <= totalFields; i++) {
-                    gotoxy(85, 30 + i);
-                    printf(i == selectedField ? ">>" : "│ ");
+                    gotoxy(88, 30 + i);
+                    printf(i == selectedField ? ">>" : "  ");
                 }
 
                 int ch = _getch();
 
-                if (ch == 0 || ch == 224) {
-                    int arrow = _getch();
-                    if (arrow == 72) {
-                        selectedField--;
-                        if (selectedField < 0) selectedField = totalFields;
-                    }
-                    else if (arrow == 80) {
-                        selectedField++;
-                        if (selectedField > totalFields) selectedField = 0;
-                    }
+                // ESC → batal
+                if (ch == 27) {
+                    fclose(fp);
+                    fclose(temp);
+                    remove("temp.dat");
+                    return;
                 }
+
+                // Arrow key
+                if (ch == 0 || ch == 224) {
+                    ch = _getch();
+                    if (ch == 72)
+                        selectedField = (selectedField - 1 + totalFields + 1) % (totalFields + 1);
+                    if (ch == 80)
+                        selectedField = (selectedField + 1) % (totalFields + 1);
+                }
+
+                // ENTER
                 else if (ch == 13) {
-                    if (selectedField == totalFields) {
+                    int inputX = 105;
+
+                    switch (selectedField) {
+
+                    case 0: // Kota Asal
+                        clearArea(inputX, 30, 25, 1);
+                        gotoxy(105, 30);
+                        scanf("%s", data.kotaAsal);
+                        break;
+
+                    case 1: // Kota Tujuan
+                        clearArea(inputX, 31, 25, 1);
+                        gotoxy(105, 31);
+                        scanf("%s", data.kotaTujuan);
+                        break;
+
+                    case 2: // Harga
+                        clearArea(inputX, 32, 25, 1);
+                        data.harga = inputHarga(105, 32);
+                        break;
+
+                    case 3: // Jam Berangkat
+                        clearArea(inputX, 33, 15, 1);
+                        gotoxy(105, 33);
+                        inputJam(data.jamBerangkat);
+                        break;
+
+                    case 4: // Jam Tiba
+                        clearArea(inputX, 34, 15, 1);
+                        gotoxy(105, 34);
+                        inputJam(data.jamTiba);
+                        break;
+
+                    case 5: // SIMPAN
                         editing = 0;
                         break;
                     }
-
-                    int inputX = 105;
-                    clearArea(inputX, 30 + selectedField, 25, 1);
-
-                    switch (selectedField) {
-                        case 0:
-                            gotoxy(102,30);
-                            scanf("%s", data.kotaAsal);
-                            break;
-
-                        case 1:
-                            gotoxy(102,31);
-                            scanf("%s", data.kotaTujuan);
-                            break;
-
-                        case 2:
-                            data.harga = inputHarga(102,32);
-                            if (data.harga == 0) goto batal;
-                            break;
-
-                        case 3:
-                            gotoxy(102,33); inputJam(data.jamBerangkat);
-                            if (!strlen(data.jamBerangkat)) goto batal;
-                            break;
-
-                        case 4:
-                            gotoxy(102,34); inputJam(data.jamTiba);
-                            if (!strlen(data.jamTiba)) goto batal;
-                            break;
-                    }
                 }
-                else if (ch == 27) goto batal;
             }
+
 
             fwrite(&data, sizeof(Rute), 1, temp);
         }

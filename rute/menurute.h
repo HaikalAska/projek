@@ -38,9 +38,9 @@ void  menurute() {
         gotoxy(6, 13); printf("Buat\n");
         gotoxy(6, 15);printf("Hapus\n");
         gotoxy(6, 17);printf("Perbarui\n");
-        gotoxy(6, 19);printf("Halaman\n");
-        gotoxy(6, 21);printf("50Dummy\n");
-        pilih = menuNavigasi(5, 13,2);
+        gotoxy(6, 19);printf("kembali\n");
+        //gotoxy(6, 21);printf("50Dummy\n");
+        pilih = menuNavigasi(4, 13,2);
         switch (pilih) {
             case 1:
                 buatrute();
@@ -55,7 +55,7 @@ void  menurute() {
                 menuStaff();
                 break;
             case 5:
-                buatDummyRute();
+                //buatDummyRute();
                 break;
         }
     }
