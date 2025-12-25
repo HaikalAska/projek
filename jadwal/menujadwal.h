@@ -9,8 +9,8 @@
 #include "readjadwal.h"
 #include "deletejadwal.h"
 #include "updatejadwal.h"
-// #include "../Menu.h"
 
+static void menuStaff();
 void  menujadwal() {
     int pilih;
 

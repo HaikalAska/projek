@@ -5,6 +5,7 @@
 #include "superadmin/KelolaStaff.h"
 #include "Kendaraan/menuKendaraan.h"
 #include "rute/menurute.h"
+#include "jadwal/menujadwal.h"
 
 
 void validLogin();
@@ -87,7 +88,7 @@ void validLogin();
             menurute();
                 break;
             case 4:
-
+                menujadwal();
                 break;
             case 5:
                 validLogin();

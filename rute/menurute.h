@@ -11,7 +11,7 @@
 #include "updaterute.h"
 #include "deleterute.h"
 
-void menuStaff();
+static void menuStaff();
 
 void  menurute() {
     int pilih;
