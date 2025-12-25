@@ -71,7 +71,7 @@ void inputJam(char *out) {
             printf("%c", ch);
         }
         // digit kedua menit: 1 - 9
-        else if (i == 1 && ch >= '1' && ch <= '9') {
+        else if (i == 1 && ch >= '0' && ch <= '9') {
             menit[i++] = ch;
             printf("%c", ch);
         }
@@ -106,11 +106,11 @@ int inputHarga(int x, int y) {
 
             if (i <= 3) {
                 // contoh: 120 -> Rp120.000,00
-                gotoxy(54,31); printf("%d.000,00", nilai);
+                gotoxy(x,y); printf("RP%d.000,00", nilai);
                 return nilai * 1000;
             } else {
                 // contoh: 1200 -> Rp1.200.000,00
-                gotoxy(54,31); printf("%d.%03d.000,00", nilai / 1000, nilai % 1000);
+                gotoxy(x,y); printf("RP%d.%03d.000,00", nilai / 1000, nilai % 1000);
                 return nilai * 1000;
             }
         }
@@ -167,55 +167,69 @@ void pilihKota(char *output) {
     int pilih;
 
 pilihProvinsi:
-    clearArea(77, y, 25, 12);
+    // Bersihkan area sebelumnya (samakan dengan frame)
+ clearArea(82, 29, 45, 12);
 
-    gotoxy(x, y);  printf("PILIH PROVINSI");
-    gotoxy(x, 31); printf("Banten");
-    gotoxy(x, 32); printf("DKI Jakarta");
-    gotoxy(x, 33); printf("Jawa Barat");
-    gotoxy(x, 34); printf("Jawa Tengah");
-    gotoxy(x, 35); printf("Yogyakarta");
-    gotoxy(x, 36); printf("Jawa Timur");
+    // Buat frame
+    bentukframe(82, 29, 45, 12);
 
-    pilih = rutenavigasi(77, 31, 6, 1);
+    // Judul
+    gotoxy(96, 30);
+    printf("=== PILIH PROVINSI ===");
+
+    // Daftar provinsi
+    gotoxy(95, 32); printf("Banten");
+    gotoxy(95, 33); printf("DKI Jakarta");
+    gotoxy(95, 34); printf("Jawa Barat");
+    gotoxy(95, 35); printf("Jawa Tengah");
+    gotoxy(95, 36); printf("Yogyakarta");
+    gotoxy(95, 37); printf("Jawa Timur");
+
+    // Navigasi
+    pilih = rutenavigasi(93, 32, 6, 1);
+
 
     // ================= BANTEN =================
     if (pilih == 0) {
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
+        bentukframe(82,29, 45, 12);
 
-        gotoxy(x, y);  printf("BANTEN");
-        gotoxy(x, 31); printf("Serang");
-        gotoxy(x, 32); printf("Tangerang");
+        gotoxy(97, 30); printf("=== BANTEN ===");
+        gotoxy(95, 32); printf("Serang");
+        gotoxy(93, 33); printf("  Tangerang");
 
-        pilih = rutenavigasi(77, 31, 2, 1);
+        pilih = rutenavigasi(93, 32, 2, 1);
 
         if      (pilih == 0) strcpy(output, "Serang");
         else if (pilih == 1) strcpy(output, "Tangerang");
         else goto pilihProvinsi;
 
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
         return;
     }
+
 
     // ================= DKI =================
     else if (pilih == 1) {
         strcpy(output, "Jakarta");
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
         return;
     }
 
+
     // ================= JAWA BARAT =================
     else if (pilih == 2) {
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
+        bentukframe(82, 29, 45, 12);
 
-        gotoxy(x, y);  printf("JAWA BARAT");
-        gotoxy(x, 31); printf("Bandung");
-        gotoxy(x, 32); printf("Bekasi");
-        gotoxy(x, 33); printf("Bogor");
-        gotoxy(x, 34); printf("Cirebon");
-        gotoxy(x, 35); printf("Tasikmalaya");
+        gotoxy(95, 30); printf("=== JAWA BARAT ===");
+        gotoxy(95, 32); printf("Bandung");
+        gotoxy(95, 33); printf("Bekasi");
+        gotoxy(95, 34); printf("Bogor");
+        gotoxy(95, 35); printf("Cirebon");
+        gotoxy(95, 36); printf("Tasikmalaya");
 
-        pilih = rutenavigasi(77, 31, 5, 1);
+        pilih = rutenavigasi(93, 32, 5, 1);
 
         if      (pilih == 0) strcpy(output, "Bandung");
         else if (pilih == 1) strcpy(output, "Bekasi");
@@ -224,21 +238,23 @@ pilihProvinsi:
         else if (pilih == 4) strcpy(output, "Tasikmalaya");
         else goto pilihProvinsi;
 
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
         return;
     }
 
+
     // ================= JAWA TENGAH =================
     else if (pilih == 3) {
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
+        bentukframe(82, 29, 45, 12);
 
-        gotoxy(x, y);  printf("JAWA TENGAH");
-        gotoxy(x, 31); printf("Semarang");
-        gotoxy(x, 32); printf("Magelang");
-        gotoxy(x, 33); printf("Pekalongan");
-        gotoxy(x, 34); printf("Tegal");
+        gotoxy(95, 30); printf("=== JAWA TENGAH ===");
+        gotoxy(95, 32); printf("Semarang");
+        gotoxy(95, 33); printf("Magelang");
+        gotoxy(95, 34); printf("Pekalongan");
+        gotoxy(95, 35); printf("Tegal");
 
-        pilih = rutenavigasi(77, 31, 4, 1);
+        pilih = rutenavigasi(93, 32, 4, 1);
 
         if      (pilih == 0) strcpy(output, "Semarang");
         else if (pilih == 1) strcpy(output, "Magelang");
@@ -246,30 +262,32 @@ pilihProvinsi:
         else if (pilih == 3) strcpy(output, "Tegal");
         else goto pilihProvinsi;
 
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
         return;
     }
+
 
     // ================= YOGYAKARTA =================
     else if (pilih == 4) {
         strcpy(output, "Yogyakarta");
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
         return;
     }
 
     // ================= JAWA TIMUR =================
     else if (pilih == 5) {
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
+        bentukframe(82, 29, 45, 12);
 
-        gotoxy(x, y);  printf("JAWA TIMUR");
-        gotoxy(x, 31); printf("Surabaya");
-        gotoxy(x, 32); printf("Malang");
-        gotoxy(x, 33); printf("Kediri");
-        gotoxy(x, 34); printf("Mojokerto");
-        gotoxy(x, 35); printf("Madiun");
-        gotoxy(x, 36); printf("Probolinggo");
+        gotoxy(95, 30); printf("=== JAWA TIMUR ===");
+        gotoxy(95, 32); printf("Surabaya");
+        gotoxy(95, 33); printf("Malang");
+        gotoxy(95, 34); printf("Kediri");
+        gotoxy(95, 35); printf("Mojokerto");
+        gotoxy(95, 36); printf("Madiun");
+        gotoxy(95, 37); printf("Probolinggo");
 
-        pilih = rutenavigasi(77, 31, 6, 1);
+        pilih = rutenavigasi(93, 32, 6, 1);
 
         if      (pilih == 0) strcpy(output, "Surabaya");
         else if (pilih == 1) strcpy(output, "Malang");
@@ -279,9 +297,10 @@ pilihProvinsi:
         else if (pilih == 5) strcpy(output, "Probolinggo");
         else goto pilihProvinsi;
 
-        clearArea(77, y, 25, 12);
+        clearArea(82, 29, 45, 12);
         return;
     }
+
 }
 
 
@@ -348,27 +367,56 @@ void buatDummyRute() {
 
     Rute r;
 
-    char *kota[] = {
-        "Jakarta","Bekasi","Depok","Bogor","Bandung",
-        "Cirebon","Semarang","Solo","Yogyakarta","Surabaya",
-        "Malang","Kediri","Madiun","Purwokerto","Tegal"
+    // ================= DATA KOTA SESUAI pilihKota() =================
+    char *asal[] = {
+        "Jakarta","Jakarta","Jakarta","Bandung","Bandung",
+        "Semarang","Semarang","Surabaya","Surabaya","Malang",
+        "Yogyakarta","Cirebon","Tegal","Madiun","Kediri"
     };
 
-    int totalKota = 15;
+    char *tujuan[] = {
+        "Bandung","Cirebon","Semarang","Jakarta","Semarang",
+        "Surabaya","Yogyakarta","Malang","Kediri","Yogyakarta",
+        "Surabaya","Jakarta","Semarang","Surabaya","Malang"
+    };
+
+    int harga[] = {
+        150000, // Jakarta - Bandung
+        180000, // Jakarta - Cirebon
+        280000, // Jakarta - Semarang
+        150000, // Bandung - Jakarta
+        250000, // Bandung - Semarang
+        230000, // Semarang - Surabaya
+        200000, // Semarang - Yogyakarta
+        100000, // Surabaya - Malang
+        140000, // Surabaya - Kediri
+        350000, // Malang - Yogyakarta
+        300000, // Yogyakarta - Surabaya
+        180000, // Cirebon - Jakarta
+        220000, // Tegal - Semarang
+        180000, // Madiun - Surabaya
+        120000  // Kediri - Malang
+    };
+
+    int totalRute = 15;
 
     for (int i = 0; i < 50; i++) {
         sprintf(r.id, "RT%03d", i + 1);
 
-        strcpy(r.kotaAsal, kota[i % totalKota]);
-        strcpy(r.kotaTujuan, kota[(i + 4) % totalKota]);
+        int idx = i % totalRute;
 
-        r.harga = 50000 + (i * 3000);
+        strcpy(r.kotaAsal, asal[idx]);
+        strcpy(r.kotaTujuan, tujuan[idx]);
 
-        int jam = 6 + (i % 12);
-        int menit = (i * 5) % 60;
+        // Variasi harga kecil biar natural
+        r.harga = harga[idx] + (i % 4) * 5000;
+
+        // Jam berangkat 05.00 – 19.00
+        int jam = 5 + (i % 15);
+        int menit = (i * 10) % 60;
 
         sprintf(r.jamBerangkat, "%02d:%02d", jam, menit);
-        sprintf(r.jamTiba, "%02d:%02d", (jam + 3) % 24, menit);
+        sprintf(r.jamTiba, "%02d:%02d", (jam + 4) % 24, menit);
 
         fwrite(&r, sizeof(Rute), 1, fp);
     }
@@ -376,8 +424,9 @@ void buatDummyRute() {
     fclose(fp);
 
     gotoxy(40, 40);
-    printf("✓ 50 data dummy rute berhasil dibuat");
+    printf("✓ 50 data dummy rute REALISTIS berhasil dibuat");
     getch();
 }
+
 
 #endif // PROJEK_CREATERUTE_H
