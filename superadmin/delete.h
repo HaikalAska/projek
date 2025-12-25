@@ -7,15 +7,13 @@
 #include "create.h"
 
 void delete(){
-    FILE *fp, *sampah;
+    FILE *fp;
     staff data;
     staff staffList[100];
     int count = 0;
     int pilihan;
     char konfirmasi;
     int found = 0;
-
-
 
     fp = fopen("staff.dat","rb");
     if (fp == NULL) {
@@ -53,10 +51,8 @@ void delete(){
     // Tampilkan detail data dalam box
     staff terpilih = staffList[pilihan - 1];
 
-
-
     // Buat box
-    bentukframe(37, 27, 45, 11);
+    bentukframe(37, 27, 47, 11);
     gotoxy(52, 27);  printf("====DATA %d===", pilihan);
     gotoxy(38, 28);  printf("Username    : %s", terpilih.username);
     gotoxy(38, 29);  printf("Nama        : %s", terpilih.nama);
@@ -70,38 +66,44 @@ void delete(){
     gotoxy(38, 33); printf("Gender      : %s", terpilih.gender);
     gotoxy(38, 34); printf("Status      : %s", terpilih.status);
 
-    // Konfirmasi penghapusan
-    gotoxy(38, 35); printf("Yakin ingin menghapus data ini? (y/n): ");
+    // Konfirmasi nonaktifkan
+    gotoxy(38, 35); printf("Yakin ingin menonaktifkan data ini? (y/n): ");
     scanf(" %c", &konfirmasi);
 
     if (tolower(konfirmasi) != 'y') {
-        gotoxy(38, 36); printf("Penghapusan dibatalkan!");
+        gotoxy(38, 36); printf("Pembatalan proses!");
         getchar();
         getchar();
         return;
     }
 
-    // Proses penghapusan
-    fp = fopen("staff.dat","rb");
-    sampah = fopen("sampah.dat","wb");
-
-    while (fread(&data, sizeof(staff), 1, fp) == 1) {
-        if (strcmp(data.id, terpilih.id) != 0) {
-            fwrite(&data, sizeof(staff), 1, sampah);
-        } else {
+    // Proses mengubah status menjadi Nonaktif
+    for (int i = 0; i < count; i++) {
+        if (strcmp(staffList[i].id, terpilih.id) == 0) {
+            strcpy(staffList[i].status, "Nonaktif");
             found = 1;
+            break;
         }
     }
-    fclose(fp);
-    fclose(sampah);
 
     if (found) {
-        remove("staff.dat");
-        rename("sampah.dat", "staff.dat");
-        gotoxy(38, 36); printf("Data '%s' berhasil dihapus!", terpilih.username);
+        // Tulis ulang semua data ke file
+        fp = fopen("staff.dat", "wb");
+        if (fp == NULL) {
+            gotoxy(38, 36); printf("Gagal membuka file!");
+            getchar();
+            getchar();
+            return;
+        }
+
+        for (int i = 0; i < count; i++) {
+            fwrite(&staffList[i], sizeof(staff), 1, fp);
+        }
+        fclose(fp);
+
+        gotoxy(38, 36); printf("Staff '%s' berhasil dinonaktifkan!", terpilih.username);
     } else {
-        remove("sampah.dat");
-        gotoxy(62, 40); printf("Terjadi kesalahan saat menghapus!");
+        gotoxy(38, 36); printf("Terjadi kesalahan saat memproses!");
     }
 
     getchar();

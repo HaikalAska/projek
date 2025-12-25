@@ -4,7 +4,6 @@
 
 #include "superadmin/KelolaStaff.h"
 #include "Kendaraan/menuKendaraan.h"
-#include "rute/menurute.h"
 
 
 void validLogin();
@@ -48,7 +47,7 @@ void validLogin();
 
 
 
- void menuStaff() {
+static void menuStaff() {
     int pilih;
 
     while (1) {
@@ -72,9 +71,9 @@ void validLogin();
         gotoxy(3, 13); printf("    Pemesanan Tiket\n");
         gotoxy(3, 15);printf("    Buat Kendaraan\n");
         gotoxy(3, 17);printf("    Buat Rute\n");
-        gotoxy(3, 19);printf("    Buat Jawal\n");
-        gotoxy(3, 21);printf("    Log Out\n");
-        pilih = menuNavigasi(5, 13, 2);
+        gotoxy(3, 17);printf("    Buat Jawal\n");
+        gotoxy(3, 19);printf("    Log Out\n");
+        pilih = menuNavigasi(4, 13, 2);
 
         switch (pilih) {
             case 1:
@@ -84,7 +83,6 @@ void validLogin();
                 menukendaraan();
                 break;
             case 3:
-                menurute();
                 break;
             case 4:
 
