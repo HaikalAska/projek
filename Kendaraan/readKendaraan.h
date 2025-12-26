@@ -27,8 +27,9 @@ void readKendaraan() {
     int wNo   = 3;
     int wKat  = 15;
     int wKap  = 10;
-    int wFas  = 25;
-    int wNama = 18;
+    int wFas  = 30;
+    int wNama = 22;
+    int wTahun = 6;
 
     int current_page = 1;
     int total_pages = 1;
@@ -62,6 +63,7 @@ void readKendaraan() {
             (wKat+2) +
             (wKap+2) +
             (wFas+2) +
+            (wTahun+2) +
             (wNama+2);
 
     char line[300];
@@ -80,12 +82,13 @@ void readKendaraan() {
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|",
-               wNo+1,   "No",
-               wKat+1,  "Kategori",
-               wKap+1,  "Kapasitas",
-               wFas+1,  "Fasilitas",
-               wNama+1, "Nama Armada"
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+                 wNo+1, "No",
+                 wKat+1, "Kategori",
+                 wKap+1, "Kapasitas",
+                 wTahun+1, "Tahun",
+                 wFas+1, "Fasilitas",
+                 wNama+1, "Nama Armada"
         );
 
         gotoxy(startX, row++);
@@ -99,12 +102,14 @@ void readKendaraan() {
             Kendaraan k = all_kendaraan[i];
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|",
-                   wNo+1,   i + 1,
-                   wKat+1,  k.kategori,
-                   wKap+1,  k.kapasitas,
-                   wFas+1,  k.fasilitas,
-                   wNama+1, k.nama_armada
+            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|",
+                 wNo+1,   i + 1,
+                 wKat+1,  k.kategori,
+                 wKap+1,  k.kapasitas,
+                 wTahun+1,k.tahun,
+                 wFas+1,  k.fasilitas,
+                 wNama+1, k.nama_armada
+
             );
         }
 
@@ -131,4 +136,3 @@ void readKendaraan() {
 }
 
 #endif
-
