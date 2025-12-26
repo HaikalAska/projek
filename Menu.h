@@ -6,6 +6,7 @@
 #include "pemesanantiket.h"
 #include "rute/menurute.h"
 #include "jadwal/menujadwal.h"
+#include "Kendaraan/menuKendaraan.h"
 
 
 void validLogin();
@@ -87,6 +88,7 @@ void menuStaff() {
                 pemesanantiket();
                 break;
             case 2:
+                menukendaraan();
                 break;
             case 3:
                 menurute();
