@@ -5,12 +5,9 @@
 #ifndef PROJEK_PEMESANANTIKET_H
 #define PROJEK_PEMESANANTIKET_H
 
-#include "login.h"
-#include "Menu.h"
+#include "Pemesanan/Pesantiket.h"
 
-
-
-//void menuStaff();
+static void menuStaff();
 
 
 void pemesanantiket() {
@@ -33,21 +30,21 @@ void pemesanantiket() {
 
 
         bentukframe(3, 10, 27, 14);
-        gotoxy(4, 11); printf(" MENU PEMESANANTIKET \n");
-        gotoxy(3, 13); printf("    transaksitiket\n");
-        gotoxy(3, 15);printf("    Log Out\n");
-        pilih = menuNavigasi(2, 13, 2);
+        gotoxy(8, 11); printf(" MENU PESAN TIKET \n");
+        gotoxy(3, 13); printf("    Pesan tiket\n");
+        gotoxy(3, 15); printf("    Pengembalian tiket\n");
+        gotoxy(3, 17);printf("    Kembali\n");
+        pilih = menuNavigasi(3, 13, 2);
 
         switch (pilih) {
         case 1:
+                PesanTiket();
             break;
         case 2:
-           // menuStaff();
+
             break;
         case 3:
-            break;
-        case 4:
-
+                menuStaff();
             break;
         }
     }
