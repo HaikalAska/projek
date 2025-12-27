@@ -15,7 +15,8 @@ typedef struct {
     char kapasitas[10];
     char fasilitas[100];
     char nama_armada[50];
-    char tahun[5];
+    char tahun[10];
+    char status [20];
 } Kendaraan;
 
 // ================= INPUT KAPASITAS =================
@@ -515,8 +516,7 @@ void buatDummyKendaraan() {
     char *kategori[] = {
         "Ekonomi",
         "Bisnis",
-        "Executive",
-
+        "Executive"
     };
 
     char *kapasitas[] = {
@@ -528,7 +528,7 @@ void buatDummyKendaraan() {
         "AC, Reclining Seat",
         "AC, Reclining Seat, Toilet",
         "AC, TV, USB Charger",
-        "AC, Toilet, WiFi",
+        "AC, Toilet, WiFi"
     };
 
     char *nama_armada[] = {
@@ -542,10 +542,24 @@ void buatDummyKendaraan() {
         "PO Agra Mas"
     };
 
+    char *tahun[] = {
+        "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"
+    };
+
+    char *status[] = {
+        "Tersedia",
+        "Tersedia",
+        "Tersedia",
+        "Dalam Perjalanan",
+        "Maintenance"
+    };
+
     int nKategori  = sizeof(kategori) / sizeof(kategori[0]);
     int nKapasitas = sizeof(kapasitas) / sizeof(kapasitas[0]);
     int nFasilitas = sizeof(fasilitas) / sizeof(fasilitas[0]);
     int nArmada    = sizeof(nama_armada) / sizeof(nama_armada[0]);
+    int nTahun     = sizeof(tahun) / sizeof(tahun[0]);
+    int nStatus    = sizeof(status) / sizeof(status[0]);
 
     // ===== BUAT / RESET FILE =====
     fp = fopen("kendaraan.dat", "wb");
@@ -558,6 +572,8 @@ void buatDummyKendaraan() {
     printf("     MEMBUAT DATA DUMMY KENDARAAN\n");
 
     for (int i = 0; i < max_data; i++) {
+        // INISIALISASI MEMORI STRUCT DULU
+        memset(&data, 0, sizeof(Kendaraan));
 
         // ID OTOMATIS
         sprintf(data.id_kendaraan, "KND%03d", i + 1);
@@ -566,6 +582,8 @@ void buatDummyKendaraan() {
         strcpy(data.kategori,  kategori[i % nKategori]);
         strcpy(data.kapasitas, kapasitas[i % nKapasitas]);
         strcpy(data.fasilitas, fasilitas[i % nFasilitas]);
+        strcpy(data.tahun,     tahun[i % nTahun]);
+        strcpy(data.status,    status[i % nStatus]);
 
         // Nama armada + nomor biar unik
         sprintf(data.nama_armada, "%s %d",
@@ -581,5 +599,4 @@ void buatDummyKendaraan() {
     printf("Tekan tombol apapun untuk kembali...");
     getch();
 }
-
 #endif // PROJEK_CREATEKENDARAAN_H

@@ -9,10 +9,9 @@
 #include "deleteKendaraan.h"
 #include "updateKendaraan.h"
 #include "readKendaraan.h"
-#include "../login.h"
-#include "../Menu.h"
 
 
+static void menuStaff();
 void menukendaraan() {
     int pilih;
 
@@ -28,30 +27,14 @@ void menukendaraan() {
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         bentukframe(3, 4, 27, 3); //INFORMASI JABATAN
-        gotoxy(11,5); printf("Staff");
+        gotoxy(13,5); printf("Staff");
         gotoxy(11,2); printf("Kelompok 5");
-        baca();
+        readKendaraan();
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
         gotoxy(4, 34);printf("[ENTER] Pilih");
         gotoxy(4, 36);printf("[Esc] Keluar");
-
-        // ================= FRAME =================
-        bentukframe(2, 1, 30, 45);      // SIDEBAR KIRI
-        bentukframe(34, 1, 121, 10);    // ASCII HEADER
-        bentukframe(3, 4, 27, 3);       // KELOMPOK
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
-        gotoxy(11, 5); printf("Kelompok 5");
-
-        readKendaraan();
-
-        // ================= NAVIGASI =================
-        bentukframe(3, 29, 27, 10);
-        gotoxy(5, 30); printf("===  MENU NAVIGASI  ===");
-        gotoxy(4, 32); printf("NAVIGASI [↑ ↓]");
-        gotoxy(4, 34); printf("[ENTER] Pilih");
-        gotoxy(4, 36); printf("[ESC] Keluar");
 
         // ================= MENU UTAMA =================
         bentukframe(3, 10, 27, 14);
@@ -77,11 +60,11 @@ void menukendaraan() {
                 updateKendaraan();
                 break;
             case 4:
-                readKendaraan();
+                menuStaff();
                 break;
-            case 5:
+            /*case 5:
                 buatDummyKendaraan();
-                break;
+                break;*/
         }
     }
 }
