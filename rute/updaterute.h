@@ -12,6 +12,18 @@
 #include "../FrameTabel.h"
 #include "createrute.h"
 
+void renderDataBaru(Rute data) {
+    bentukframe(85, 29, 55, 12);
+    gotoxy(109, 30); printf("DATA BARU");
+
+    gotoxy(90,32); printf("Kota Asal    : %s ", data.kotaAsal);
+    gotoxy(90,33); printf("Kota Tujuan  : ");
+    gotoxy(90,34); printf("Harga        : ");
+    gotoxy(90,35); printf("Berangkat    : ");
+    gotoxy(90,36); printf("Tiba         : ");
+    gotoxy(90,37); printf("[ SIMPAN ]");
+}
+
 void updaterute() {
     FILE *fp, *temp;
     Rute data;
@@ -52,27 +64,27 @@ void updaterute() {
             found = 1;
 
             // ========= DATA LAMA =========
-            bentukframe(37, 27, 45, 12);
-            gotoxy(55, 28); printf("DATA LAMA");
+            bentukframe(37, 29, 45, 12);
+            gotoxy(55, 30); printf("DATA LAMA");
 
-            gotoxy(39, 30); printf("Kota Asal    : %s", data.kotaAsal);
-            gotoxy(39, 31); printf("Kota Tujuan  : %s", data.kotaTujuan);
+            gotoxy(39, 32); printf("Kota Asal    : %s", data.kotaAsal);
+            gotoxy(39, 33); printf("Kota Tujuan  : %s", data.kotaTujuan);
             char hargaStr[30];
             formatHarga((int)data.harga, hargaStr);
-            gotoxy(39, 32); printf("Harga        : %s", hargaStr);
-            gotoxy(39, 33); printf("Berangkat    : %s", data.jamBerangkat);
-            gotoxy(39, 34); printf("Tiba         : %s", data.jamTiba);
+            gotoxy(39, 34); printf("Harga        : %s", hargaStr);
+            gotoxy(39, 35); printf("Berangkat    : %s", data.jamBerangkat);
+            gotoxy(39, 36); printf("Tiba         : %s", data.jamTiba);
 
             // ========= DATA BARU =========
-            bentukframe(85, 27, 55, 12);
-            gotoxy(109, 28); printf("DATA BARU");
+            bentukframe(85, 29, 55, 12);
+            gotoxy(109, 30); printf("DATA BARU");
 
-            gotoxy(90,30); printf("Kota Asal    : ");
-            gotoxy(90,31); printf("Kota Tujuan  : ");
-            gotoxy(90,32); printf("Harga        : ");
-            gotoxy(90,33); printf("Berangkat    : ");
-            gotoxy(90,34); printf("Tiba         : ");
-            gotoxy(90,35); printf("[ SIMPAN ]");
+            gotoxy(90,32); printf("Kota Asal    : ");
+            gotoxy(90,33); printf("Kota Tujuan  : ");
+            gotoxy(90,34); printf("Harga        : ");
+            gotoxy(90,35); printf("Berangkat    : ");
+            gotoxy(90,36); printf("Tiba         : ");
+            gotoxy(90,37); printf("[ SIMPAN ]");
 
             int selectedField = 0;
             int totalFields = 5; // 0-4 input, 5 simpan
@@ -82,7 +94,7 @@ void updaterute() {
 
                 // Penanda >>
                 for (int i = 0; i <= totalFields; i++) {
-                    gotoxy(88, 30 + i);
+                    gotoxy(88, 32 + i);
                     printf(i == selectedField ? ">>" : "  ");
                 }
 
@@ -112,31 +124,48 @@ void updaterute() {
                     switch (selectedField) {
 
                     case 0: // Kota Asal
-                        clearArea(inputX, 30, 25, 1);
-                        gotoxy(105, 30);
-                        scanf("%s", data.kotaAsal);
+                        // HILANGKAN DATA BARU
+                        clearArea(85, 29, 55, 12);
+
+                        // PILIH KOTA (FULL SCREEN MENU)
+                        pilihKota(data.kotaAsal);
+
+                        // TAMPILKAN LAGI DATA BARU
+                        renderDataBaru(data);
+
+                        // CETAK HASIL PILIHAN
+                        gotoxy(105, 32);
+                        printf("%s", data.kotaAsal);
                         break;
+
 
                     case 1: // Kota Tujuan
-                        clearArea(inputX, 31, 25, 1);
-                        gotoxy(105, 31);
-                        scanf("%s", data.kotaTujuan);
+                        clearArea(85, 29, 55, 12);
+
+                        pilihKota(data.kotaTujuan);
+
+                        renderDataBaru(data);
+
+                        gotoxy(105, 33);
+                        printf("%s", data.kotaTujuan);
                         break;
 
+
+
                     case 2: // Harga
-                        clearArea(inputX, 32, 25, 1);
-                        data.harga = inputHarga(105, 32);
+                        clearArea(inputX, 34, 25, 1);
+                        data.harga = inputHarga(105, 34);
                         break;
 
                     case 3: // Jam Berangkat
-                        clearArea(inputX, 33, 15, 1);
-                        gotoxy(105, 33);
+                        clearArea(inputX, 35, 15, 1);
+                        gotoxy(105, 35);
                         inputJam(data.jamBerangkat);
                         break;
 
                     case 4: // Jam Tiba
-                        clearArea(inputX, 34, 15, 1);
-                        gotoxy(105, 34);
+                        clearArea(inputX, 36, 15, 1);
+                        gotoxy(105, 36);
                         inputJam(data.jamTiba);
                         break;
 
