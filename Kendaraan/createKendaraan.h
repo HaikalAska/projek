@@ -7,25 +7,27 @@
 
 #include "../FrameTabel.h"
 #include <string.h>
+#include <time.h>
 
-// ================= STRUCT KENDARAAN =================
 typedef struct {
     char id_kendaraan[10];
     char kategori[30];
     char kapasitas[10];
     char fasilitas[100];
     char nama_armada[50];
+    char tahun[10];
+    char status [20];
 } Kendaraan;
 
-// ================= INPUT ANGKA (UNTUK KAPASITAS) =================
-static void inputAngka(char *angka, int maxLen) {
+// ================= INPUT KAPASITAS =================
+static void inpukapasitas(char *angka, int maxLen) {
     int i = 0;
     char ch;
 
     while (1) {
         ch = getch();
 
-        if (ch == 13) { // ENTER
+        if (ch == 13) {
             angka[i] = '\0';
 
             if (i == 0) {
@@ -58,7 +60,6 @@ static void inputAngka(char *angka, int maxLen) {
     }
 }
 
-// ================= HITUNG DATA =================
 static int getKendaraanCount() {
     FILE *fp = fopen("kendaraan.dat", "rb");
     if (!fp) return 0;
@@ -70,44 +71,84 @@ static int getKendaraanCount() {
     return size / sizeof(Kendaraan);
 }
 
-// ================= VALIDASI KAPASITAS 2 DIGIT =================
 void inputKapasitas2Digit(char *kapasitas) {
     int i = 0;
     char ch;
+    char temp[3] = "";
+
+    const int INPUT_X = 52;
+    const int INPUT_Y = 30;
+    const int ERR_X   = 80;
+    const int ERR_Y   = 30;
 
     while (1) {
         ch = getch();
 
-        // ENTER
+        // ===== ENTER =====
         if (ch == 13) {
-            kapasitas[i] = '\0';
+            temp[i] = '\0';
 
+            // kosong
             if (i == 0) {
-                printf(" [Tidak boleh kosong]");
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-25s", "[Tidak boleh kosong]");
                 Sleep(800);
-                printf("\r                     \r");
-                i = 0;
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-25s", " ");
+                gotoxy(INPUT_X, INPUT_Y);
                 continue;
             }
-            break;
+
+            int nilai = atoi(temp);
+
+            // validasi 1 - 60
+            if (nilai < 1 || nilai > 60) {
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-25s", "[Kapasitas hanya 1 - 60]");
+                Sleep(800);
+
+                // hapus error
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-25s", " ");
+
+                // hapus input angka
+                gotoxy(INPUT_X, INPUT_Y);
+                printf("  ");
+                gotoxy(INPUT_X, INPUT_Y);
+
+                i = 0;
+                memset(temp, 0, sizeof(temp));
+                continue;
+            }
+
+            // valid → simpan
+            strcpy(kapasitas, temp);
+            return;
         }
-        // ESC
+
+        // ===== ESC =====
         else if (ch == 27) {
             kapasitas[0] = '\0';
-            break;
+            return;
         }
-        // BACKSPACE
+
+        // ===== BACKSPACE =====
         else if (ch == 8) {
             if (i > 0) {
                 i--;
-                printf("\b \b");
+                gotoxy(INPUT_X + i, INPUT_Y);
+                printf(" ");
+                gotoxy(INPUT_X + i, INPUT_Y);
             }
         }
-        // HANYA ANGKA & MAKS 2 DIGIT
-        else if (ch >= '0' && ch <= '6') {
+
+        //ANGKA SAJA (MAKS 2 DIGIT) =====
+        else if (ch >= '0' && ch <= '9') {
             if (i < 2) {
-                kapasitas[i++] = ch;
+                temp[i] = ch;
+                gotoxy(INPUT_X + i, INPUT_Y);
                 printf("%c", ch);
+                i++;
             }
         }
     }
@@ -118,95 +159,107 @@ static void inputFasilitas(char *fasilitas, int maxLen) {
     int i = 0;
     char ch;
 
+    const int INPUT_X = 52;
+    const int INPUT_Y = 31;
+    const int ERR_X   = 85;
+    const int ERR_Y   = 31;
+
     while (1) {
         ch = getch();
 
-        // ENTER
-        if (ch == 13) {
+        if (ch == 13) { // ENTER
             fasilitas[i] = '\0';
 
             if (i == 0) {
-                printf(" [Tidak boleh kosong]");
+                // tampilkan error
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-30s", "[Tidak boleh kosong]");
                 Sleep(800);
-                printf("\r                              \r");
-                i = 0;
+
+                // hapus error
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-30s", " ");
+
+                // balik ke input
+                gotoxy(INPUT_X, INPUT_Y);
                 continue;
             }
-            break;
+            return;
         }
-        // ESC
-        else if (ch == 27) {
+        else if (ch == 27) { // ESC
             fasilitas[0] = '\0';
-            break;
+            return;
         }
-        // BACKSPACE
-        else if (ch == 8) {
+        else if (ch == 8) { // BACKSPACE
             if (i > 0) {
                 i--;
-                printf("\b \b");
+                gotoxy(INPUT_X + i, INPUT_Y);
+                printf(" ");
+                gotoxy(INPUT_X + i, INPUT_Y);
             }
         }
-        // HURUF
         else if ((ch >= 'a' && ch <= 'z') ||
-                 (ch >= 'A' && ch <= 'Z')) {
+                 (ch >= 'A' && ch <= 'Z') ||
+                 ch == ' ' || ch == ',') {
+
             if (i < maxLen - 1) {
                 fasilitas[i++] = ch;
+                gotoxy(INPUT_X + i - 1, INPUT_Y);
                 printf("%c", ch);
             }
-        }
-        // SPASI
-        else if (ch == ' ') {
-            if (i < maxLen - 1 && i > 0 && fasilitas[i - 1] != ' ') {
-                fasilitas[i++] = ch;
-                printf(" ");
-            }
-        }
-        // KOMA (,)
-        else if (ch == ',') {
-            if (i < maxLen - 1 && i > 0 && fasilitas[i - 1] != ',') {
-                fasilitas[i++] = ch;
-                printf(",");
-            }
-        }
-        // karakter lain → diabaikan
+                 }
     }
 }
 
-// ================= INPUT KATEGORI KENDARAAN =================
+// ================= INPUT KATEGORI =================
 static void inputKategoriKendaraan(char *kategori) {
     char ch;
-    char temp[50] = "";   // simpan pilihan sementara
+    char temp[30] = "";
+
+    const int INPUT_X = 52;
+    const int Y       = 29;
+    const int INFO_X  = 85;
+
+    // tampilkan petunjuk SEKALI
+    gotoxy(INFO_X, Y);
+    printf("Isi (E/B/X)");
 
     while (1) {
         ch = getch();
 
-        // ESC → batal
+        // ===== ESC =====
         if (ch == 27) {
             kategori[0] = '\0';
             return;
         }
 
-        // ENTER → konfirmasi pilihan
+        // ===== ENTER =====
         if (ch == 13) {
             if (strlen(temp) == 0) {
-                // belum pilih apa-apa
-                printf(" [Pilih kategori dulu]");
+                // tampilkan error
+                gotoxy(INFO_X, Y);
+                printf("%-25s", "[Wajib pilih kategori]");
                 Sleep(800);
 
-                // Hapus peringatan
-                printf("\r");
-                for (int k = 0; k < 50; k++) {
-                    printf(" ");
-                }
-                printf("\r");
+                // hapus error
+                gotoxy(INFO_X, Y);
+                printf("%-25s", " ");
+
+                // BALIKIN PETUNJUK
+                gotoxy(INFO_X, Y);
+                printf("Isi (E/B/X)");
+
+                // balik ke input
+                gotoxy(INPUT_X, Y);
                 continue;
             }
 
-            strcpy(kategori, temp); // simpan final
+            // valid
+            strcpy(kategori, temp);
             return;
         }
 
-        // PILIHAN KATEGORI
+        // ===== PILIHAN =====
         switch (ch) {
             case 'e':
             case 'E':
@@ -223,31 +276,129 @@ static void inputKategoriKendaraan(char *kategori) {
                 strcpy(temp, "Executive");
                 break;
 
-            case 'p':
-            case 'P':
-                strcpy(temp, "Pariwisata");
-                break;
-
-            case 'm':
-            case 'M':
-                strcpy(temp, "Mania");
-                break;
-
             default:
-                continue; // tombol lain (termasuk Tab) diabaikan
+                continue;
         }
 
-        // TAMPILKAN PILIHAN (bisa berubah-ubah)
-        // Hapus text lama dulu
-        // printf("\r");
-        for (int k = 0; k < 50; k++) {
-            // printf(" ");
-        }
-        // printf("\r");
+        // hapus petunjuk (sekali user mulai input)
+        gotoxy(INFO_X, Y);
+        printf("%-25s", " ");
 
-        // Tampilkan pilihan baru
-        gotoxy(52,29); printf("%-30s", temp);
+        // tampilkan pilihan
+        gotoxy(INPUT_X, Y);
+        printf("%-30s", temp);
     }
+}
+
+// ================= INPUT ARMADA =================
+void inputNamaArmada(char *nama) {
+    int i = 0;
+    char ch;
+
+    const int INPUT_X = 52;
+    const int INPUT_Y = 32;
+    const int ERR_X   = 85;
+    const int ERR_Y   = 32;
+
+    while (1) {
+        ch = getch();
+
+        // ENTER
+        if (ch == 13) {
+            nama[i] = '\0';
+
+            if (i == 0) {
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-30s", "[Nama armada wajib diisi]");
+                Sleep(800);
+                gotoxy(ERR_X, ERR_Y);
+                printf("%-30s", " ");
+                gotoxy(INPUT_X, INPUT_Y);
+                continue;
+            }
+            return;
+        }
+
+        // ESC
+        else if (ch == 27) {
+            nama[0] = '\0';
+            return;
+        }
+
+        // BACKSPACE
+        else if (ch == 8 && i > 0) {
+            i--;
+            gotoxy(INPUT_X + i, INPUT_Y);
+            printf(" ");
+            gotoxy(INPUT_X + i, INPUT_Y);
+        }
+
+        // ===== HANYA HURUF & SPASI =====
+        else if ((ch >= 'A' && ch <= 'Z') ||
+                 (ch >= 'a' && ch <= 'z') ||
+                 ch == ' ') {
+
+            if (i < 49) {
+                nama[i++] = ch;
+                gotoxy(INPUT_X + i - 1, INPUT_Y);
+                printf("%c", ch);
+            }
+                 }
+        // angka & simbol otomatis ditolak
+    }
+}
+
+// ================= INPUT TAHUN =================
+void inputTahun(char *tahun) {
+    int i = 0;
+    char ch;
+
+    const int X = 52;
+    const int Y = 33;
+
+    gotoxy(X, Y);
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {
+            if (i != 4) {
+                gotoxy(80, Y);
+                printf("[Harus 4 digit]");
+                Sleep(800);
+                gotoxy(80, Y);
+                printf("               ");
+                gotoxy(X + i, Y);
+                continue;
+            }
+            tahun[i] = '\0';
+            return;
+        }
+
+        else if (ch == 27) {
+            tahun[0] = '\0';
+            return;
+        }
+
+        else if (ch == 8 && i > 0) {
+            i--;
+            gotoxy(X + i, Y);
+            printf(" ");
+            gotoxy(X + i, Y);
+        }
+
+        else if (ch >= '0' && ch <= '9' && i < 4) {
+            tahun[i++] = ch;
+            gotoxy(X + i - 1, Y);
+            printf("%c", ch);
+        }
+    }
+}
+
+int getTahunSekarang() {
+    time_t t = time(NULL);
+    struct tm *tm_info = localtime(&t);
+    return tm_info->tm_year + 1900;
 }
 
 // ================= CREATE KENDARAAN =================
@@ -299,11 +450,35 @@ void createKendaraan() {
         // ===== NAMA ARMADA =====
         gotoxy(37, 32); printf("Nama Armada  : ");
         setPointer(33, 53);
-        INPUTNama(data.nama_armada);
+        inputNamaArmada(data.nama_armada);
+
+
         if (strlen(data.nama_armada) == 0) {
             fclose(fp);
             return;
         }
+
+        // ===== TAHUN =====
+        gotoxy(37, 33); printf("Tahun        : ");
+        setPointer(34, 53);
+        inputTahun(data.tahun);
+        if (strlen(data.tahun) == 0) {
+            fclose(fp);
+            return;
+        }
+
+        // ===== CEK UMUR BUS =====
+        int tahunBus = atoi(data.tahun);
+        int tahunSekarang = getTahunSekarang();
+        int umur = tahunSekarang - tahunBus;
+
+        gotoxy(85, 33);
+        if (umur > 10) {
+            printf("[Tidak Layak | Umur %d th]", umur);
+        } else {
+            printf("[Layak | Umur %d th]", umur);
+        }
+
 
         // ===== SIMPAN =====
         fwrite(&data, sizeof(Kendaraan), 1, fp);
@@ -339,11 +514,9 @@ void buatDummyKendaraan() {
 
     // ===== CONTOH DATA =====
     char *kategori[] = {
-        "Bus Ekonomi",
-        "Bus Bisnis",
-        "Bus Executive",
-        "Mini Bus",
-        "Bus Pariwisata"
+        "Ekonomi",
+        "Bisnis",
+        "Executive"
     };
 
     char *kapasitas[] = {
@@ -355,7 +528,7 @@ void buatDummyKendaraan() {
         "AC, Reclining Seat",
         "AC, Reclining Seat, Toilet",
         "AC, TV, USB Charger",
-        "AC, Toilet, WiFi",
+        "AC, Toilet, WiFi"
     };
 
     char *nama_armada[] = {
@@ -369,10 +542,24 @@ void buatDummyKendaraan() {
         "PO Agra Mas"
     };
 
+    char *tahun[] = {
+        "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"
+    };
+
+    char *status[] = {
+        "Tersedia",
+        "Tersedia",
+        "Tersedia",
+        "Dalam Perjalanan",
+        "Maintenance"
+    };
+
     int nKategori  = sizeof(kategori) / sizeof(kategori[0]);
     int nKapasitas = sizeof(kapasitas) / sizeof(kapasitas[0]);
     int nFasilitas = sizeof(fasilitas) / sizeof(fasilitas[0]);
     int nArmada    = sizeof(nama_armada) / sizeof(nama_armada[0]);
+    int nTahun     = sizeof(tahun) / sizeof(tahun[0]);
+    int nStatus    = sizeof(status) / sizeof(status[0]);
 
     // ===== BUAT / RESET FILE =====
     fp = fopen("kendaraan.dat", "wb");
@@ -385,6 +572,8 @@ void buatDummyKendaraan() {
     printf("     MEMBUAT DATA DUMMY KENDARAAN\n");
 
     for (int i = 0; i < max_data; i++) {
+        // INISIALISASI MEMORI STRUCT DULU
+        memset(&data, 0, sizeof(Kendaraan));
 
         // ID OTOMATIS
         sprintf(data.id_kendaraan, "KND%03d", i + 1);
@@ -393,6 +582,8 @@ void buatDummyKendaraan() {
         strcpy(data.kategori,  kategori[i % nKategori]);
         strcpy(data.kapasitas, kapasitas[i % nKapasitas]);
         strcpy(data.fasilitas, fasilitas[i % nFasilitas]);
+        strcpy(data.tahun,     tahun[i % nTahun]);
+        strcpy(data.status,    status[i % nStatus]);
 
         // Nama armada + nomor biar unik
         sprintf(data.nama_armada, "%s %d",
@@ -408,5 +599,4 @@ void buatDummyKendaraan() {
     printf("Tekan tombol apapun untuk kembali...");
     getch();
 }
-
 #endif // PROJEK_CREATEKENDARAAN_H
