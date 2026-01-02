@@ -46,7 +46,7 @@ void PesanTiket() {
     gotoxy(4,36); printf("[ESC] Keluar");
 
     // tampilkan tabel jadwal
-    bacaJadwal();
+    bacajadwal();
 
     char n;
 
@@ -105,7 +105,7 @@ void PesanTiket() {
         // ================= COPY DATA JADWAL =================
         strcpy(data.rute_awal, jadwal_data.kotaAsal);
         strcpy(data.tujuan, jadwal_data.kotaTujuan);
-        strcpy(data.nama_armada, jadwal_data.armada);
+        strcpy(data.nama_armada, jadwal_data.nama_armada);
         strcpy(data.tanggal_berangkat, jadwal_data.tanggal);
         strcpy(data.jam_berangkat, jadwal_data.jamBerangkat);
         data.harga = jadwal_data.harga;
@@ -113,8 +113,9 @@ void PesanTiket() {
         gotoxy(37, 30); printf("Rute           : %s → %s", data.rute_awal, data.tujuan);
         gotoxy(37, 31); printf("Armada         : %s", data.nama_armada);
         gotoxy(37, 32);printf("Berangkat      : %s | %s",data.tanggal_berangkat, data.jam_berangkat);
-        gotoxy(37, 33); printf("Harga          : Rp%.2f", data.harga);
-
+        // gotoxy(37, 33); printf("Harga          : Rp%.2f", data.harga);
+        gotoxy(37,33); printf("Harga          : ");
+        tampilanhargatiket(data.harga);
 
 
 
@@ -159,6 +160,42 @@ void PesanTiket() {
         if (strlen(data.metode_bayar) == 0) {
             fclose(fp_tiket);
             return;
+        }
+
+        if (strcmp(data.metode_bayar, "Cash") == 0) {
+
+            float dibayar;
+            float kembalian;
+            bentukframe(88, 34, 40, 8);
+            gotoxy(100,34); printf("CASH");
+
+            gotoxy(90, 36);
+            printf("Dibayar        : ");
+            scanf("%f", &dibayar);
+
+            gotoxy(90, 36);
+            printf("Dibayar        : ");
+            tampilanhargatiket(dibayar);
+
+            gotoxy(90, 37);
+            printf("Harga          : ");
+            tampilanhargatiket(data.harga);
+
+            gotoxy(90, 38);
+            printf("------------------------------");
+
+            kembalian = dibayar - data.harga;
+
+            gotoxy(90, 39);
+            if (kembalian < 0) {
+                printf("Kembalian      : Uang kurang!");
+                getch();
+                fclose(fp_tiket);
+                return;
+            }
+
+            printf("Kembalian      : ");
+            tampilanhargatiket(kembalian);
         }
 
         getCurrentDate(data.tanggal_booking);
