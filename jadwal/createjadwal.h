@@ -644,6 +644,7 @@ void buatjadwal() {
 
         j.kendaraan = kendaraan;
 
+        j.kendaraan = kendaraan;
 
         gotoxy(37,33);
         printf("Armada          : %s", k.nama_armada);

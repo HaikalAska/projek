@@ -101,6 +101,7 @@ void updateKendaraan() {
                     gotoxy(85, 32 + i);
                     printf(i == selected ? ">>" : "│ ");
                 }
+            }
 
                 int ch = _getch();
 
@@ -163,6 +164,12 @@ void updateKendaraan() {
                     remove("temp.dat");
                     return;
                 }
+                gotoxy(85, 36); printf("│ "); // Panah selesai
+            } else {
+                fclose(fp);
+                fclose(tmp);
+                remove("temp.dat");
+                return;
             }
 
             fwrite(&data, sizeof(Kendaraan), 1, tmp);
