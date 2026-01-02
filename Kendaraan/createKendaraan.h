@@ -20,66 +20,12 @@ typedef struct {
 } Kendaraan;
 
 // ================= INPUT KAPASITAS =================
-static void inpukapasitas(char *angka, int maxLen) {
+static void inputKapasitas2Digit(char *kapasitas, int row, int col) {
     int i = 0;
     char ch;
+    char temp[3] = "";   // buffer dibersihkan dari awal
 
-    while (1) {
-        ch = getch();
-
-        if (ch == 13) {
-            angka[i] = '\0';
-
-            if (i == 0) {
-                printf(" [Tidak boleh kosong]");
-                Sleep(700);
-
-                printf("\r                     \r");
-                i = 0;
-                continue;
-            }
-            break;
-        }
-        else if (ch == 27) { // ESC
-            angka[0] = '\0';
-            break;
-        }
-        else if (ch == 8) { // BACKSPACE
-            if (i > 0) {
-                i--;
-                printf("\b \b");
-            }
-        }
-        else if (ch >= '0' && ch <= '9') {
-            if (i < maxLen - 1) {
-                angka[i++] = ch;
-                printf("%c", ch);
-            }
-        }
-        // selain angka → diabaikan
-    }
-}
-
-static int getKendaraanCount() {
-    FILE *fp = fopen("kendaraan.dat", "rb");
-    if (!fp) return 0;
-
-    fseek(fp, 0, SEEK_END);
-    long size = ftell(fp);
-    fclose(fp);
-
-    return size / sizeof(Kendaraan);
-}
-
-void inputKapasitas2Digit(char *kapasitas) {
-    int i = 0;
-    char ch;
-    char temp[3] = "";
-
-    const int INPUT_X = 52;
-    const int INPUT_Y = 30;
-    const int ERR_X   = 80;
-    const int ERR_Y   = 30;
+    gotoxy(col, row);
 
     while (1) {
         ch = getch();
@@ -88,40 +34,37 @@ void inputKapasitas2Digit(char *kapasitas) {
         if (ch == 13) {
             temp[i] = '\0';
 
-            // kosong
             if (i == 0) {
-                gotoxy(ERR_X, ERR_Y);
-                printf("%-25s", "[Tidak boleh kosong]");
+                gotoxy(col + 0, row);
+                printf("[Tidak boleh kosong]");
                 Sleep(800);
-                gotoxy(ERR_X, ERR_Y);
+
+                gotoxy(col + 0, row);
                 printf("%-25s", " ");
-                gotoxy(INPUT_X, INPUT_Y);
+
+                gotoxy(col, row);
+                i = 0;
                 continue;
             }
 
             int nilai = atoi(temp);
-
-            // validasi 1 - 60
             if (nilai < 1 || nilai > 60) {
-                gotoxy(ERR_X, ERR_Y);
-                printf("%-25s", "[Kapasitas hanya 1 - 60]");
+                gotoxy(col + 5, row);
+                printf("[Kapasitas 1 - 60]");
                 Sleep(800);
 
-                // hapus error
-                gotoxy(ERR_X, ERR_Y);
+                gotoxy(col + 5, row);
                 printf("%-25s", " ");
 
-                // hapus input angka
-                gotoxy(INPUT_X, INPUT_Y);
+                gotoxy(col, row);
                 printf("  ");
-                gotoxy(INPUT_X, INPUT_Y);
+                gotoxy(col, row);
 
                 i = 0;
-                memset(temp, 0, sizeof(temp));
+                temp[0] = '\0';
                 continue;
             }
 
-            // valid → simpan
             strcpy(kapasitas, temp);
             return;
         }
@@ -136,75 +79,74 @@ void inputKapasitas2Digit(char *kapasitas) {
         else if (ch == 8) {
             if (i > 0) {
                 i--;
-                gotoxy(INPUT_X + i, INPUT_Y);
-                printf(" ");
-                gotoxy(INPUT_X + i, INPUT_Y);
+                temp[i] = '\0';
+                printf("\b \b");
             }
         }
 
-        //ANGKA SAJA (MAKS 2 DIGIT) =====
+        // ===== ANGKA =====
         else if (ch >= '0' && ch <= '9') {
             if (i < 2) {
-                temp[i] = ch;
-                gotoxy(INPUT_X + i, INPUT_Y);
+                temp[i++] = ch;
+                temp[i] = '\0';
                 printf("%c", ch);
-                i++;
             }
         }
     }
 }
 
+static int getKendaraanCount() {
+    FILE *fp = fopen("kendaraan.dat", "rb");
+    if (!fp) return 0;
+
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fclose(fp);
+
+    return size / sizeof(Kendaraan);
+}
+
 // ================= INPUT FASILITAS =================
-static void inputFasilitas(char *fasilitas, int maxLen) {
+static void inputFasilitas(char *fasilitas, int row, int col) {
     int i = 0;
     char ch;
-
-    const int INPUT_X = 52;
-    const int INPUT_Y = 31;
-    const int ERR_X   = 85;
-    const int ERR_Y   = 31;
+    char temp[100];
 
     while (1) {
         ch = getch();
 
-        if (ch == 13) { // ENTER
-            fasilitas[i] = '\0';
+        if (ch == 13) {
+            temp[i] = '\0';
 
             if (i == 0) {
-                // tampilkan error
-                gotoxy(ERR_X, ERR_Y);
-                printf("%-30s", "[Tidak boleh kosong]");
+                gotoxy(col + 0, row);
+                printf("[Fasilitas tidak boleh kosong!]");
                 Sleep(800);
 
-                // hapus error
-                gotoxy(ERR_X, ERR_Y);
-                printf("%-30s", " ");
+                gotoxy(col + 0, row);
+                printf("%-35s", " ");
 
-                // balik ke input
-                gotoxy(INPUT_X, INPUT_Y);
+                gotoxy(col, row);
+                i = 0;
                 continue;
             }
+
+            strcpy(fasilitas, temp);
             return;
         }
-        else if (ch == 27) { // ESC
+        else if (ch == 27) {
             fasilitas[0] = '\0';
             return;
         }
-        else if (ch == 8) { // BACKSPACE
-            if (i > 0) {
-                i--;
-                gotoxy(INPUT_X + i, INPUT_Y);
-                printf(" ");
-                gotoxy(INPUT_X + i, INPUT_Y);
-            }
+        else if (ch == 8 && i > 0) {
+            i--;
+            printf("\b \b");
         }
         else if ((ch >= 'a' && ch <= 'z') ||
                  (ch >= 'A' && ch <= 'Z') ||
                  ch == ' ' || ch == ',') {
-
-            if (i < maxLen - 1) {
-                fasilitas[i++] = ch;
-                gotoxy(INPUT_X + i - 1, INPUT_Y);
+            if (i < 99) {
+                temp[i++] = ch;
                 printf("%c", ch);
             }
                  }
@@ -212,20 +154,27 @@ static void inputFasilitas(char *fasilitas, int maxLen) {
 }
 
 // ================= INPUT KATEGORI =================
-static void inputKategoriKendaraan(char *kategori) {
+static void inputKategoriKendaraan(char *kategori, int row, int col) {
     char ch;
     char temp[30] = "";
 
-    const int INPUT_X = 52;
-    const int Y       = 29;
-    const int INFO_X  = 85;
-
-    // tampilkan petunjuk SEKALI
-    gotoxy(INFO_X, Y);
-    printf("Isi (E/B/X)");
-
     while (1) {
         ch = getch();
+
+        // ===== ENTER =====
+        if (ch == 13) {
+            if (strlen(temp) == 0) {
+                gotoxy(col + 0, row);
+                printf("[Wajib pilih kategori]");
+                Sleep(800);
+                gotoxy(col + 0, row);
+                printf("%-25s", " ");
+                continue;
+            }
+
+            strcpy(kategori, temp);
+            return;
+        }
 
         // ===== ESC =====
         if (ch == 27) {
@@ -233,165 +182,215 @@ static void inputKategoriKendaraan(char *kategori) {
             return;
         }
 
-        // ===== ENTER =====
-        if (ch == 13) {
-            if (strlen(temp) == 0) {
-                // tampilkan error
-                gotoxy(INFO_X, Y);
-                printf("%-25s", "[Wajib pilih kategori]");
-                Sleep(800);
+        // ===== BACKSPACE → hapus pilihan =====
+        if (ch == 8) {
+            temp[0] = '\0';
 
-                // hapus error
-                gotoxy(INFO_X, Y);
-                printf("%-25s", " ");
-
-                // BALIKIN PETUNJUK
-                gotoxy(INFO_X, Y);
-                printf("Isi (E/B/X)");
-
-                // balik ke input
-                gotoxy(INPUT_X, Y);
-                continue;
-            }
-
-            // valid
-            strcpy(kategori, temp);
-            return;
+            gotoxy(col, row);
+            printf("%-30s", " ");
+            gotoxy(col, row);
+            continue;
         }
 
-        // ===== PILIHAN =====
-        switch (ch) {
-            case 'e':
-            case 'E':
-                strcpy(temp, "Ekonomi");
-                break;
-
-            case 'b':
-            case 'B':
-                strcpy(temp, "Bisnis");
-                break;
-
-            case 'x':
-            case 'X':
-                strcpy(temp, "Executive");
-                break;
-
-            default:
-                continue;
+        // ===== PILIHAN KATEGORI =====
+        if (ch == 'e' || ch == 'E') {
+            strcpy(temp, "Ekonomi");
         }
-
-        // hapus petunjuk (sekali user mulai input)
-        gotoxy(INFO_X, Y);
-        printf("%-25s", " ");
+        else if (ch == 'b' || ch == 'B') {
+            strcpy(temp, "Bisnis");
+        }
+        else if (ch == 'x' || ch == 'X') {
+            strcpy(temp, "Executive");
+        }
+        else {
+            continue; // tombol lain diabaikan
+        }
 
         // tampilkan pilihan
-        gotoxy(INPUT_X, Y);
+        gotoxy(col, row);
         printf("%-30s", temp);
     }
 }
 
 // ================= INPUT ARMADA =================
-void inputNamaArmada(char *nama) {
+static void inputNamaArmada(char *nama, int row, int col) {
     int i = 0;
     char ch;
-
-    const int INPUT_X = 52;
-    const int INPUT_Y = 32;
-    const int ERR_X   = 85;
-    const int ERR_Y   = 32;
+    char temp[50];
 
     while (1) {
         ch = getch();
 
-        // ENTER
         if (ch == 13) {
-            nama[i] = '\0';
+            temp[i] = '\0';
 
             if (i == 0) {
-                gotoxy(ERR_X, ERR_Y);
-                printf("%-30s", "[Nama armada wajib diisi]");
+                gotoxy(col + 0, row);
+                printf("[Nama armada wajib di isi!]");
                 Sleep(800);
-                gotoxy(ERR_X, ERR_Y);
-                printf("%-30s", " ");
-                gotoxy(INPUT_X, INPUT_Y);
+
+                gotoxy(col + 0, row);
+                printf("%-35s", " ");
+
+                gotoxy(col, row);
+                i = 0;
                 continue;
             }
-            return;
-        }
 
-        // ESC
-        else if (ch == 27) {
+            strcpy(nama, temp);
+            break;
+        }
+        else if (ch == 27) {  // ESC
             nama[0] = '\0';
-            return;
+            break;
         }
-
-        // BACKSPACE
-        else if (ch == 8 && i > 0) {
-            i--;
-            gotoxy(INPUT_X + i, INPUT_Y);
-            printf(" ");
-            gotoxy(INPUT_X + i, INPUT_Y);
+        else if (ch == 8) {  // BACKSPACE (SAMA)
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
         }
-
-        // ===== HANYA HURUF & SPASI =====
         else if ((ch >= 'A' && ch <= 'Z') ||
                  (ch >= 'a' && ch <= 'z') ||
                  ch == ' ') {
 
             if (i < 49) {
-                nama[i++] = ch;
-                gotoxy(INPUT_X + i - 1, INPUT_Y);
+                temp[i++] = ch;
                 printf("%c", ch);
             }
                  }
-        // angka & simbol otomatis ditolak
     }
 }
 
 // ================= INPUT TAHUN =================
-void inputTahun(char *tahun) {
+static void inputTahun(char *tahun, int row, int col) {
     int i = 0;
     char ch;
-
-    const int X = 52;
-    const int Y = 33;
-
-    gotoxy(X, Y);
+    char temp[5];
 
     while (1) {
         ch = getch();
 
-        if (ch == 13) {
+        if (ch == 13) {  // ENTER
+            temp[i] = '\0';
+
+            // VALIDASI: HARUS 4 DIGIT
             if (i != 4) {
-                gotoxy(80, Y);
+                // tampilkan error di KANAN input
+                gotoxy(col + 0, row);
                 printf("[Harus 4 digit]");
                 Sleep(800);
-                gotoxy(80, Y);
-                printf("               ");
-                gotoxy(X + i, Y);
+
+                // hapus error DENGAN PANJANG SAMA
+                gotoxy(col + 0, row);
+                printf("%-15s", " ");
+
+                // bersihkan input
+                gotoxy(col, row);
+                printf("    ");
+                gotoxy(col, row);
+
+                i = 0;
                 continue;
             }
-            tahun[i] = '\0';
+
+            // VALIDASI: MAKSIMAL 2025
+            int tahunInput = atoi(temp);
+            if (tahunInput > 2025) {
+                gotoxy(col, row);
+                printf("[Maksimal tahun 2025]");
+                Sleep(800);
+
+                gotoxy(col, row);
+                printf("%-25s", " ");
+
+                gotoxy(col, row);
+                printf("    ");
+                gotoxy(col, row);
+
+                i = 0;
+                continue;
+            }
+
+            strcpy(tahun, temp);
             return;
         }
-
-        else if (ch == 27) {
+        else if (ch == 27) {  // ESC
             tahun[0] = '\0';
             return;
         }
+        else if (ch == 8) {
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch >= '0' && ch <= '9') {
+            if (i < 4) {
+                temp[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+    }
+}
 
-        else if (ch == 8 && i > 0) {
-            i--;
-            gotoxy(X + i, Y);
-            printf(" ");
-            gotoxy(X + i, Y);
+// ================= INPUT STATUS =================
+static void inputStatusKendaraan(char *status, int row, int col) {
+    char ch;
+    char temp[20] = "";
+
+    while (1) {
+        ch = getch();
+
+        // ===== ENTER =====
+        if (ch == 13) {
+            if (strlen(temp) == 0) {
+                gotoxy(col + 0, row);
+                printf("[Wajib pilih status]");
+                Sleep(800);
+                gotoxy(col + 0, row);
+                printf("%-25s", " ");
+                continue;
+            }
+            strcpy(status, temp);
+            return;
         }
 
-        else if (ch >= '0' && ch <= '9' && i < 4) {
-            tahun[i++] = ch;
-            gotoxy(X + i - 1, Y);
-            printf("%c", ch);
+        // ===== ESC =====
+        if (ch == 27) {
+            status[0] = '\0';
+            return;
         }
+
+        // ===== BACKSPACE =====
+        if (ch == 8) {
+            temp[0] = '\0';
+            gotoxy(col, row);
+            printf("%-20s", " ");
+            gotoxy(col, row);
+            continue;
+        }
+
+        // ===== PILIHAN STATUS =====
+        if (ch == 't' || ch == 'T') {
+            strcpy(temp, "Tersedia");
+        }
+        else if (ch == 'm' || ch == 'M') {
+            strcpy(temp, "Maintenance");
+        }
+        else if (ch == 'd' || ch == 'D') {
+            strcpy(temp, "Dalam Perjalanan");
+        }
+        else if (ch == 'n' || ch == 'N') {
+            strcpy(temp, "Tidak Aktif");
+        }
+        else {
+            continue;
+        }
+
+        // tampilkan pilihan
+        gotoxy(col, row);
+        printf("%-20s", temp);
     }
 }
 
@@ -421,18 +420,27 @@ void createKendaraan() {
         printf("ID Kendaraan : %s", data.id_kendaraan);
 
         // ===== KATEGORI =====
-        gotoxy(37, 29); printf("Kategori     : ");
-        setPointer(30, 53);
-        inputKategoriKendaraan(data.kategori);
+        gotoxy(37, 29);
+        printf("Kategori     : ");
+
+        gotoxy(37, 30);
+        printf("(E=Ekonomi  B=Bisnis  X=Executive)");
+
+        setPointer(29, 53);
+        inputKategoriKendaraan(data.kategori, 29, 52);
+
         if (strlen(data.kategori) == 0) {
-            fclose(fp);
-            return;
+        fclose(fp);
+        return;
         }
+
+        // hapus keterangan setelah dipilih
+        clearArea(37, 30, 60, 1);
 
         // ===== KAPASITAS =====
         gotoxy(37, 30); printf("Kapasitas    : ");
-        setPointer(31, 53);
-        inputKapasitas2Digit(data.kapasitas);
+        setPointer(30, 53);
+        inputKapasitas2Digit(data.kapasitas, 30, 52);
         if (strlen(data.kapasitas) == 0) {
             fclose(fp);
             return;
@@ -441,7 +449,7 @@ void createKendaraan() {
         // ===== FASILITAS =====
         gotoxy(37, 31); printf("Fasilitas    : ");
         setPointer(32, 53);
-        inputFasilitas(data.fasilitas, sizeof(data.fasilitas));
+        inputFasilitas(data.fasilitas, 31, 52);
         if (strlen(data.fasilitas) == 0) {
             fclose(fp);
             return;
@@ -450,9 +458,7 @@ void createKendaraan() {
         // ===== NAMA ARMADA =====
         gotoxy(37, 32); printf("Nama Armada  : ");
         setPointer(33, 53);
-        inputNamaArmada(data.nama_armada);
-
-
+        inputNamaArmada(data.nama_armada, 32, 52);
         if (strlen(data.nama_armada) == 0) {
             fclose(fp);
             return;
@@ -461,7 +467,7 @@ void createKendaraan() {
         // ===== TAHUN =====
         gotoxy(37, 33); printf("Tahun        : ");
         setPointer(34, 53);
-        inputTahun(data.tahun);
+        inputTahun(data.tahun, 33, 52);
         if (strlen(data.tahun) == 0) {
             fclose(fp);
             return;
@@ -479,15 +485,32 @@ void createKendaraan() {
             printf("[Layak | Umur %d th]", umur);
         }
 
+        // ===== STATUS =====
+        gotoxy(37, 34);
+        printf("Status       : ");
+
+        gotoxy(37, 35);
+        printf("(T=Tersedia  M=Maintenance  D=Perjalanan  N=Tidak aktif)");
+
+        setPointer(34, 52);
+        inputStatusKendaraan(data.status, 34, 52);
+
+        if (strlen(data.status) == 0) {
+            fclose(fp);
+            return;
+        }
+
+        // hapus keterangan status setelah dipilih
+        clearArea(37, 35, 80, 1);
 
         // ===== SIMPAN =====
         fwrite(&data, sizeof(Kendaraan), 1, fp);
         fclose(fp);
 
-        gotoxy(37, 34);
+        gotoxy(37, 36);
         printf("Data kendaraan berhasil dibuat!");
 
-        gotoxy(37, 35);
+        gotoxy(37, 37);
         printf("Tambah lagi? (y/n): ");
 
         while (1) {
