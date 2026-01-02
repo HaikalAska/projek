@@ -23,7 +23,7 @@ void  menujadwal() {
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
         tampilanlogin("GAMBARASCI.txt", 60, 3);
         gotoxy(11,5); printf("Kelompok 5");
-        bacaJadwal();
+        bacajadwal();
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
@@ -43,10 +43,10 @@ void  menujadwal() {
                 buatjadwal();
                 break;
             case 2:
-                deleteJadwal();
+                hapusjadwal();
                 break;
             case 3:
-                updateJadwal();
+                perbaruijadwal();
                 break;
             case 4:
                 menuStaff();
@@ -54,6 +54,5 @@ void  menujadwal() {
         }
     }
 }
-
 
 #endif //PROJEK_MENUJADWAL_H
