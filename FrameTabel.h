@@ -260,6 +260,55 @@ void waitEsc() {
     }
 //=============================================//
 
+
+
+//=============================================//
+//==========INPUT 7 DIGIT ANGKA================//
+float inputangka7digit(int x, int y, int *isEsc) {
+    char buffer[8] = ""; // 7 digit + '\0'
+    int len = 0;
+    char ch;
+
+    *isEsc = 0;
+
+    while (1) {
+        ch = getch();
+
+        // ESC ditekan
+        if (ch == 27) {
+            *isEsc = 1;
+            return 0;
+        }
+
+        // ENTER
+        if (ch == 13 && len > 0) {
+            buffer[len] = '\0';
+            return atof(buffer);
+        }
+
+        // BACKSPACE
+        if (ch == 8 && len > 0) {
+            len--;
+            buffer[len] = '\0';
+
+            gotoxy(x, y);
+            printf("       "); // hapus tampilan
+            gotoxy(x, y);
+            printf("%s", buffer);
+        }
+
+        // ANGKA 0–9 (maks 7 digit)
+        if (ch >= '0' && ch <= '9' && len < 7) {
+            buffer[len++] = ch;
+            buffer[len] = '\0';
+
+            gotoxy(x, y);
+            printf("%s", buffer);
+        }
+    }
+}
+//=============================================//
+
 //=============================================//
 //========TAMPILAN HARGA TIKET=================//
 void tampilanhargatiket(float harga) {
