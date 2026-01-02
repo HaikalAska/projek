@@ -167,7 +167,7 @@ void PesanTiket() {
             float dibayar;
             float kembalian;
             bentukframe(88, 34, 40, 8);
-            gotoxy(100,34); printf("CASH");
+            gotoxy(100,34); printf("CASH" );
 
             gotoxy(90, 36);
             printf("Dibayar        : ");
