@@ -262,6 +262,36 @@ void waitEsc() {
 
 
 
+//=============================================//
+//========TAMPILAN HARGA TIKET=================//
+void tampilanhargatiket(float harga) {
+    if (harga >= 1000000) {
+        // 7 digit atau lebih → x.xxx.xxx
+        printf("Rp%.0f.%03.0f.%03.0f,00",
+               harga / 1000000,
+               ((long)(harga / 1000)) % 1000,
+               (long)harga % 1000);
+    }
+    else if (harga >= 100000) {
+        // 6 digit → xxx.xxx
+        printf("Rp%.0f.%03.0f,00",
+               harga / 1000,
+               (long)harga % 1000);
+    }
+    else if (harga >= 10000) {
+        // 5 digit → xx.xxx
+        printf("Rp%.0f.%03.0f,00",
+               harga / 1000,
+               (long)harga % 1000);
+    }
+    else {
+        // cadangan (di bawah 5 digit)
+        printf("Rp%.0f,00", harga);
+    }
+}
+//=====================================================//
+
+
 //===============================================================//
 //==========================INPUT NO TELPON=====================//
 static void inputNoTelp(char *notlpn, int x, int y) {
