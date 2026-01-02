@@ -161,6 +161,42 @@ void PesanTiket() {
             return;
         }
 
+        if (strcmp(data.metode_bayar, "Cash") == 0) {
+
+            float dibayar;
+            float kembalian;
+            bentukframe(88, 34, 40, 8);
+            gotoxy(100,34); printf("CASH" );
+
+            gotoxy(90, 36);
+            printf("Dibayar        : ");
+            scanf("%f", &dibayar);
+
+            gotoxy(90, 36);
+            printf("Dibayar        : ");
+            tampilanhargatiket(dibayar);
+
+            gotoxy(90, 37);
+            printf("Harga          : ");
+            tampilanhargatiket(data.harga);
+
+            gotoxy(90, 38);
+            printf("------------------------------");
+
+            kembalian = dibayar - data.harga;
+
+            gotoxy(90, 39);
+            if (kembalian < 0) {
+                printf("Kembalian      : Uang kurang!");
+                getch();
+                fclose(fp_tiket);
+                return;
+            }
+
+            printf("Kembalian      : ");
+            tampilanhargatiket(kembalian);
+        }
+
         getCurrentDate(data.tanggal_booking);
         strcpy(data.status, "Aktif");
 
