@@ -46,7 +46,7 @@ void PesanTiket() {
     gotoxy(4,36); printf("[ESC] Keluar");
 
     // tampilkan tabel jadwal
-    bacaJadwal();
+    bacajadwal();
 
     char n;
 
@@ -105,7 +105,7 @@ void PesanTiket() {
         // ================= COPY DATA JADWAL =================
         strcpy(data.rute_awal, jadwal_data.kotaAsal);
         strcpy(data.tujuan, jadwal_data.kotaTujuan);
-        strcpy(data.nama_armada, jadwal_data.armada);
+        strcpy(data.nama_armada, jadwal_data.nama_armada);
         strcpy(data.tanggal_berangkat, jadwal_data.tanggal);
         strcpy(data.jam_berangkat, jadwal_data.jamBerangkat);
         data.harga = jadwal_data.harga;
