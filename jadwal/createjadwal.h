@@ -522,9 +522,9 @@ if (liatrute() == -1)
         ch = _getch();
 
         // ===== ESC =====
-        // if (ch == 27) {
-        //     return -1;
-        // }
+        if (ch == 27) {
+            return -1;
+        }
 
         // ===== ENTER =====
         if (ch == 13) {
@@ -615,6 +615,7 @@ void buatjadwal() {
         int hasil = pilihrute(&r);
 
         if (hasil == -1) {
+            clearArea(35,28,80,25);
             return;
         }
 
@@ -644,7 +645,6 @@ void buatjadwal() {
 
         j.kendaraan = kendaraan;
 
-        j.kendaraan = kendaraan;
 
         gotoxy(37,33);
         printf("Armada          : %s", k.nama_armada);
@@ -668,6 +668,13 @@ void buatjadwal() {
         gotoxy(37,37);
         printf("Tambah lagi? (y/n): ");
 
+        // dari rute
+
+
+        // dari kendaraan
+
+
+
         while (1) {
             x = _getch();
             if (x == 27) {
@@ -682,4 +689,5 @@ void buatjadwal() {
 
     } while (x == 'y' || x == 'Y');
 }
+
 #endif // PROJEK_CREATEJADWAL_H
