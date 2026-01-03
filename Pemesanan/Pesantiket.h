@@ -14,7 +14,7 @@ typedef struct {
     char nama_armada[30];
     char tanggal_berangkat[15];
     char jam_berangkat[10];
-    float harga;
+    long harga;
     char tanggal_booking[15];
     char metode_bayar[10];
     char status[20];
@@ -162,14 +162,13 @@ void PesanTiket() {
         }
 
         if (strcmp(data.metode_bayar, "Cash") == 0) {
-            float dibayar = 0;
-            float kembalian = 0;
+            long dibayar = 0;
+            long kembalian = 0;
             int escPressed;
 
             bentukframe(87, 34, 36, 9);
             gotoxy(103,35); printf("CASH");
 
-            // ===== TAMPILAN AWAL =====
             gotoxy(90, 37); printf("Dibayar        : ");
             gotoxy(90, 38); printf("Harga          : ");
             tampilanhargatiket(data.harga);

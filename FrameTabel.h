@@ -264,7 +264,7 @@ void waitEsc() {
 
 //=============================================//
 //==========INPUT 7 DIGIT ANGKA================//
-float inputangka7digit(int x, int y, int *isEsc) {
+long inputangka7digit(int x, int y, int *isEsc) {
     char buffer[8] = ""; // 7 digit + '\0'
     int len = 0;
     char ch;
@@ -311,31 +311,32 @@ float inputangka7digit(int x, int y, int *isEsc) {
 
 //=============================================//
 //========TAMPILAN HARGA TIKET=================//
-void tampilanhargatiket(float harga) {
+void tampilanhargatiket(long harga) {
     if (harga >= 1000000) {
-        // 7 digit atau lebih → x.xxx.xxx
-        printf("Rp%.0f.%03.0f.%03.0f,00",
+        // x.xxx.xxx
+        printf("Rp%ld.%03ld.%03ld,00",
                harga / 1000000,
-               ((long)(harga / 1000)) % 1000,
-               (long)harga % 1000);
+               (harga / 1000) % 1000,
+               harga % 1000);
     }
     else if (harga >= 100000) {
-        // 6 digit → xxx.xxx
-        printf("Rp%.0f.%03.0f,00",
+        // xxx.xxx
+        printf("Rp%ld.%03ld,00",
                harga / 1000,
-               (long)harga % 1000);
+               harga % 1000);
     }
     else if (harga >= 10000) {
-        // 5 digit → xx.xxx
-        printf("Rp%.0f.%03.0f,00",
+        // xx.xxx
+        printf("Rp%ld.%03ld,00",
                harga / 1000,
-               (long)harga % 1000);
+               harga % 1000);
     }
     else {
-        // cadangan (di bawah 5 digit)
-        printf("Rp%.0f,00", harga);
+        // di bawah 10 ribu
+        printf("Rp%ld,00", harga);
     }
 }
+
 //=====================================================//
 
 
