@@ -319,7 +319,7 @@ void tampilanhargatiket(long harga) {
                (harga / 1000) % 1000,
                harga % 1000);
     }
-    else if (harga >= 100000) {
+    else if (harga >= 100000 ) {
         // xxx.xxx
         printf("Rp%ld.%03ld,00",
                harga / 1000,

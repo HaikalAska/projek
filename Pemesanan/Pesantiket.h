@@ -184,7 +184,7 @@ void PesanTiket() {
 
                 // INPUT DIBAYAR
                 gotoxy(107, 37);
-                dibayar = inputangka7digit(107, 37, &escPressed);
+                dibayar = inputangka7digit(107, 37, &escPressed );
 
                 // ESC ditekan
                 if (escPressed) {
