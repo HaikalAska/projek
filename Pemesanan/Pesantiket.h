@@ -113,8 +113,8 @@ void PesanTiket() {
         gotoxy(37, 30); printf("Rute           : %s → %s", data.rute_awal, data.tujuan);
         gotoxy(37, 31); printf("Armada         : %s", data.nama_armada);
         gotoxy(37, 32);printf("Berangkat      : %s | %s",data.tanggal_berangkat, data.jam_berangkat);
-        gotoxy(37, 33); printf("Harga          : Rp%.2f", data.harga);
-
+        gotoxy(37, 33); printf("Harga          : ");
+        tampilanhargatiket(data.harga);
 
 
 
@@ -162,40 +162,64 @@ void PesanTiket() {
         }
 
         if (strcmp(data.metode_bayar, "Cash") == 0) {
+            float dibayar = 0;
+            float kembalian = 0;
+            int escPressed;
 
-            float dibayar;
-            float kembalian;
-            bentukframe(88, 34, 40, 8);
-            gotoxy(100,34); printf("CASH" );
+            bentukframe(87, 34, 36, 9);
+            gotoxy(103,35); printf("CASH");
 
-            gotoxy(90, 36);
-            printf("Dibayar        : ");
-            scanf("%f", &dibayar);
-
-            gotoxy(90, 36);
-            printf("Dibayar        : ");
-            tampilanhargatiket(dibayar);
-
-            gotoxy(90, 37);
-            printf("Harga          : ");
+            // ===== TAMPILAN AWAL =====
+            gotoxy(90, 37); printf("Dibayar        : ");
+            gotoxy(90, 38); printf("Harga          : ");
             tampilanhargatiket(data.harga);
 
-            gotoxy(90, 38);
-            printf("------------------------------");
+            gotoxy(90, 39); printf("------------------------------");
+            gotoxy(90, 40); printf("Kembalian      : ");
 
-            kembalian = dibayar - data.harga;
+            do {
+                // Kosongkan nilai input & kembalian
+                gotoxy(107, 37); printf("           ");
+                gotoxy(107, 40); printf("           ");
+                gotoxy(107, 41); printf("           ");
 
-            gotoxy(90, 39);
-            if (kembalian < 0) {
-                printf("Kembalian      : Uang kurang!");
-                getch();
-                fclose(fp_tiket);
-                return;
-            }
+                // INPUT DIBAYAR
+                gotoxy(107, 37);
+                dibayar = inputangka7digit(107, 37, &escPressed);
 
-            printf("Kembalian      : ");
+                // ESC ditekan
+                if (escPressed) {
+                    fclose(fp_tiket);
+                    return;
+                }
+
+                // Tampilkan dibayar
+                gotoxy(107, 37);
+                tampilanhargatiket(dibayar);
+
+                kembalian = dibayar - data.harga;
+
+                // Jika uang kurang
+                if (kembalian < 0) {
+                    gotoxy(90, 41);
+                    printf("Uang kurang!");
+
+                    Sleep(800);
+
+                    gotoxy(90, 41);
+                    printf("             "); // hapus pesan
+
+                    continue;
+                }
+
+            } while (kembalian < 0);
+
+            // ===== TAMPILKAN KEMBALIAN =====
+            gotoxy(107, 40);
             tampilanhargatiket(kembalian);
         }
+
+
 
         getCurrentDate(data.tanggal_booking);
         strcpy(data.status, "Aktif");
