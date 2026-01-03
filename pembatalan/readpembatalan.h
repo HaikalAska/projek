@@ -1,32 +1,18 @@
-//
-// Created by Asus on 16/12/2025.
-//
-
-#ifndef PROJEK_READPEMBATALAN_H
-#define PROJEK_READPEMBATALAN_H
-
-#include <stdio.h>
-#include <conio.h>
-#include <string.h>
-#include "../FrameTabel.h"
-#include "createpembatalan.h"
-
-// ===== Paging =====
-#define MAX_ROWS_PER_PAGE 8
-
 void readPembatalan() {
 
     FILE *fp;
     pembatalan all_data[1000];
     int total_data = 0;
 
-    int startX = 47;
+    int startX = 36;
     int startY = 12;
 
     // ===== Lebar kolom =====
-    int wNo          = 3;
-    int wIdPesan     = 15;
-    int wRefund      = 15;
+    int wNo      = 3;
+    int wIdPesan = 14;
+    int wTanggal = 14;
+    int wRefund  = 6;    // dipersempit
+    int wIdStaf  = 14;
 
     int current_page = 1;
     int total_pages = 1;
@@ -34,7 +20,6 @@ void readPembatalan() {
 
     bentukframe(34, 11, 121, 35);
 
-    // ===== Buka file =====
     fp = fopen("pembatalan.dat", "rb");
     if (!fp) {
         gotoxy(startX, startY);
@@ -45,30 +30,27 @@ void readPembatalan() {
 
     pembatalan data;
     while (fread(&data, sizeof(pembatalan), 1, fp)) {
-        if (total_data < 1000) {
-            all_data[total_data++] = data;
-        }
+        all_data[total_data++] = data;
     }
     fclose(fp);
 
-    if (total_data > 0) {
-        total_pages = (total_data + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
-    }
+    total_pages = (total_data + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
 
-    // ===== Garis tabel =====
     int totalWidth = 1 +
                      (wNo + 2) +
                      (wIdPesan + 2) +
-                     (wRefund + 5);
+                     (wTanggal + 2) +
+                     (wRefund +  7) +
+                     (wIdStaf + 2);
 
-    char line[200];
+    char line[300];
     memset(line, '-', totalWidth);
     line[totalWidth] = '\0';
 
     do {
-        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 10);
+        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 12);
 
-        gotoxy(78, 13);
+        gotoxy(75, 13);
         printf("=== DAFTAR PEMBATALAN ===");
 
         int row = startY + 2;
@@ -76,12 +58,14 @@ void readPembatalan() {
         gotoxy(startX, row++);
         printf("%s", line);
 
-        // ===== HEADER =====
+        // ===== HEADER (TANPA ID BATAL) =====
         gotoxy(startX, row++);
-        printf("| %-*s | %-*s | %-*s |",
+        printf("| %-*s | %-*s | %-*s | %-*s | %-*s |",
                wNo,      "No",
-               wIdPesan, "ID Pemesanan",
-               wRefund,  "Pengembalian"
+               wIdPesan, "ID Pesan",
+               wTanggal, "Tanggal",
+               wRefund, "Refund",
+               wIdStaf, "ID Staf"
         );
 
         gotoxy(startX, row++);
@@ -96,11 +80,14 @@ void readPembatalan() {
             pembatalan p = all_data[i];
 
             gotoxy(startX, row++);
-            printf("| %-*d | %-*s | %-*.0f%% |",
-                   wNo,      i + 1,
-                   wIdPesan, p.id_pemesanan,
-                   wRefund - 1, p.pengembalian*100
-            );
+            printf("| %-*d | %-*s | %-*s | %-*s | %-*s |",
+        wNo,      i + 1,
+        wIdPesan, p.id_pemesanan,
+        wTanggal, p.tanggal_pembatalan,
+        wRefund,  "70%",
+        wIdStaf,  p.id_staf
+ );
+
         }
 
         gotoxy(startX, row++);
@@ -116,16 +103,8 @@ void readPembatalan() {
 
         key = getch();
 
-        if (key == ' ') {
-            if (current_page < total_pages) current_page++;
-        }
-        else if (key == 8) {
-            if (current_page > 1) current_page--;
-        }
+        if (key == ' ' && current_page < total_pages) current_page++;
+        else if (key == 8 && current_page > 1) current_page--;
 
     } while (key != 13);
 }
-
-
-
-#endif //PROJEK_READPEMBATALAN_H

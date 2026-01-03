@@ -18,7 +18,7 @@ typedef struct {
 } Kendaraan;
 
 // ================= INPUT ANGKA (UNTUK KAPASITAS) =================
-static void inputAngka(char *angka, int maxLen) {
+ void inputAngka(char *angka, int maxLen) {
     int i = 0;
     char ch;
 

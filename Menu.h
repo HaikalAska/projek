@@ -5,6 +5,7 @@
 #include "superadmin/KelolaStaff.h"
 #include "Kendaraan/menuKendaraan.h"
 #include "rute/menurute.h"
+#include "pemesanantiket.h"
 
 
 void validLogin();
@@ -78,7 +79,7 @@ void validLogin();
 
         switch (pilih) {
             case 1:
-
+                pemesanantiket();
                 break;
             case 2:
                 menukendaraan();

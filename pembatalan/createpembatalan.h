@@ -1,10 +1,5 @@
-//
-// Created by Asus on 16/12/2025.
-//
-
 #ifndef PROJEK_CREATEPEMBATALAN_H
 #define PROJEK_CREATEPEMBATALAN_H
-
 
 #include "../FrameTabel.h"
 
@@ -12,124 +7,150 @@
 typedef struct {
     char id_pembatalan[20];
     char id_pemesanan[20];
+    char tanggal_pembatalan[15];
     float pengembalian;
+    char id_staf[20];
 } pembatalan;
 
 // ================= DEKLARASI ================= //
 int getPembatalanCount();
-void inputAngka(char *data, int row, int col, int maxLen) {
+
+// ================= INPUT ANGKA ================= //
+void inputAngka3Digit(char *angka, int row, int col) {
     int i = 0;
     char ch;
 
     gotoxy(col, row);
 
-    while (1) {
+    while (i < 3) {
         ch = getch();
 
-        // ENTER
-        if (ch == 13) {
-            if (i == 0) {
-                gotoxy(col, row);
-                printf("Tidak boleh kosong!");
-                Sleep(800);
-                clearArea(col, row, maxLen, 1);
-                gotoxy(col, row);
-                i = 0;
-                continue;
-            }
-            data[i] = '\0';
-            break;
-        }
-
-        // ESC
-        else if (ch == 27) {
-            data[0] = '\0';
-            break;
+        // ESC → batal
+        if (ch == 27) {
+            angka[0] = '\0';
+            return;
         }
 
         // BACKSPACE
-        else if (ch == 8 && i > 0) {
+        if (ch == 8 && i > 0) {
             i--;
-            printf("\b \b");
+            gotoxy(col + i, row);
+            printf(" ");
+            gotoxy(col + i, row);
+            continue;
         }
 
         // HANYA ANGKA
-        else if (ch >= '0' && ch <= '9') {
-            if (i < maxLen - 1) {
-                data[i++] = ch;
-                printf("%c", ch);
-            }
+        if (ch >= '0' && ch <= '9') {
+            angka[i++] = ch;
+            printf("%c", ch);
         }
     }
+
+    // AUTO SELESAI (LOCK)
+    angka[3] = '\0';
 }
+
+
+// ================= INPUT TANGGAL ================= //
+void inputTanggalpembatalan(char *tgl, int row, int col) {
+    int i = 0;
+    char ch;
+
+    gotoxy(col, row);
+
+    while (i < 8) {   // DD/MM/YY = 8 karakter
+        ch = getch();
+
+        // ESC → batal
+        if (ch == 27) {
+            tgl[0] = '\0';
+            return;
+        }
+
+        // BACKSPACE
+        if (ch == 8 && i > 0) {
+            i--;
+            gotoxy(col + i, row);
+            printf(" ");
+            gotoxy(col + i, row);
+            continue;
+        }
+
+        // HANYA ANGKA
+        if (ch >= '0' && ch <= '9') {
+
+            // posisi slash otomatis
+            if (i == 2 || i == 5) {
+                tgl[i] = '/';
+                printf("/");
+                i++;
+            }
+
+            tgl[i] = ch;
+            printf("%c", ch);
+            i++;
+        }
+    }
+
+    // AUTO SELESAI (tidak bisa input lagi)
+    tgl[8] = '\0';
+}
+
 
 // ================= CREATE PEMBATALAN ================= //
 void createPembatalan() {
     char n;
 
     do {
-        bentukframe(35, 27, 108, 9);
-        gotoxy(75, 27); printf("=== BUAT PEMBATALAN ===");
+        bentukframe(35, 26, 108, 12);
+        gotoxy(70, 26); printf("=== BUAT PEMBATALAN ===");
 
         FILE *fp = fopen("pembatalan.dat", "ab");
         if (!fp) return;
 
         pembatalan data;
+        char angka[10];
 
-        // ================= ID PEMBATALAN (AUTO) ================= //
+        // ===== ID PEMBATALAN (AUTO PENUH) =====
         int count = getPembatalanCount() + 1;
         sprintf(data.id_pembatalan, "BTL%03d", count);
+        gotoxy(37, 27); printf("ID Pembatalan     : %s", data.id_pembatalan);
 
-        gotoxy(37, 28);
-        printf("ID Pembatalan : %s", data.id_pembatalan);
+        // ===== ID PEMESANAN (PSN + ANGKA) =====
+        strcpy(data.id_pemesanan, "PSN");
+        gotoxy(37, 28); printf("ID Pemesanan      : PSN");
+        inputAngka3Digit(angka, 28, 60 );
+        if (strlen(angka) == 0) { fclose(fp); return; }
+        strcat(data.id_pemesanan, angka);
 
-        // ================= ID PEMESANAN ================= //
-        gotoxy(37, 29); printf("ID Pemesanan  : ");
-        inputAngka(data.id_pemesanan, 29, 53, 20);
+        // ===== TANGGAL =====
+        gotoxy(37, 29); printf("Tanggal Pembatalan: ");
+        inputTanggalpembatalan(data.tanggal_pembatalan, 29, 57);
+        if (strlen(data.tanggal_pembatalan) == 0) { fclose(fp); return; }
 
-        if (strlen(data.id_pemesanan) == 0) {
-            fclose(fp);
-            return;
-        }
+        // ===== PENGEMBALIAN =====
+        gotoxy(37, 30); printf("Pengembalian      : 70%%");
+        data.pengembalian = 0.7f;
 
-        // ================= PENGEMBALIAN (AUTO 70%) ================= //
-        gotoxy(37, 30); printf("Pengembalian  : ");
-        gotoxy(53, 30);
-        printf("70%%");               // tampil di layar
+        // ===== ID STAF (STF + ANGKA) =====
+        strcpy(data.id_staf, "STF");
+        gotoxy(37, 31); printf("ID Staf           : STF");
+        inputAngka3Digit(angka, 31, 60);
+        if (strlen(angka) == 0) { fclose(fp); return; }
+        strcat(data.id_staf, angka);
 
-        // tunggu ENTER atau ESC
-        char ch;
-        while (1) {
-            ch = getch();
-            if (ch == 13) {          // ENTER
-                data.pengembalian = 0.7f;  // simpan 70%
-                break;
-            }
-            else if (ch == 27) {     // ESC
-                fclose(fp);
-                return;
-            }
-        }
-
-
-        // ================= SIMPAN ================= //
+        // ===== SIMPAN =====
         fwrite(&data, sizeof(pembatalan), 1, fp);
         fclose(fp);
 
-        gotoxy(37, 31);
-        printf("Data pembatalan berhasil dibuat!");
-
-        gotoxy(37, 32);
-        printf("Tambah lagi? (y/n): ");
+        gotoxy(37, 32); printf("Data pembatalan berhasil disimpan!");
+        gotoxy(37, 33); printf("Tambah lagi? (y/n): ");
 
         while (1) {
-            n = _getch();
-            if (n == 27) {
-                clearArea(35, 27, 80, 9);
-                return;
-            }
+            n = getch();
             if (n == 'y' || n == 'Y' || n == 'n' || n == 'N') {
-                clearArea(35, 27, 80, 9);
+                clearArea(35, 26, 80, 12);
                 if (n == 'n' || n == 'N') return;
                 break;
             }
@@ -152,7 +173,16 @@ int getPembatalanCount() {
 void buatdummy_pembatalan_ke_file() {
     FILE *fp;
     pembatalan data;
-    int max_data = 30;   // jumlah data dummy
+    int max_data = 40;   // jumlah data dummy
+
+    // ===== DATA TANGGAL DUMMY (DD/MM/YY) =====
+    char *tanggal_dummy[] = {
+        "01/01/24", "05/01/24", "10/01/24", "15/01/24",
+        "20/01/24", "25/01/24", "30/01/24",
+        "04/02/24", "09/02/24", "14/02/24"
+    };
+
+    int total_tgl = sizeof(tanggal_dummy) / sizeof(tanggal_dummy[0]);
 
     fp = fopen("pembatalan.dat", "wb");
     if (!fp) {
@@ -165,18 +195,22 @@ void buatdummy_pembatalan_ke_file() {
 
     for (int i = 0; i < max_data; i++) {
 
-        // ================= ID PEMBATALAN (AUTO) =================
+        // ===== ID PEMBATALAN (BTL001, BTL002, ...) =====
         sprintf(data.id_pembatalan, "BTL%03d", i + 1);
 
-        // ================= ID PEMESANAN (ANGKA SAJA) =================
-        // sesuai inputAngka()
-        sprintf(data.id_pemesanan, "%d", 0 + i + 1);
-        // contoh: 1001, 1002, 1003, ...
+        // ===== ID PEMESANAN (PSN001 - PSN999) =====
+        sprintf(data.id_pemesanan, "PSN%03d", (i % 999) + 1);
 
-        // ================= PENGEMBALIAN (70%) =================
-        data.pengembalian = 0.7f;   // 70%
+        // ===== TANGGAL PEMBATALAN (DD/MM/YY) =====
+        strcpy(data.tanggal_pembatalan, tanggal_dummy[i % total_tgl]);
 
-        // ================= SIMPAN =================
+        // ===== PENGEMBALIAN (70%) =====
+        data.pengembalian = 0.7f;
+
+        // ===== ID STAF (STF001 - STF015) =====
+        sprintf(data.id_staf, "STF%03d", (i % 15) + 1);
+
+        // ===== SIMPAN KE FILE =====
         fwrite(&data, sizeof(pembatalan), 1, fp);
     }
 
@@ -188,5 +222,4 @@ void buatdummy_pembatalan_ke_file() {
 }
 
 
-
-#endif //PROJEK_CREATEPEMBATALAN_H
+#endif

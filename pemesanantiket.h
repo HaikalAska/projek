@@ -7,6 +7,7 @@
 
 #include "login.h"
 #include "Menu.h"
+#include "pembatalan/pembatalan.h"
 
 
 
@@ -40,6 +41,7 @@ void pemesanantiket() {
 
         switch (pilih) {
         case 1:
+            menupembatalan();
             break;
         case 2:
            // menuStaff();
