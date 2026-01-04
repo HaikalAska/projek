@@ -6,7 +6,7 @@
 #define PROJEK_PEMESANANTIKET_H
 
 #include "Pemesanan/Pesantiket.h"
-#include "pembatalan/pembatalan.h"
+#include "pembatalan/pengembaliantiket.h"
 
 static void menuStaff();
 
@@ -42,7 +42,7 @@ void pemesanantiket() {
                 PesanTiket();
             break;
         case 2:
-                menupembatalan();
+                BatalTiket();
             break;
         case 3:
                 menuStaff();
