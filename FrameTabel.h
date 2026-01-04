@@ -989,4 +989,34 @@ void tabelData(int startX, int startY, int maxId, int maxUsr, int maxPw, int row
     printf("%s", line);
 }
 
+
+
+
+
+///////////////////////////////////////////////////////////////
+//                QR CODE                                   //
+//////////////////////////////////////////////////////////////
+void printQRCodeFromFile(char* filename, int startX, int startY) {
+    FILE *file = fopen(filename, "r");
+
+    if (file == NULL) {
+        printf("Error: File tidak ditemukan!\n");
+        return;
+    }
+
+    char line[256];
+    int y = 0;
+
+    while (fgets(line, sizeof(line), file)) {
+        // Hapus newline di akhir baris
+        line[strcspn(line, "\n")] = 0;
+
+        gotoxy(startX, startY + y);
+        printf("%s", line);
+        y++;
+    }
+
+    fclose(file);
+}
+
 #endif
