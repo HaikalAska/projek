@@ -80,7 +80,7 @@ void readKendaraan() {
 
         int row = startY + 2;
 
-        gotoxy(startX, row++);
+        gotoxy(startX, row++ );
         printf("%s", line);
 
         gotoxy(startX, row++);
