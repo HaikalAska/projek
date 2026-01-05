@@ -129,7 +129,7 @@ void updateKendaraan() {
             }
 
             // ================= 2. KAPASITAS =================
-            gotoxy(85, 33); printf(">>"); // Panah aktif
+            gotoxy(85, 33 ); printf(">>"); // Panah aktif
             clearArea(inputX, 33, 35, 1);
             strcpy(tempData, data.kapasitas);
             gotoxy(inputX, 33);

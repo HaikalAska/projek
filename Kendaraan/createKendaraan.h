@@ -480,7 +480,7 @@ void createKendaraan() {
 
         gotoxy(85, 33);
         if (umur > 10) {
-            printf("[Tidak Layak | Umur %d th]", umur);
+            printf("[Tidak Layak | Umur %d th] ", umur);
         } else {
             printf("[Layak | Umur %d th]", umur);
         }

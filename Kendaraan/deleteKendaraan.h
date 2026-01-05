@@ -38,7 +38,7 @@ void deleteKendaraan() {
 
     if (count == 0) {
         gotoxy(3, 13);
-        printf("Tidak ada data kendaraan!");
+        printf("Tidak ada data kendaraan! ");
         getch();
         return;
     }
