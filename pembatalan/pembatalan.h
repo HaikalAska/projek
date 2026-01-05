@@ -32,7 +32,7 @@ void menupembatalan() {
         bentukframe(34, 1, 121, 10);    // Header ASCII
         bentukframe(3, 4, 27, 3);       // Kelompok
 
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(11, 5); printf("Kelompok 5");
 
         // ===== TAMPIL DATA PROMO =====

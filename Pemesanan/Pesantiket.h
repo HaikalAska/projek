@@ -39,7 +39,7 @@ void PesanTiket() {
         bentukframe(2, 1, 30, 45);
         bentukframe(34, 1, 121, 10);
         bentukframe(3, 4, 27, 3);
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(8,5); printf("Kelompok 5");
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("=== MENU NAVIGASI ===");
@@ -461,5 +461,31 @@ static void inputEmailGmail(char *email, int x, int y) {
         }
         // selain itu diabaikan
     }
+}
+
+
+///////////////////////////////////////////////
+//              TRANSAKSI                   //
+//////////////////////////////////////////////
+void transaksi(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    tiket data;
+    int total = 0;
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        total++;
+    }
+
+    fclose(fp);
+
+    gotoxy(x, y);
+    printf("%d", total);
 }
 #endif
