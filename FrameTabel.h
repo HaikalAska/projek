@@ -1,6 +1,7 @@
 #ifndef PROJEK_FRAMETABEL_H
 #define PROJEK_FRAMETABEL_H
 
+
 //==================================================================//
 //=====================buat nampilin ASCI nya======================//
 static void tampilanlogin(char *filename, int startX, int startY) {
@@ -1088,5 +1089,8 @@ void bentukTabel(int posX, int posY, int width, int height, char *headerText) {
     for (int i = 0; i < width - 2; i++) printf("═");
     printf("╝");
 }
+
+
+
 
 #endif

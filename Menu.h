@@ -8,6 +8,7 @@
 #include "jadwal/menujadwal.h"
 #include "pemesanantiket.h"
 #include "Laporan-Manager/laporan.h"
+#include "pembatalan/createpembatalan.h"
 
 
 void validLogin();
@@ -129,14 +130,14 @@ void validLogin();
 
 
         bentukTabel(67, 17, 30, 7, "TOTAL TRANSAKSI");
-        transaksi(80,21);
+        transaksi(81,21);
 
         bentukTabel(100, 17, 30, 7, "TOTAL PENGEMBALIAN");
-        //pengembalian();
+        pengembalian(114,21);
 
 
         bentukTabel(35, 25, 95, 7, "TOTAL PENDAPATAN");
-        //pendaparan();
+        pendapatan(79,29);
 
 
         pilih = menuNavigasi(2, 13, 2);

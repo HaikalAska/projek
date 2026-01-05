@@ -3,6 +3,7 @@
 
 #include "../FrameTabel.h"
 #include <time.h>
+#include "../pembatalan/createpembatalan.h"
 
 // ================= STRUCT =================
 typedef struct {
@@ -15,6 +16,7 @@ typedef struct {
     char tanggal_berangkat[15];
     char jam_berangkat[10];
     long harga;
+    long hargaTtiket;
     char tanggal_booking[15];
     char metode_bayar[10];
     char status[20];
@@ -487,4 +489,67 @@ void transaksi(int x, int y) {
     gotoxy(x, y);
     printf("%d", total);
 }
+
+void hitungtotalhargatiket() {
+    FILE *fp;
+    tiket data;
+    long total = 0;
+
+    fp = fopen("tiket.dat", "rb");
+    if (fp == NULL) {
+        gotoxy(37, 30);
+        printf("Data tiket belum tersedia!");
+        return;
+    }
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        total += data.harga;
+    }
+
+    fclose(fp);
+
+    gotoxy(37, 32);
+    printf("Total Pendapatan Tiket : ");
+    tampilanhargatiket(total);
+}
+
+
+
+void pendapatan(int x, int y) {
+
+    FILE *fpTiket, *fpRefund;
+    tiket t;
+    batal p;
+
+    long totalPenjualan = 0;
+    long totalRefund = 0;
+    long totalPendapatan;
+
+    // ================== HITUNG PENJUALAN ==================
+    fpTiket = fopen("tiket.dat", "rb");
+    if (fpTiket != NULL) {
+        while (fread(&t, sizeof(tiket), 1, fpTiket)) {
+             totalPenjualan += t.harga;
+        }
+        fclose(fpTiket);
+    }
+
+    // ================== HITUNG REFUND ==================
+    fpRefund = fopen("pembatalan.dat", "rb");
+    if (fpRefund != NULL) {
+        while (fread(&p, sizeof(batal), 1, fpRefund)) {
+            totalRefund += p.hargaTbatal;
+        }
+        fclose(fpRefund);
+    }
+
+    // ================== TOTAL PENDAPATAN ==================
+    totalPendapatan = totalPenjualan - totalRefund;
+
+    // ================== OUTPUT ==================
+    gotoxy(x, y);
+    tampilanhargatiket(totalPendapatan);
+}
+
+
 #endif
