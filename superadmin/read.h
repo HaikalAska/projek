@@ -143,8 +143,28 @@ void baca() {
         }
 
     } while (key != 13);
-    /*clearLine(24, 33, 90);
-    clearLine(25, 33, 90);*/
+
+}
+
+void totalStaff(int x, int y) {
+    FILE *fp_staff = fopen("staff.dat", "rb");
+    if (!fp_staff) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    staff data;
+    int total = 0;
+
+    while (fread(&data, sizeof(staff), 1, fp_staff)) {
+        total++;
+    }
+
+    fclose(fp_staff);
+
+    gotoxy(x, y);
+    printf("%d", total);
 }
 
 #endif

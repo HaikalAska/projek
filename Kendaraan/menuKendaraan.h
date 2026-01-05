@@ -25,7 +25,7 @@ void menukendaraan() {
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         bentukframe(3, 4, 27, 3); //INFORMASI JABATAN
         gotoxy(13,5); printf("Staff");
         gotoxy(11,2); printf("Kelompok 5");

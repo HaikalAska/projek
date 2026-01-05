@@ -450,8 +450,8 @@ int pilihkendaraan(Kendaraan *hasil) {
         }
 
         // ===== ENTER =====
-        if (ch == 13) {
-            pilihan = atoi(input);
+            if (ch == 13) {
+                 pilihan = atoi(input);
 
             if (pilihan >= 1 && pilihan <= total) {
                 *hasil = list[pilihan - 1];

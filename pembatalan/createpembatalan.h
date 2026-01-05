@@ -10,7 +10,8 @@ typedef struct {
     char tanggal_pembatalan[15];
     float pengembalian;
     char id_staf[20];
-} pembatalan;
+    long hargaTbatal;
+} batal;
 
 // ================= DEKLARASI ================= //
 int getPembatalanCount();
@@ -109,7 +110,7 @@ void createPembatalan() {
         FILE *fp = fopen("pembatalan.dat", "ab");
         if (!fp) return;
 
-        pembatalan data;
+        batal data;
         char angka[10];
 
         // ===== ID PEMBATALAN (AUTO PENUH) =====
@@ -141,7 +142,7 @@ void createPembatalan() {
         strcat(data.id_staf, angka);
 
         // ===== SIMPAN =====
-        fwrite(&data, sizeof(pembatalan), 1, fp);
+        fwrite(&data, sizeof(batal), 1, fp);
         fclose(fp);
 
         gotoxy(37, 32); printf("Data pembatalan berhasil disimpan!");
@@ -168,11 +169,11 @@ int getPembatalanCount() {
     long size = ftell(fp);
     fclose(fp);
 
-    return size / sizeof(pembatalan);
+    return size / sizeof(batal);
 }
 void buatdummy_pembatalan_ke_file() {
     FILE *fp;
-    pembatalan data;
+    batal data;
     int max_data = 40;   // jumlah data dummy
 
     // ===== DATA TANGGAL DUMMY (DD/MM/YY) =====
@@ -211,7 +212,7 @@ void buatdummy_pembatalan_ke_file() {
         sprintf(data.id_staf, "STF%03d", (i % 15) + 1);
 
         // ===== SIMPAN KE FILE =====
-        fwrite(&data, sizeof(pembatalan), 1, fp);
+        fwrite(&data, sizeof(batal), 1, fp);
     }
 
     fclose(fp);
@@ -221,5 +222,46 @@ void buatdummy_pembatalan_ke_file() {
     getch();
 }
 
+void pengembalian(int x, int y) {
+    FILE *fp_batal = fopen("pembatalan.dat","rb");
+
+    if (!fp_batal) {
+        gotoxy(x,y);
+        printf("0");
+        return;
+    }
+
+    batal b;
+    int total = 0;
+
+    while (fread(&b,sizeof(batal), 1, fp_batal)) {
+        total++;
+    }
+
+    fclose(fp_batal);
+
+    gotoxy(x,y);
+    printf("%d",total);
+}
+
+long totalHargaTbatal() {
+
+    FILE *fp;
+    batal data;
+    long total = 0;
+
+    fp = fopen("pembatalan.dat", "rb");
+    if (fp == NULL) {
+        return 0;
+    }
+
+    while (fread(&data, sizeof(batal), 1, fp)) {
+        total += data.hargaTbatal;
+    }
+
+
+    fclose(fp);
+    return total;
+}
 
 #endif
