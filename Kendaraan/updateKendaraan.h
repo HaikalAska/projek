@@ -85,9 +85,9 @@ void updateKendaraan() {
             gotoxy(85,37); printf("│ "); gotoxy(88,37); printf("Status    : ");
 
             gotoxy(88,40);
-            printf("Kategori-(E=Ekonomi  B=Bisnis  X=Executive)");
+            printf("Kategori-([E]Ekonomi [B]Bisnis  [X]Executive)");
             gotoxy(88,41);
-            printf("Status-(T=Tersedia  M=Maintenance  D=Perjalanan  N=Tidak aktif)");
+            printf("Status-([T]Tersedia  [M]Maintenance  [D]Perjalanan  [N]Tidak aktif)");
 
             // ================= TUNGGU ENTER UNTUK MULAI =================
             while (1) {

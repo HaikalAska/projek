@@ -48,9 +48,9 @@ static void inputKapasitas2Digit(char *kapasitas, int row, int col) {
             }
 
             int nilai = atoi(temp);
-            if (nilai < 1 || nilai > 60) {
+            if (nilai < 25 || nilai > 60) {
                 gotoxy(col + 5, row);
-                printf("[Kapasitas 1 - 60]");
+                printf("[Kapasitas 25 - 60]");
                 Sleep(800);
 
                 gotoxy(col + 5, row);
@@ -424,7 +424,7 @@ void createKendaraan() {
         printf("Kategori     : ");
 
         gotoxy(37, 30);
-        printf("(E=Ekonomi  B=Bisnis  X=Executive)");
+        printf("([E]Ekonomi [B]Bisnis [X]Executive)");
 
         setPointer(29, 53);
         inputKategoriKendaraan(data.kategori, 29, 52);
