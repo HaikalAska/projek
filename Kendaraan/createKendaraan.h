@@ -48,9 +48,9 @@ static void inputKapasitas2Digit(char *kapasitas, int row, int col) {
             }
 
             int nilai = atoi(temp);
-            if (nilai < 1 || nilai > 60) {
+            if (nilai < 25 || nilai > 60) {
                 gotoxy(col + 5, row);
-                printf("[Kapasitas 1 - 60]");
+                printf("[Kapasitas 25 - 60]");
                 Sleep(800);
 
                 gotoxy(col + 5, row);
