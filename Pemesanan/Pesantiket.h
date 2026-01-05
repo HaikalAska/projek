@@ -31,26 +31,24 @@ static void inputEmailGmail(char *email, int x, int y);
 
 // ================= PESAN TIKET =================
 void PesanTiket() {
-
-    system("chcp 65001 > nul");
-    fillBackground(0x90);
-    bentukframe(2, 1, 30, 45);
-    bentukframe(34, 1, 121, 10);
-    bentukframe(3, 4, 27, 3);
-    tampilanlogin("GAMBARASCI.txt", 60, 3);
-    gotoxy(8,5); printf("Kelompok 5");
-    bentukframe(3, 29, 27, 10);
-    gotoxy(5,30); printf("=== MENU NAVIGASI ===");
-    gotoxy(4,32); printf("NAVIGASI [↑ ↓]");
-    gotoxy(4,34); printf("[ENTER] Pilih");
-    gotoxy(4,36); printf("[ESC] Keluar");
-
-    // tampilkan tabel jadwal
-    bacajadwal();
-
-    char n;
+      char n;
 
     do {
+        system("chcp 65001 > nul");
+        fillBackground(0x90);
+        bentukframe(2, 1, 30, 45);
+        bentukframe(34, 1, 121, 10);
+        bentukframe(3, 4, 27, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
+        gotoxy(8,5); printf("Kelompok 5");
+        bentukframe(3, 29, 27, 10);
+        gotoxy(5,30); printf("=== MENU NAVIGASI ===");
+        gotoxy(4,32); printf("NAVIGASI [↑ ↓]");
+        gotoxy(4,34); printf("[ENTER] Pilih");
+        gotoxy(4,36); printf("[ESC] Keluar");
+        bacajadwal();
+
+
         bentukframe(35, 27, 108, 18);
         gotoxy(78, 27); printf("=== BUAT TIKET ===");
 
@@ -216,6 +214,28 @@ void PesanTiket() {
             // ===== TAMPILKAN KEMBALIAN =====
             gotoxy(107, 40);
             tampilanhargatiket(kembalian);
+        }
+        else if (strcmp(data.metode_bayar, "Cashless") == 0) {
+            // ===== PROSES PEMBAYARAN QRIS =====
+
+            gotoxy(103, 35); printf("QRIS");
+            gotoxy(90, 37); printf("Scan QR Code berikut:");
+            system("cls");
+            printQRCodeFromFile("QR.txt", 53, 7);
+
+
+            // ===== PROSES PEMBAYARAN =====
+            gotoxy(60, 35); printf("Memproses pembayaran");
+
+            for (int i = 0; i < 3; i++) {
+                printf(".");
+                fflush(stdout); // Paksa print langsung
+                Sleep(500);
+            }
+
+            gotoxy(50, 57);
+            printf("Pembayaran berhasil!");
+            Sleep(1000);
         }
 
 
@@ -440,5 +460,31 @@ static void inputEmailGmail(char *email, int x, int y) {
         }
         // selain itu diabaikan
     }
+}
+
+
+///////////////////////////////////////////////
+//              TRANSAKSI                   //
+//////////////////////////////////////////////
+void transaksi(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    tiket data;
+    int total = 0;
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        total++;
+    }
+
+    fclose(fp);
+
+    gotoxy(x, y);
+    printf("%d", total);
 }
 #endif

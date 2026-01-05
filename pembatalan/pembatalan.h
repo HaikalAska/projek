@@ -13,7 +13,11 @@
 #include "readpembatalan.h"
 #include "deletepembatalan.h"
 #include "../login.h"
+#include "../pemesanantiket.h"
 //#include "Menu.h"
+
+
+void (pemesanantiket)();
 
 void menupembatalan() {
     int pilih;
@@ -28,7 +32,7 @@ void menupembatalan() {
         bentukframe(34, 1, 121, 10);    // Header ASCII
         bentukframe(3, 4, 27, 3);       // Kelompok
 
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(11, 5); printf("Kelompok 5");
 
         // ===== TAMPIL DATA PROMO =====
@@ -46,7 +50,7 @@ void menupembatalan() {
         gotoxy(4,11); printf("=== KELOLA DATA PEMBATALAN ===");
         gotoxy(6,13); printf("Buat ");
         gotoxy(6,15); printf("Kembali");
-        // gotoxy(6,21); printf("Dummy Promo");
+        //gotoxy(6,17); printf("Dummy Pembatalan");
 
         pilih = menuNavigasi(2, 13, 2);
 
@@ -55,11 +59,12 @@ void menupembatalan() {
             createPembatalan();
             break;
         case 2:
+            pemesanantiket();
             //menuStaff();
             //deletepembatalan();
             break;
         case 3:
-            //buatdummy_pembatalan_ke_file();
+           // buatdummy_pembatalan_ke_file();
             break;
         case 4:
             return; // kembali ke menu sebelumnya

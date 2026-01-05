@@ -79,7 +79,7 @@ void validLogin() {
 
 
         bentukframe(41, 14, 67, 20);
-        tampilanlogin("GAMBARASCI.txt", 42, 15);
+        tampilanlogin("WELCOME.txt", 42, 17);
         gotoxy(73, 26);printf("Masuk");
         bentukframe(45, 27, 60, 6);
         gotoxy(47,29); printf("  Username   : ");

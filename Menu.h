@@ -7,6 +7,7 @@
 #include "rute/menurute.h"
 #include "jadwal/menujadwal.h"
 #include "pemesanantiket.h"
+#include "Laporan-Manager/laporan.h"
 
 
 void validLogin();
@@ -20,7 +21,7 @@ void validLogin();
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(11,5); printf("Kelompok 5");
         bentukframe(3, 29, 27, 8);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
@@ -59,7 +60,7 @@ void validLogin();
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(8,5); printf("Kelompok 5");
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
@@ -108,8 +109,9 @@ void validLogin();
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(8,5); printf("Kelompok 5");
+        bacaManagerHalo(60,12);
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("  MENU NAVIGASI  ");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
@@ -121,11 +123,28 @@ void validLogin();
         gotoxy(9, 11);printf(" MENU MANAGER \n");
         gotoxy(3, 13);printf("    Lihat Laporan\n");
         gotoxy(3, 15);printf("    Log Out\n");
+
+        bentukTabel(35, 17, 30, 7, "TOTAL KARYAWAN");
+        totalStaff(48, 21);
+
+
+        bentukTabel(67, 17, 30, 7, "TOTAL TRANSAKSI");
+        transaksi(80,21);
+
+        bentukTabel(100, 17, 30, 7, "TOTAL PENGEMBALIAN");
+        //pengembalian();
+
+
+        bentukTabel(35, 25, 95, 7, "TOTAL PENDAPATAN");
+        //pendaparan();
+
+
         pilih = menuNavigasi(2, 13, 2);
+
 
         switch (pilih) {
             case 1:
-                // Laporan();
+                laporan();
                 break;
             case 2:
                 validLogin();

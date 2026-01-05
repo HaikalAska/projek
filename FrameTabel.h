@@ -990,4 +990,103 @@ void tabelData(int startX, int startY, int maxId, int maxUsr, int maxPw, int row
     printf("%s", line);
 }
 
+
+
+
+
+///////////////////////////////////////////////////////////////
+//                QR CODE                                   //
+//////////////////////////////////////////////////////////////
+void printQRCodeFromFile(char* filename, int startX, int startY) {
+    FILE *file = fopen(filename, "r");
+
+    if (file == NULL) {
+        printf("Error: File tidak ditemukan!\n");
+        return;
+    }
+
+    char line[256];
+    int y = 0;
+
+    while (fgets(line, sizeof(line), file)) {
+        // Hapus newline di akhir baris
+        line[strcspn(line, "\n")] = 0;
+
+        gotoxy(startX, startY + y);
+        printf("%s", line);
+        y++;
+    }
+
+    fclose(file);
+}
+
+
+
+///////////////////////////////////////////////
+//              HALO MANAGER                 //
+//////////////////////////////////////////////
+void bacaManagerHalo(int x, int y) {
+    FILE *fp = fopen("MANAGERHALO.txt", "r");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("File MANAGERHALO.txt tidak ditemukan!");
+        return;
+    }
+
+    char line[256];
+    int baris = 0;
+
+    while (fgets(line, sizeof(line), fp)) {
+        gotoxy(x, y + baris);
+        printf("%s", line);
+        baris++;
+    }
+
+    fclose(fp);
+}
+
+//===========================================//
+//              BUAT TABEL                  //
+//=========================================//
+void bentukTabel(int posX, int posY, int width, int height, char *headerText) {
+    SetConsoleOutputCP(65001);
+
+    // Baris atas
+    gotoxy(posX, posY);
+    printf("╔");
+    for (int i = 0; i < width - 2; i++) printf("═");
+    printf("╗");
+
+    // Header
+    gotoxy(posX, posY + 1);
+    printf("║");
+    int textLen = strlen(headerText);
+    int padding = (width - 2 - textLen) / 2;
+    for (int i = 0; i < padding; i++) printf(" ");
+    printf("%s", headerText);
+    for (int i = 0; i < (width - 2 - textLen - padding); i++) printf(" ");
+    printf("║");
+
+    // Garis pembatas
+    gotoxy(posX, posY + 2);
+    printf("╠");
+    for (int i = 0; i < width - 2; i++) printf("═");
+    printf("╣");
+
+    // Isi
+    for (int y = 3; y < height - 1; y++) {
+        gotoxy(posX, posY + y);
+        printf("║");
+        for (int x = 0; x < width - 2; x++) printf(" ");
+        printf("║");
+    }
+
+    // Baris bawah
+    gotoxy(posX, posY + height - 1);
+    printf("╚");
+    for (int i = 0; i < width - 2; i++) printf("═");
+    printf("╝");
+}
+
 #endif

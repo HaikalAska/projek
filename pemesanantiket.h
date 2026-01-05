@@ -6,6 +6,7 @@
 #define PROJEK_PEMESANANTIKET_H
 
 #include "Pemesanan/Pesantiket.h"
+#include "pembatalan/pembatalan.h"
 
 static void menuStaff();
 
@@ -19,7 +20,7 @@ void pemesanantiket() {
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(8,5); printf("Kelompok 5");
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
@@ -41,7 +42,7 @@ void pemesanantiket() {
                 PesanTiket();
             break;
         case 2:
-
+                menupembatalan();
             break;
         case 3:
                 menuStaff();

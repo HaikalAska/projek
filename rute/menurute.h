@@ -23,7 +23,7 @@ void  menurute() {
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(11,5); printf("Kelompok 5");
         bacaRute();
         bentukframe(3, 29, 27, 10);
