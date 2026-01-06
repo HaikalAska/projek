@@ -61,10 +61,11 @@ void updateKendaraan() {
             bentukframe(37,29,45,14);
             bentukframe(85,29,68,14);
 
-            // ===== NAVIGASI =====
+            // ===== MENU =====
             gotoxy(5,30); printf("MENU");
-            gotoxy(4,32); printf("ENTER Mulai Edit");
-            gotoxy(4,34); printf("ESC Keluar");
+            gotoxy(4,32); printf("NAVIGASI [↑ ↓]");
+            gotoxy(4,34); printf("ENTER Pilih");
+            gotoxy(4,36); printf("ESC  Keluar");
 
             // ===== DATA LAMA =====
             gotoxy(54,30); printf("DATA LAMA");
@@ -75,25 +76,130 @@ void updateKendaraan() {
             gotoxy(40,36); printf("Tahun     : %s", data.tahun);
             gotoxy(40,37); printf("Status    : %s", data.status);
 
-            // ===== DATA BARU (KOSONG DULU) =====
+            // ===== DATA BARU =====
             gotoxy(102,30); printf("DATA BARU");
-            gotoxy(85,32); printf("│ "); gotoxy(88,32); printf("Kategori  : ");
-            gotoxy(85,33); printf("│ "); gotoxy(88,33); printf("Kapasitas : ");
-            gotoxy(85,34); printf("│ "); gotoxy(88,34); printf("Fasilitas : ");
-            gotoxy(85,35); printf("│ "); gotoxy(88,35); printf("Armada    : ");
-            gotoxy(85,36); printf("│ "); gotoxy(88,36); printf("Tahun     : ");
-            gotoxy(85,37); printf("│ "); gotoxy(88,37); printf("Status    : ");
+            gotoxy(88,32); printf("Kategori  : ");
+            gotoxy(88,33); printf("Kapasitas : ");
+            gotoxy(88,34); printf("Fasilitas : ");
+            gotoxy(88,35); printf("Armada    : ");
+            gotoxy(88,36); printf("Tahun     : ");
+            gotoxy(88,37); printf("Status    : ");
+            gotoxy(88,38); printf("[ SIMPAN PERUBAHAN ]");
 
-            gotoxy(88,40);
-            printf("Kategori-([E]Ekonomi [B]Bisnis  [X]Executive)");
-            gotoxy(88,41);
-            printf("Status-([T]Tersedia  [M]Maintenance  [D]Perjalanan  [N]Tidak aktif)");
 
-            // ================= TUNGGU ENTER UNTUK MULAI =================
-            while (1) {
+            int selectedField = 0;
+            int totalField = 6; // 0-5 field, 6 simpan
+            int editing = 1;
+
+            while (editing) {
+
+                // ===== PANAH =====
+                for (int i = 0; i <= totalField; i++) {
+                    gotoxy(85, 32 + i);
+                    if (i == selectedField) printf(">>");
+                    else printf("│ ");
+                }
+
                 int ch = _getch();
-                if (ch == 13) break;  // ENTER → mulai edit
-                if (ch == 27) {       // ESC → keluar
+
+                // ===== PANAH ATAS / BAWAH =====
+                if (ch == 0 || ch == 224) {
+                    int arrow = _getch();
+                    if (arrow == 72) { // UP
+                        selectedField--;
+                        if (selectedField < 0) selectedField = totalField;
+                    }
+                    else if (arrow == 80) { // DOWN
+                        selectedField++;
+                        if (selectedField > totalField) selectedField = 0;
+                    }
+                }
+
+                // ===== ENTER =====
+                else if (ch == 13) {
+
+                    char backup[100];
+
+                    // ===== SIMPAN =====
+                    if (selectedField == totalField) {
+                        editing = 0;
+                        break;
+                    }
+
+                    clearArea(inputX, 32 + selectedField, 35, 1);
+
+                    switch (selectedField) {
+
+                        case 0: // KATEGORI
+                            // === TAMPILKAN PETUNJUK SAAT INPUT ===
+                            gotoxy(88,40);
+                            printf("[E]Ekonomi [B]Bisnis [X]Executive");
+
+                            strcpy(backup, data.kategori);
+                            gotoxy(inputX,32);
+                            inputKategoriKendaraan(data.kategori, 32, inputX);
+
+                            // === HAPUS PETUNJUK SETELAH INPUT ===
+                            clearArea(88, 40, 35, 1);
+
+                            if (strlen(data.kategori)==0)
+                                strcpy(data.kategori, backup);
+                            break;
+
+
+                        case 1: // KAPASITAS
+                            strcpy(backup, data.kapasitas);
+                            gotoxy(inputX,33);
+                            inputKapasitas2Digit(data.kapasitas, 33, inputX);
+                            if (strlen(data.kapasitas)==0)
+                                strcpy(data.kapasitas, backup);
+                            break;
+
+                        case 2: // FASILITAS
+                            strcpy(backup, data.fasilitas);
+                            gotoxy(inputX,34);
+                            inputFasilitas(data.fasilitas, 34, inputX);
+                            if (strlen(data.fasilitas)==0)
+                                strcpy(data.fasilitas, backup);
+                            break;
+
+                        case 3: // ARMADA
+                            strcpy(backup, data.nama_armada);
+                            gotoxy(inputX,35);
+                            inputNamaArmada(data.nama_armada, 35, inputX);
+                            if (strlen(data.nama_armada)==0)
+                                strcpy(data.nama_armada, backup);
+                            break;
+
+                        case 4: // TAHUN
+                            strcpy(backup, data.tahun);
+                            gotoxy(inputX,36);
+                            inputTahun(data.tahun, 36, inputX);
+                            if (strlen(data.tahun)==0)
+                                strcpy(data.tahun, backup);
+                            break;
+
+                        case 5: // STATUS
+                            // === TAMPILKAN PETUNJUK SAAT INPUT STATUS ===
+                            gotoxy(88,40);
+                            printf("[T]Tersedia [M]Maintenance [D]Perjalanan [N]Nonaktif");
+
+                            strcpy(backup, data.status);
+                            gotoxy(inputX,37);
+                            inputStatusKendaraan(data.status, 37, inputX);
+
+                            // === HAPUS PETUNJUK SETELAH INPUT ===
+                            clearArea(88, 40, 55, 1);
+
+                            if (strlen(data.status)==0)
+                                strcpy(data.status, backup);
+                            break;
+
+                    }
+                }
+
+                // ===== ESC =====
+                else if (ch == 27) {
                     fclose(fp);
                     fclose(tmp);
                     remove("temp.dat");
@@ -101,166 +207,7 @@ void updateKendaraan() {
                 }
             }
 
-            char tempData[100];
-            int cancelEdit = 0;
-
-            // ================= 1. KATEGORI =================
-            gotoxy(85, 32); printf(">>"); // Panah aktif
-            clearArea(inputX, 32, 35, 1);
-            strcpy(tempData, data.kategori);
-            gotoxy(inputX, 32);
-            inputKategoriKendaraan(data.kategori, 32, inputX);
-
-            if (strlen(data.kategori) == 0) {
-                strcpy(data.kategori, tempData);
-                cancelEdit = 1;
-            }
-
-            if (!cancelEdit) {
-                clearArea(inputX, 32, 35, 1);
-                gotoxy(inputX, 32);
-                printf("%s", data.kategori);
-                gotoxy(85, 32); printf("│ "); // Panah selesai
-            } else {
-                fclose(fp);
-                fclose(tmp);
-                remove("temp.dat");
-                return;
-            }
-
-            // ================= 2. KAPASITAS =================
-            gotoxy(85, 33 ); printf(">>"); // Panah aktif
-            clearArea(inputX, 33, 35, 1);
-            strcpy(tempData, data.kapasitas);
-            gotoxy(inputX, 33);
-            inputKapasitas2Digit(data.kapasitas, 33, inputX);
-
-            if (strlen(data.kapasitas) == 0) {
-                strcpy(data.kapasitas, tempData);
-                cancelEdit = 1;
-            }
-
-            if (!cancelEdit) {
-                clearArea(inputX, 33, 35, 1);
-                gotoxy(inputX, 33);
-                printf("%s", data.kapasitas);
-                gotoxy(85, 33); printf("│ "); // Panah selesai
-            } else {
-                fclose(fp);
-                fclose(tmp);
-                remove("temp.dat");
-                return;
-            }
-
-            // ================= 3. FASILITAS =================
-            gotoxy(85, 34); printf(">>"); // Panah aktif
-            clearArea(inputX, 34, 35, 1);
-            strcpy(tempData, data.fasilitas);
-            gotoxy(inputX, 34);
-            inputFasilitas(data.fasilitas, 34, inputX);
-
-            if (strlen(data.fasilitas) == 0) {
-                strcpy(data.fasilitas, tempData);
-                cancelEdit = 1;
-            }
-
-            if (!cancelEdit) {
-                clearArea(inputX, 34, 35, 1);
-                gotoxy(inputX, 34);
-                printf("%s", data.fasilitas);
-                gotoxy(85, 34); printf("│ "); // Panah selesai
-            } else {
-                fclose(fp);
-                fclose(tmp);
-                remove("temp.dat");
-                return;
-            }
-
-            // ================= 4. ARMADA =================
-            gotoxy(85, 35); printf(">>"); // Panah aktif
-            clearArea(inputX, 35, 35, 1);
-            strcpy(tempData, data.nama_armada);
-            gotoxy(inputX, 35);
-            inputNamaArmada(data.nama_armada, 35, inputX);
-
-            if (strlen(data.nama_armada) == 0) {
-                strcpy(data.nama_armada, tempData);
-                cancelEdit = 1;
-            }
-
-            if (!cancelEdit) {
-                clearArea(inputX, 35, 35, 1);
-                gotoxy(inputX, 35);
-                printf("%s", data.nama_armada);
-                gotoxy(85, 35); printf("│ "); // Panah selesai
-            } else {
-                fclose(fp);
-                fclose(tmp);
-                remove("temp.dat");
-                return;
-            }
-
-            // ================= 5. TAHUN =================
-            gotoxy(85, 36); printf(">>"); // Panah aktif
-            clearArea(inputX, 36, 35, 1);
-            strcpy(tempData, data.tahun);
-            gotoxy(inputX, 36);
-            inputTahun(data.tahun, 36, inputX);
-
-            if (strlen(data.tahun) == 0) {
-                strcpy(data.tahun, tempData);
-                cancelEdit = 1;
-            }
-
-            if (!cancelEdit) {
-                clearArea(inputX, 36, 35, 1);
-                gotoxy(inputX, 36);
-                printf("%s", data.tahun);
-
-                // Validasi umur bus
-                int tahunBus = atoi(data.tahun);
-                int tahunSekarang = getTahunSekarang();
-                int umur = tahunSekarang - tahunBus;
-
-                gotoxy(inputX + 6, 36);
-                if (umur > 10) {
-                    printf("[Tidak Layak | %d th]", umur);
-                } else {
-                    printf("[Layak | %d th]", umur);
-                }
-                gotoxy(85, 36); printf("│ "); // Panah selesai
-            } else {
-                fclose(fp);
-                fclose(tmp);
-                remove("temp.dat");
-                return;
-            }
-
-            // ================= 6. STATUS =================
-            gotoxy(85, 37); printf(">>"); // Panah aktif
-            clearArea(inputX, 37, 35, 1);
-            strcpy(tempData, data.status);
-            gotoxy(inputX, 37);
-            inputStatusKendaraan(data.status, 37, inputX);
-
-            if (strlen(data.status) == 0) {
-                strcpy(data.status, tempData);
-                cancelEdit = 1;
-            }
-
-            if (!cancelEdit) {
-                clearArea(inputX, 37, 35, 1);
-                gotoxy(inputX, 37);
-                printf("%s", data.status);
-                gotoxy(85, 37); printf("│ "); // Panah selesai
-            } else {
-                fclose(fp);
-                fclose(tmp);
-                remove("temp.dat");
-                return;
-            }
-
-            // ================= SIMPAN =================
+            // ===== SIMPAN KE FILE =====
             fwrite(&data, sizeof(Kendaraan), 1, tmp);
         }
         else {
@@ -273,7 +220,7 @@ void updateKendaraan() {
     fclose(fp);
     fclose(tmp);
 
-    // ================= HASIL =================
+    // ===== HASIL =====
     if (found) {
         remove("kendaraan.dat");
         rename("temp.dat", "kendaraan.dat");
