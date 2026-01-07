@@ -3,7 +3,7 @@
 
 #include "../FrameTabel.h"
 #include <time.h>
-#include "readtiket.h"
+//#include "readtiket.h"
 #include "../Pemesanan/Pesantiket.h"
 
 // ================= STRUCT (SAMA PERSIS DENGAN CREATETIKET.H) =================
