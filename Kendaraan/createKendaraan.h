@@ -296,9 +296,9 @@ static void inputTahun(char *tahun, int row, int col) {
 
             // VALIDASI: MAKSIMAL 2025
             int tahunInput = atoi(temp);
-            if (tahunInput > 2025) {
+            if (tahunInput < 2000 || tahunInput > 2025) {
                 gotoxy(col, row);
-                printf("[Maksimal tahun 2025]");
+                printf("[Tahun 2001-2025]");
                 Sleep(800);
 
                 gotoxy(col, row);
@@ -489,19 +489,39 @@ void createKendaraan() {
         gotoxy(37, 34);
         printf("Status       : ");
 
-        gotoxy(37, 35);
-        printf("(T=Tersedia  M=Maintenance  D=Perjalanan  N=Tidak aktif)");
+        // ===== STATUS =====
+        gotoxy(37, 34);
+        printf("Status       : ");
 
-        setPointer(34, 52);
-        inputStatusKendaraan(data.status, 34, 52);
+        // JIKA TIDAK LAYAK (UMUR > 10 TAHUN) → OTOMATIS "TIDAK AKTIF"
+        if (umur > 10) {
+            strcpy(data.status, "Tidak Aktif");
 
-        if (strlen(data.status) == 0) {
-            fclose(fp);
-            return;
+            gotoxy(52, 34);
+            printf("Tidak Aktif");
+
+            gotoxy(37, 35);
+            printf("[Status otomatis: Tidak Aktif karena bus tidak layak]");
+
+            Sleep(1500); // Tampilkan pesan 1.5 detik
+            clearArea(37, 35, 80, 1); // Hapus pesan
         }
+        // JIKA LAYAK → INPUT STATUS MANUAL
+        else {
+            gotoxy(37, 35);
+            printf("(T=Tersedia  M=Maintenance  D=Perjalanan  N=Tidak aktif)");
 
-        // hapus keterangan status setelah dipilih
-        clearArea(37, 35, 80, 1);
+            setPointer(34, 52);
+            inputStatusKendaraan(data.status, 34, 52);
+
+            if (strlen(data.status) == 0) {
+                fclose(fp);
+                return;
+            }
+
+            // hapus keterangan status setelah dipilih
+            clearArea(37, 35, 80, 1);
+        }
 
         // ===== SIMPAN =====
         fwrite(&data, sizeof(Kendaraan), 1, fp);
