@@ -429,7 +429,7 @@ void BatalTiket() {
                 fclose(fp_temp);
 
                 remove("tiket.dat");
-                rename("temp.dat", "tiket.dat");
+                rename("temp.dat", "batal.dat");
 
                 // ================= SIMPAN DATA PEMBATALAN =================
                 FILE *fp_batal = fopen("batal.dat", "ab");
@@ -442,7 +442,7 @@ void BatalTiket() {
                     data_batal.metode_pengembalian = metode_pengembalian; // 1 = Tunai, 2 = Non Tunai
                     data_batal.refund = data.harga * 0.7;
 
-                    fwrite(&data_batal, sizeof(DataPembatalan), 1, fp_batal);
+                    fwrite(&data_batal, sizeof(batal), 1, fp_batal);
                     fclose(fp_batal);
                 }
 
@@ -496,33 +496,31 @@ void BatalTiket() {
 //Hitung pendapatan
 void pendapatan(int x, int y) {
 
-    FILE *fpTiket, *fpRefund;
+    FILE *fpTiket;
     tiket t;
-    batal p;
 
     long totalPenjualan = 0;
     long totalRefund = 0;
     long totalPendapatan;
 
-    // ================== HITUNG PENJUALAN ==================
+    // ================== HITUNG PENJUALAN DAN REFUND ==================
     fpTiket = fopen("tiket.dat", "rb");
     if (fpTiket != NULL) {
         while (fread(&t, sizeof(tiket), 1, fpTiket)) {
-             totalPenjualan += t.harga;
+            // Cek status tiket
+            if (strcmp(t.status, "Batal") == 0) {
+                // Jika tiket dibatalkan, hitung refund 30%
+                totalRefund += (t.hargaTbatal * 0.3);
+            } else {
+                // Jika tiket tidak dibatalkan, hitung sebagai penjualan
+                totalPenjualan += t.harga;
+            }
         }
         fclose(fpTiket);
     }
 
-    // ================== HITUNG REFUND ==================
-    fpRefund = fopen("batal.dat", "rb");
-    if (fpRefund != NULL) {
-        while (fread(&p, sizeof(batal), 1, fpRefund)) {
-            totalRefund += p.hargaTbatal;
-        }
-        fclose(fpRefund);
-    }
-
     // ================== TOTAL PENDAPATAN ==================
+    // Pendapatan = Penjualan - Refund (karena refund adalah pengeluaran)
     totalPendapatan = totalPenjualan - totalRefund;
 
     // ================== OUTPUT ==================
