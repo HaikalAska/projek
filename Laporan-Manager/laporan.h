@@ -1,10 +1,5 @@
-//
-// Created by Asus on 07/01/2026.
-//
-
 #ifndef PROJEK_LAPORAN_H
 #define PROJEK_LAPORAN_H
-
 
 #include "../FrameTabel.h"
 

@@ -1,6 +1,7 @@
 #ifndef PROJEK_FRAMETABEL_H
 #define PROJEK_FRAMETABEL_H
 
+
 //==================================================================//
 //=====================buat nampilin ASCI nya======================//
 static void tampilanlogin(char *filename, int startX, int startY) {
@@ -264,7 +265,7 @@ void waitEsc() {
 
 //=============================================//
 //==========INPUT 7 DIGIT ANGKA================//
-float inputangka7digit(int x, int y, int *isEsc) {
+long inputangka7digit(int x, int y, int *isEsc) {
     char buffer[8] = ""; // 7 digit + '\0'
     int len = 0;
     char ch;
@@ -311,31 +312,32 @@ float inputangka7digit(int x, int y, int *isEsc) {
 
 //=============================================//
 //========TAMPILAN HARGA TIKET=================//
-void tampilanhargatiket(float harga) {
+void tampilanhargatiket(long harga) {
     if (harga >= 1000000) {
-        // 7 digit atau lebih → x.xxx.xxx
-        printf("Rp%.0f.%03.0f.%03.0f,00",
+        // x.xxx.xxx
+        printf("Rp%ld.%03ld.%03ld,00",
                harga / 1000000,
-               ((long)(harga / 1000)) % 1000,
-               (long)harga % 1000);
+               (harga / 1000) % 1000,
+               harga % 1000);
     }
-    else if (harga >= 100000) {
-        // 6 digit → xxx.xxx
-        printf("Rp%.0f.%03.0f,00",
+    else if (harga >= 100000 ) {
+        // xxx.xxx
+        printf("Rp%ld.%03ld,00",
                harga / 1000,
-               (long)harga % 1000);
+               harga % 1000);
     }
     else if (harga >= 10000) {
-        // 5 digit → xx.xxx
-        printf("Rp%.0f.%03.0f,00",
+        // xx.xxx
+        printf("Rp%ld.%03ld,00",
                harga / 1000,
-               (long)harga % 1000);
+               harga % 1000);
     }
     else {
-        // cadangan (di bawah 5 digit)
-        printf("Rp%.0f,00", harga);
+        // di bawah 10 ribu
+        printf("Rp%ld,00", harga);
     }
 }
+
 //=====================================================//
 
 
@@ -1018,5 +1020,77 @@ void printQRCodeFromFile(char* filename, int startX, int startY) {
 
     fclose(file);
 }
+
+
+
+///////////////////////////////////////////////
+//              HALO MANAGER                 //
+//////////////////////////////////////////////
+void bacaManagerHalo(int x, int y) {
+    FILE *fp = fopen("MANAGERHALO.txt", "r");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("File MANAGERHALO.txt tidak ditemukan!");
+        return;
+    }
+
+    char line[256];
+    int baris = 0;
+
+    while (fgets(line, sizeof(line), fp)) {
+        gotoxy(x, y + baris);
+        printf("%s", line);
+        baris++;
+    }
+
+    fclose(fp);
+}
+
+//===========================================//
+//              BUAT TABEL                  //
+//=========================================//
+void bentukTabel(int posX, int posY, int width, int height, char *headerText) {
+    SetConsoleOutputCP(65001);
+
+    // Baris atas
+    gotoxy(posX, posY);
+    printf("╔");
+    for (int i = 0; i < width - 2; i++) printf("═");
+    printf("╗");
+
+    // Header
+    gotoxy(posX, posY + 1);
+    printf("║");
+    int textLen = strlen(headerText);
+    int padding = (width - 2 - textLen) / 2;
+    for (int i = 0; i < padding; i++) printf(" ");
+    printf("%s", headerText);
+    for (int i = 0; i < (width - 2 - textLen - padding); i++) printf(" ");
+    printf("║");
+
+    // Garis pembatas
+    gotoxy(posX, posY + 2);
+    printf("╠");
+    for (int i = 0; i < width - 2; i++) printf("═");
+    printf("╣");
+
+    // Isi
+    for (int y = 3; y < height - 1; y++) {
+        gotoxy(posX, posY + y);
+        printf("║");
+        for (int x = 0; x < width - 2; x++) printf(" ");
+        printf("║");
+    }
+
+    // Baris bawah
+    gotoxy(posX, posY + height - 1);
+    printf("╚");
+    for (int i = 0; i < width - 2; i++) printf("═");
+    printf("╝");
+}
+
+
+
 
 #endif
