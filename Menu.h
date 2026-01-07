@@ -145,7 +145,7 @@ void validLogin();
 
         switch (pilih) {
             case 1:
-                laporan();
+                laporanBulanan();
                 break;
             case 2:
                 validLogin();

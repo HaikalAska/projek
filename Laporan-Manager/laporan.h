@@ -1,186 +1,180 @@
-#ifndef PROJEK_LAPORAN_H
-#define PROJEK_LAPORAN_H
-
-#include "../FrameTabel.h"
-
-
-
-void menuManager();
-void laporanBulanan();
-void laporanTahunan();
-
-void laporan() {
-    system("chcp 65001 > nul");
-    fillBackground(0x90);
-    bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
-    bentukframe(34, 1, 121, 10); //ASCI
-    bentukframe(3, 4, 27, 3); //KELOMPOK 5
-    tampilanlogin("GAMBARASCI.txt", 45, 3);
-    gotoxy(10,5); printf("Kelompok 5");
-    bentukframe(3, 29, 27, 10);
-    gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
-    gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
-    gotoxy(4, 34);printf("[ENTER] Pilih");
-    gotoxy(4, 36);printf("[Esc] Keluar");
-
-    bentukframe(3, 10, 27, 14);
-    bentukframe(3, 10, 27, 14);
-    gotoxy(5, 11);
-    printf("     MENU LAPORAN   ");
-    gotoxy(6, 13);
-    printf("Laporan Bulanan\n");
-    gotoxy(6, 15);
-    printf("Laporan Tahunan\n");
-    gotoxy(6, 17);
-    printf("Kembali\n");
-
-    int pilih = menuNavigasi(3, 13, 2);
-
-    switch (pilih) {
-        case 1:
-            laporanBulanan();
-            break;
-        case 2:
-            laporanTahunan();
-            break;
-        case 3:
-            menuManager();
-            break;
-    }
-}
-
-
-
-
-//BUAT BACA LAPORAN BULANAN
 void laporanBulanan() {
-    clearscreen();
-    system("chcp 65001 > nul");
-    fillBackground(0x90);
-    bentukframe(34, 1, 121, 40);
-
-    gotoxy(40, 3);
-    printf("=== LAPORAN PEMBATALAN BULANAN ===");
-
     int bulan, tahun;
-    gotoxy(40, 5);
-    printf("Pilih Bulan dan Tahun:");
-    gotoxy(40, 7);
-    printf("Bulan (1-12): ");
-    scanf("%d", &bulan);
-    gotoxy(40, 8);
-    printf("Tahun: ");
-    scanf("%d", &tahun);
-
-    // Validasi input
-    if (bulan < 1 || bulan > 12) {
-        gotoxy(40, 10);
-        printf("Bulan tidak valid! Tekan tombol untuk kembali...");
-        _getch();
-        return;
-    }
-
-    clearscreen();
-    fillBackground(0x90);
-    bentukframe(34, 1, 121, 40);
-
-    gotoxy(40, 3);
-    printf("=== LAPORAN PEMBATALAN BULANAN - %02d/%d ===", bulan, tahun);
-
-    // Baca file batal.dat
-    FILE *file = fopen("tiket.dat", "rb");
-    if (file == NULL) {
-        gotoxy(40, 5);
-        printf("File batal.dat tidak ditemukan!");
-        gotoxy(40, 38);
-        printf("Tekan tombol apapun untuk kembali...");
-        _getch();
-        return;
-    }
-
-    batal data;
-    long totalPembatalan = 0;
-    int baris = 9;
-    int jumlahData = 0;
-
-    // Header tabel
-    gotoxy(35, 7);
-    printf("===================================================================================");
-    gotoxy(35, 8);
-    printf("ID Tiket      Nama Penumpang         Rute                Tgl Batal    Harga Batal");
-    gotoxy(35, 9);
-    printf("===================================================================================");
-
-    // Baca dan filter data berdasarkan bulan dan tahun
-    while (fread(&data, sizeof(batal), 1, file) == 1) {
-        int tglBulan, tglTahun, tglHari;
-
-        // Parse tanggal booking (asumsi format DD/MM/YYYY atau DD-MM-YYYY)
-        if (sscanf(data.tanggal_booking, "%d/%d/%d", &tglHari, &tglBulan, &tglTahun) == 3 ||
-            sscanf(data.tanggal_booking, "%d-%d-%d", &tglHari, &tglBulan, &tglTahun) == 3) {
-
-            // Cek apakah sesuai bulan dan tahun yang dipilih
-            if (tglBulan == bulan && tglTahun == tahun) {
-                if (baris < 35) { // Batasi tampilan agar tidak overflow
-                    gotoxy(35, baris);
-                    printf("%-13s %-22s %-19s %-12s %12ld",
-                           data.id_tiket,
-                           data.nama_penumpang,
-                           data.rute_awal,
-                           data.tanggal_booking,
-                           data.hargaTbatal);
-                    baris++;
-                }
-
-                // Hitung total
-                totalPembatalan += data.hargaTbatal;
-                jumlahData++;
-            }
+    char pilihan;
+    
+    do {
+        system("chcp 65001 > nul");
+        fillBackground(0x90);
+        bentukframe(2, 1, 30, 45);
+        bentukframe(34, 1, 121, 10);
+        bentukframe(3, 4, 27, 3);
+        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        gotoxy(8, 5); printf("Kelompok 5");
+        
+        bentukframe(3, 29, 27, 10);
+        gotoxy(5, 30); printf("=== MENU NAVIGASI ===");
+        gotoxy(4, 32); printf("NAVIGASI [↑ ↓]");
+        gotoxy(4, 34); printf("[ENTER] Pilih");
+        gotoxy(4, 36); printf("[ESC] Keluar");
+        
+        // Input Bulan dan Tahun
+        bentukframe(35, 12, 108, 8);
+        gotoxy(70, 13); printf("=== LAPORAN BULANAN ===");
+        gotoxy(37, 15); printf("Masukkan Bulan (1-12) : ");
+        scanf("%d", &bulan);
+        
+        if (bulan < 1 || bulan > 12) {
+            gotoxy(37, 17);
+            printf("Bulan tidak valid! Tekan tombol apapun...");
+            getch();
+            continue;
         }
-    }
-
-    fclose(file);
-
-    // Tampilkan total
-    gotoxy(35, baris + 1);
-    printf("===================================================================================");
-    gotoxy(35, baris + 2);
-    printf("Total Pembatalan     : Rp %15ld", totalPembatalan);
-    gotoxy(35, baris + 3);
-    printf("Jumlah Tiket Dibatal : %d tiket", jumlahData);
-    gotoxy(35, baris + 4);
-    printf("===================================================================================");
-
-    if (jumlahData == 0) {
-        gotoxy(40, 10);
-        printf("Tidak ada pembatalan pada bulan %02d/%d", bulan, tahun);
-    }
-
-    gotoxy(40, 38);
-    printf("Tekan tombol apapun untuk kembali...");
-    _getch();
+        
+        gotoxy(37, 16); printf("Masukkan Tahun        : ");
+        scanf("%d", &tahun);
+        
+        if (tahun < 2000 || tahun > 2100) {
+            gotoxy(37, 17);
+            printf("Tahun tidak valid! Tekan tombol apapun...");
+            getch();
+            continue;
+        }
+        
+        // Nama bulan
+        char* namaBulan[] = {"", "Januari", "Februari", "Maret", "April", "Mei", 
+                             "Juni", "Juli", "Agustus", "September", "Oktober", 
+                             "November", "Desember"};
+        
+        // ========== LAPORAN TIKET TERJUAL ==========
+        system("cls");
+        fillBackground(0x90);
+        bentukframe(2, 1, 121, 45);
+        
+        gotoxy(50, 3);
+        printf("LAPORAN TIKET TERJUAL - %s %d", namaBulan[bulan], tahun);
+        
+        FILE *fp_tiket = fopen("tiket.dat", "rb");
+        tiket data_tiket;
+        long totalPenjualan = 0;
+        int jumlahTiket = 0;
+        int baris = 7;
+        
+        // Header tabel tiket
+        gotoxy(5, 5);
+        printf("==============================================================================================");
+        gotoxy(5, 6);
+        printf("ID Tiket      Nama Penumpang         Rute                Tgl Berangkat  Harga");
+        gotoxy(5, 7);
+        printf("==============================================================================================");
+        
+        if (fp_tiket != NULL) {
+            while (fread(&data_tiket, sizeof(tiket), 1, fp_tiket) == 1) {
+                int tglBulan, tglTahun, tglHari;
+                
+                // Parse tanggal berangkat (format DD/MM/YYYY atau DD-MM-YYYY)
+                if (sscanf(data_tiket.tanggal_berangkat, "%d/%d/%d", &tglHari, &tglBulan, &tglTahun) == 3 ||
+                    sscanf(data_tiket.tanggal_berangkat, "%d-%d-%d", &tglHari, &tglBulan, &tglTahun) == 3) {
+                    
+                    // Filter berdasarkan bulan dan tahun
+                    if (tglBulan == bulan && tglTahun == tahun) {
+                        if (baris < 25) { // Batasi tampilan
+                            gotoxy(5, baris);
+                            printf("%-13s %-22s %-19s %-14s %12ld",
+                                   data_tiket.id_tiket,
+                                   data_tiket.nama_penumpang,
+                                   data_tiket.rute_awal,
+                                   data_tiket.tanggal_berangkat,
+                                   data_tiket.harga);
+                            baris++;
+                        }
+                        
+                        totalPenjualan += data_tiket.harga;
+                        jumlahTiket++;
+                    }
+                }
+            }
+            fclose(fp_tiket);
+        }
+        
+        gotoxy(5, baris);
+        printf("==============================================================================================");
+        gotoxy(5, baris + 1);
+        printf("Total Tiket Terjual   : %d tiket", jumlahTiket);
+        gotoxy(5, baris + 2);
+        printf("Total Penjualan       : Rp %ld", totalPenjualan);
+        
+        // ========== LAPORAN PEMBATALAN TIKET ==========
+        baris += 5;
+        gotoxy(50, baris);
+        printf("LAPORAN PEMBATALAN TIKET - %s %d", namaBulan[bulan], tahun);
+        baris += 2;
+        
+        FILE *fp_batal = fopen("pembatalan.dat", "rb");
+        DataPembatalan data_batal;
+        long totalPembatalan = 0;
+        int jumlahBatal = 0;
+        int barisBatal = baris + 2;
+        
+        // Header tabel pembatalan
+        gotoxy(5, baris);
+        printf("==============================================================================================");
+        gotoxy(5, baris + 1);
+        printf("ID Tiket      Nama Penumpang         Rute                Tgl Batal      Harga Refund");
+        gotoxy(5, baris + 2);
+        printf("==============================================================================================");
+        
+        if (fp_batal != NULL) {
+            while (fread(&data_batal, sizeof(DataPembatalan), 1, fp_batal) == 1) {
+                int tglBulan, tglTahun, tglHari;
+                
+                // Parse tanggal booking (format DD/MM/YYYY atau DD-MM-YYYY)
+                if (sscanf(data_batal.tanggal_booking, "%d/%d/%d", &tglHari, &tglBulan, &tglTahun) == 3 ||
+                    sscanf(data_batal.tanggal_booking, "%d-%d-%d", &tglHari, &tglBulan, &tglTahun) == 3) {
+                    
+                    // Filter berdasarkan bulan dan tahun
+                    if (tglBulan == bulan && tglTahun == tahun) {
+                        if (barisBatal < 42) { // Batasi tampilan
+                            gotoxy(5, barisBatal);
+                            printf("%-13s %-22s %-14s %12ld",
+                                   data_batal.id_tiket,
+                                   data_batal.nama_penumpang,
+                                   data_batal.tanggal_booking,
+                                   data_batal.hargaTbatal);
+                            barisBatal++;
+                        }
+                        
+                        totalPembatalan += data_batal.hargaTbatal;
+                        jumlahBatal++;
+                    }
+                }
+            }
+            fclose(fp_batal);
+        }
+        
+        gotoxy(5, barisBatal);
+        printf("==============================================================================================");
+        gotoxy(5, barisBatal + 1);
+        printf("Total Pembatalan      : %d tiket", jumlahBatal);
+        gotoxy(5, barisBatal + 2);
+        printf("Total Refund          : Rp %ld", totalPembatalan);
+        
+        // ========== RINGKASAN ==========
+        long pendapatanBersih = totalPenjualan - totalPembatalan;
+        gotoxy(5, barisBatal + 4);
+        printf("==============================================================================================");
+        gotoxy(5, barisBatal + 5);
+        printf("PENDAPATAN BERSIH     : Rp %ld", pendapatanBersih);
+        gotoxy(5, barisBatal + 6);
+        printf("==============================================================================================");
+        
+        gotoxy(5, barisBatal + 8);
+        printf("Tekan [Y] untuk laporan bulan lain, [ESC] untuk kembali...");
+        
+        pilihan = getch();
+        
+        if (pilihan == 27) { // ESC
+            break;
+        }
+        
+    } while (pilihan == 'Y' || pilihan == 'y');
 }
-
-//LAPORAN TAHUNAN
-void laporanTahunan() {
-    gotoxy(5, 5);
-    printf("=== LAPORAN TAHUNAN ===\n");
-    gotoxy(5, 7);
-    printf("Pilih Tahun:\n");
-
-    int tahun;
-    gotoxy(5, 9);
-    printf("Tahun: ");
-    scanf("%d", &tahun);
-
-    system("cls");
-    gotoxy(5, 5);
-    printf("=== LAPORAN TAHUNAN - %d ===\n", tahun);
-
-    gotoxy(5, 7);
-    printf("Menampilkan laporan transaksi tahun %d...\n", tahun);
-    gotoxy(5, 20);
-    printf("Tekan tombol apapun untuk kembali...");
-}
-
-#endif //PROJEK_LAPORAN_H
