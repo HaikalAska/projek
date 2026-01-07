@@ -25,7 +25,7 @@ void menukendaraan() {
         bentukframe(2, 1, 30, 45); //SIDEBAR KIRI
         bentukframe(34, 1, 121, 10); //ASCI
         bentukframe(3, 4, 27, 3); //KELOMPOK 5
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         bentukframe(3, 4, 27, 3); //INFORMASI JABATAN
         gotoxy(13,5); printf("Staff");
         gotoxy(11,2); printf("Kelompok 5");
@@ -43,9 +43,7 @@ void menukendaraan() {
         gotoxy(6, 13); printf("Tambah Kendaraan");
         gotoxy(6, 15); printf("Hapus Kendaraan");
         gotoxy(6, 17); printf("Perbarui Data");
-        gotoxy(6, 19); printf("Kembali");
-        gotoxy(6, 21); printf("Generate Dummy Data");
-        gotoxy(6, 19); printf("Lihat Data");
+        gotoxy(6, 19); printf("Kembali ");
 
         pilih = menuNavigasi(4, 13, 2);
 
@@ -62,11 +60,6 @@ void menukendaraan() {
             case 4:
                 menuStaff();
                 break;
-            case 5:
-                buatDummyKendaraan();
-                break;
-
-
 
         }
     }

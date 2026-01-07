@@ -18,7 +18,11 @@ void perbaruijadwal() {
     int idx = 0;
 
     // ================= INPUT NOMOR =================
-    gotoxy(3, 25); printf("Pilih No Urut: ");
+    gotoxy(3, 25);
+    printf("Pilih No Urut : ");
+    gotoxy(20, 25);
+    printf("          ");
+    gotoxy(20, 25);
 
     while (1) {
         char ch = _getch();
