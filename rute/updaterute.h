@@ -195,7 +195,7 @@ void updaterute() {
         gotoxy(40, 42); printf("Rute berhasil diperbarui!");
     } else {
         remove("temp.dat");
-        gotoxy(40, 42); printf("Nomor rute tidak ditemukan!");
+        gotoxy(3, 27); printf("Nomor rute tidak ditemukan!");
     }
 
     getch();

@@ -20,6 +20,10 @@ add_executable(projek
         jadwal/deletejadwal.h
         jadwal/menujadwal.h
         rute/menurute.h
+        pembatalan/pengembaliantiket.h
+        Pemesanan/Pesantiket.h
+        pembatalan/readtiket.h
+        "Laporan-Manager/laporan.h"
 )
 
 
