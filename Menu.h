@@ -129,15 +129,18 @@ void validLogin();
         totalStaff(48, 21);
 
 
-        bentukTabel(67, 17, 30, 7, "TOTAL TRANSAKSI");
+        bentukTabel(67, 17, 30, 7, "TOTAL SELURUH TRANSAKSI");
         transaksi(81,21);
 
-        /*bentukTabel(100, 17, 30, 7, "TOTAL PENGEMBALIAN");
-        pengembalian(114,21);
+        bentukTabel(100, 17, 30, 7, "TOTAL PEMBELIAN TIKET");
+        hitungTransaksiAktif(114,21);
 
 
-        bentukTabel(35, 25, 95, 7, "TOTAL PENDAPATAN");
-        pendapatan(79,29);*/
+        bentukTabel(35, 25, 30, 7, "TOTAL PEMBATALAN TIKET");
+        hitungTransaksiNonaktif(48,29);
+
+        bentukTabel(67, 25, 63, 7, "TOTAL SELURUH PENDAPATAN");
+
 
 
         pilih = menuNavigasi(2, 13, 2);

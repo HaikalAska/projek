@@ -70,37 +70,58 @@ void PesanTiket() {
 
         // ================= INPUT NOMOR JADWAL =================
         int nomor_jadwal;
-
-        gotoxy(37, 29);
-        printf("No Jadwal      : ");
-
-        nomor_jadwal = inputNoJadwal(54, 29);
-        if (nomor_jadwal == -1) {
-            fclose(fp_tiket);
-            return;
-        }
-
-        FILE *fp_jadwal = fopen("jadwal.dat", "rb");
-
         int found = 0;
-        int index = 1;
 
-        while (fread(&jadwal_data, sizeof(jadwal), 1, fp_jadwal)) {
-            if (index == nomor_jadwal) {
-                found = 1;
-                break;
+
+        while (!found) {  // Loop sampai nomor valid ditemukan
+            gotoxy(37, 29);
+            printf("No Jadwal      : ");
+
+            // Bersihkan input sebelumnya
+            gotoxy(54, 29);
+            printf("          ");
+
+            gotoxy(54, 29);
+            nomor_jadwal = inputNoJadwal(54, 29);
+
+            // Jika ESC ditekan
+            if (nomor_jadwal == -1) {
+                fclose(fp_tiket);
+                return;
             }
-            index++;
-        }
-        fclose(fp_jadwal);
 
-        if (!found) {
-            fclose(fp_tiket);
-            gotoxy(37, 30);
-            printf("Nomor Tidak Ada di Data!");
-            getch();
-            clearArea(35, 27, 80, 18);
-            continue;
+            // Baca dan validasi jadwal
+            FILE *fp_jadwal = fopen("jadwal.dat", "rb");
+            if (!fp_jadwal) {
+                fclose(fp_tiket);
+                gotoxy(37, 30);
+                printf("File jadwal tidak ditemukan!");
+                getch();
+                return;
+            }
+
+            int index = 1;
+            found = 0;
+
+            while (fread(&jadwal_data, sizeof(jadwal), 1, fp_jadwal)) {
+                if (index == nomor_jadwal) {
+                    found = 1;
+                    break;
+                }
+                index++;
+            }
+            fclose(fp_jadwal);
+
+            // Jika tidak ditemukan, tampilkan error dan ulangi
+            if (!found) {
+                gotoxy(37, 30);
+                printf("Nomor Tidak Ada di Data! Tekan untuk input ulang...");
+                getch();
+
+                // Bersihkan pesan error
+                gotoxy(37, 30);
+                printf("                                                      ");
+            }
         }
 
         // ================= COPY DATA JADWAL =================
@@ -519,6 +540,10 @@ void hitungtotalhargatiket() {
 
 
 
+
+//////////////////////////////////////////////////////////////////
+//========================TABEL BUAT PENUMPANG==================//
+/////////////////////////////////////////////////////////////////
 void readTiketPenumpang() {
 
     FILE *fp;
@@ -527,7 +552,6 @@ void readTiketPenumpang() {
     int startX = 33;
     int startY = 12;
 
-    // ===== LEBAR KOLOM =====
     int wNo = 3, wID = 10, wNama = 20, wTelp = 13;
     int wRute = 20, wTgl = 12,wjam =5 , wStatus = 6;
 
@@ -560,17 +584,13 @@ void readTiketPenumpang() {
         int start = (current_page - 1) * MAX_ROWS_PER_PAGE;
         int end = start + MAX_ROWS_PER_PAGE;
         if (end > total) end = total;
-
         clearArea(startX, startY + 1, totalWidth, 18);
-
         gotoxy(80, 13);
         printf("=== DAFTAR TIKET PENUMPANG ===");
-
         int row = startY + 2;
 
         // ===== TABEL =====
         gotoxy(startX, row++); printf("%s", garis);
-
         gotoxy(startX, row++);
         printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1,"No",
@@ -603,25 +623,79 @@ void readTiketPenumpang() {
         }
 
         gotoxy(startX, row++); printf("%s", garis);
-
-        // ===== NAVIGASI (SESUIAI PERMINTAANMU) =====
         bentukframe(3, 11, 27, 12);
         gotoxy(6, 13); printf("[SPASI] Lanjut");
         gotoxy(6, 15); printf("[BACKSPACE] Kembali");
         gotoxy(6, 17); printf("[ENTER] Keluar");
         gotoxy(6, 19); printf("Halaman: %d/%d", current_page, total_pages);
         gotoxy(6, 21); printf("Total  : %d data", total);
-
         key = getch();
-
         if (key == ' ' && current_page < total_pages)
             current_page++;
         else if (key == 8 && current_page > 1)
             current_page--;
-
     } while (key != 13);
 }
 //========================================================================
+
+
+
+
+//=====================BACA YANG AKTIF STAFF NYA===========//
+////////////////////////////////////////////////////////////////
+void hitungTransaksiAktif(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    tiket data;
+    int totalAktif = 0;
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        // Cek jika status = "Aktif"
+        if (strcmp(data.status, "Aktif") == 0) {
+            totalAktif++;
+        }
+    }
+
+    fclose(fp);
+
+    gotoxy(x, y);
+    printf("%d", totalAktif);
+}
+
+//=====================BACA YANG NONAKTIF STAFF NYA===========//
+////////////////////////////////////////////////////////////////
+void hitungTransaksiNonaktif(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    tiket data;
+    int totalAktif = 0;
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        // Cek jika status = "Aktif"
+        if (strcmp(data.status, "Batal") == 0) {
+            totalAktif++;
+        }
+    }
+
+    fclose(fp);
+
+    gotoxy(x, y);
+    printf("%d", totalAktif);
+}
+
+
 
 
 #endif
