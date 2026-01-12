@@ -7,23 +7,23 @@
 #include "../Pemesanan/Pesantiket.h"
 
 // ================= STRUCT (SAMA PERSIS DENGAN CREATETIKET.H) =================
-typedef struct {
-    char id_tiket[20];
-    char id_penumpang[20];
-    char nama_penumpang[50];
-    char rute_awal[30];
-    char tujuan[30];
-    char nama_armada[30];
-    char tanggal_berangkat[15];
-    char jam_berangkat[10];
-    float harga;
-    long hargaTbatal;
-    char tanggal_booking[15];
-    char metode_bayar[10];
-    char status[20];
-    char notlpn[15];
-    char Email[50];
-} batal;
+// typedef struct {
+//     char id_tiket[20];
+//     char id_penumpang[20];
+//     char nama_penumpang[50];
+//     char rute_awal[30];
+//     char tujuan[30];
+//     char nama_armada[30];
+//     char tanggal_berangkat[15];
+//     char jam_berangkat[10];
+//     float harga;
+//     long hargaTbatal;
+//     char tanggal_booking[15];
+//     char metode_bayar[10];
+//     char status[20];
+//     char notlpn[15];
+//     char Email[50];
+// } batal;
 
 // ================= STRUCT UNTUK MENYIMPAN DATA PEMBATALAN =================
 typedef struct {
@@ -420,16 +420,17 @@ void BatalTiket() {
                 tiket temp_data;
                 while (fread(&temp_data, sizeof(tiket), 1, fp_read)) {
                     if (strcmp(temp_data.id_tiket, id_cari) == 0) {
-                        strcpy(temp_data.status, "Batal");
+                       // strcpy(temp_data.status, "Batal");
+                        fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
                     }
-                    fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
+                    //fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
                 }
 
                 fclose(fp_read);
                 fclose(fp_temp);
 
                 remove("tiket.dat");
-                rename("temp.dat", "batal.dat");
+                rename("temp.dat", "tiket.dat");
 
                 // ================= SIMPAN DATA PEMBATALAN =================
                 FILE *fp_batal = fopen("batal.dat", "ab");
@@ -442,7 +443,7 @@ void BatalTiket() {
                     data_batal.metode_pengembalian = metode_pengembalian; // 1 = Tunai, 2 = Non Tunai
                     data_batal.refund = data.harga * 0.7;
 
-                    fwrite(&data_batal, sizeof(batal), 1, fp_batal);
+                    fwrite(&data_batal, sizeof(tiket), 1, fp_batal);
                     fclose(fp_batal);
                 }
 
@@ -496,31 +497,33 @@ void BatalTiket() {
 //Hitung pendapatan
 void pendapatan(int x, int y) {
 
-    FILE *fpTiket;
+    FILE *fpTiket, *fpRefund;
     tiket t;
+    tiket p;
 
     long totalPenjualan = 0;
     long totalRefund = 0;
     long totalPendapatan;
 
-    // ================== HITUNG PENJUALAN DAN REFUND ==================
+    // ================== HITUNG PENJUALAN ==================
     fpTiket = fopen("tiket.dat", "rb");
     if (fpTiket != NULL) {
         while (fread(&t, sizeof(tiket), 1, fpTiket)) {
-            // Cek status tiket
-            if (strcmp(t.status, "Batal") == 0) {
-                // Jika tiket dibatalkan, hitung refund 30%
-                totalRefund += (t.hargaTbatal * 0.3);
-            } else {
-                // Jika tiket tidak dibatalkan, hitung sebagai penjualan
-                totalPenjualan += t.harga;
-            }
+             totalPenjualan += t.harga;
         }
         fclose(fpTiket);
     }
 
+    // ================== HITUNG REFUND ==================
+    fpRefund = fopen("batal.dat", "rb");
+    if (fpRefund != NULL) {
+        while (fread(&p, sizeof(tiket), 1, fpRefund)) {
+            totalRefund += p.hargaTbatal;
+        }
+        fclose(fpRefund);
+    }
+
     // ================== TOTAL PENDAPATAN ==================
-    // Pendapatan = Penjualan - Refund (karena refund adalah pengeluaran)
     totalPendapatan = totalPenjualan - totalRefund;
 
     // ================== OUTPUT ==================
@@ -537,10 +540,10 @@ void pengembalian(int x, int y) {
         return;
     }
 
-    batal data;
+    tiket data;
     int total = 0;
 
-    while (fread(&data, sizeof(batal), 1, fp)) {
+    while (fread(&data, sizeof(tiket), 1, fp)) {
         total++;
     }
 
@@ -552,7 +555,7 @@ void pengembalian(int x, int y) {
 
 void hitungtotalbatal() {
     FILE *fp;
-    batal data;
+    tiket data;
     long total = 0;
 
     fp = fopen("batal.dat", "rb");
@@ -562,7 +565,7 @@ void hitungtotalbatal() {
         return;
     }
 
-    while (fread(&data, sizeof(batal), 1, fp)) {
+    while (fread(&data, sizeof(tiket), 1, fp)) {
         total += data.hargaTbatal;
     }
 
