@@ -1023,6 +1023,9 @@ void printQRCodeFromFile(char* filename, int startX, int startY) {
 
 
 
+
+
+
 ///////////////////////////////////////////////
 //              HALO MANAGER                 //
 //////////////////////////////////////////////
