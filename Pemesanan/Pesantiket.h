@@ -3,7 +3,7 @@
 
 #include "../FrameTabel.h"
 #include <time.h>
-#include "../pembatalan/createpembatalan.h"
+// #include "../pembatalan/pengembaliantiket.h"
 
 // ================= STRUCT =================
 typedef struct {
@@ -17,6 +17,7 @@ typedef struct {
     char jam_berangkat[10];
     long harga;
     long hargaTtiket;
+    long hargaTbatal;
     char tanggal_booking[15];
     char metode_bayar[10];
     char status[20];
@@ -515,41 +516,41 @@ void hitungtotalhargatiket() {
 
 
 
-void pendapatan(int x, int y) {
-
-    FILE *fpTiket, *fpRefund;
-    tiket t;
-    batal p;
-
-    long totalPenjualan = 0;
-    long totalRefund = 0;
-    long totalPendapatan;
-
-    // ================== HITUNG PENJUALAN ==================
-    fpTiket = fopen("tiket.dat", "rb");
-    if (fpTiket != NULL) {
-        while (fread(&t, sizeof(tiket), 1, fpTiket)) {
-             totalPenjualan += t.harga;
-        }
-        fclose(fpTiket);
-    }
-
-    // ================== HITUNG REFUND ==================
-    fpRefund = fopen("pembatalan.dat", "rb");
-    if (fpRefund != NULL) {
-        while (fread(&p, sizeof(batal), 1, fpRefund)) {
-            totalRefund += p.hargaTbatal;
-        }
-        fclose(fpRefund);
-    }
-
-    // ================== TOTAL PENDAPATAN ==================
-    totalPendapatan = totalPenjualan - totalRefund;
-
-    // ================== OUTPUT ==================
-    gotoxy(x, y);
-    tampilanhargatiket(totalPendapatan);
-}
+// void pendapatan(int x, int y) {
+//
+//     FILE *fpTiket, *fpRefund;
+//     tiket t;
+//     batal p;
+//
+//     long totalPenjualan = 0;
+//     long totalRefund = 0;
+//     long totalPendapatan;
+//
+//     // ================== HITUNG PENJUALAN ==================
+//     fpTiket = fopen("tiket.dat", "rb");
+//     if (fpTiket != NULL) {
+//         while (fread(&t, sizeof(tiket), 1, fpTiket)) {
+//              totalPenjualan += t.harga;
+//         }
+//         fclose(fpTiket);
+//     }
+//
+//     // ================== HITUNG REFUND ==================
+//     fpRefund = fopen("pembatalan.dat", "rb");
+//     if (fpRefund != NULL) {
+//         while (fread(&p, sizeof(batal), 1, fpRefund)) {
+//             totalRefund += p.hargaTbatal;
+//         }
+//         fclose(fpRefund);
+//     }
+//
+//     // ================== TOTAL PENDAPATAN ==================
+//     totalPendapatan = totalPenjualan - totalRefund;
+//
+//     // ================== OUTPUT ==================
+//     gotoxy(x, y);
+//     tampilanhargatiket(totalPendapatan);
+// }
 
 
 #endif
