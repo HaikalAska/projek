@@ -178,6 +178,16 @@ void BatalTiket() {
                 while (fread(&temp_data, sizeof(tiket), 1, fp_read)) {
                     if (strcmp(temp_data.id_tiket, id_cari) == 0) {
                         strcpy(temp_data.status, "Batal");
+
+                        // TAMBAHKAN INI - Update metode pengembalian
+                        if (metode_pengembalian == 1) {
+                            strcpy(temp_data.metode_bayar, "Tunai");
+                        } else {
+                            strcpy(temp_data.metode_bayar, "Non-Tunai");
+                        }
+
+                        // TAMBAHKAN INI - Hitung refund 70%
+                        temp_data.harga = temp_data.harga * 0.7;
                     }
                     fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
                 }
@@ -185,23 +195,6 @@ void BatalTiket() {
                 fclose(fp_temp);
                 remove("tiket.dat");
                 rename("temp.dat", "tiket.dat");
-
-                // ================= SIMPAN DATA PEMBATALAN =================
-                FILE *fp_batal = fopen("tiket.dat", "ab");
-                if (fp_batal) {
-                    tiket data_batal = data;
-                    strcpy(data_batal.status, "Batal");
-
-                    if (metode_pengembalian == 1) {
-                        strcpy(data_batal.metode_bayar, "Tunai");
-                    } else {
-                        strcpy(data_batal.metode_bayar, "Non-Tunai");
-                    }
-
-                    data_batal.harga = data.harga * 0.7;
-                    fwrite(&data_batal, sizeof(tiket), 1, fp_batal);
-                    fclose(fp_batal);
-                }
 
                 // Tampilan proses pembatalan
                 clearArea(108, 30, 44, 10);

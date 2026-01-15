@@ -98,7 +98,7 @@ void bacajadwal() {
     int wJam = 7;
     int wAsal = 12;
     int wTujuan = 12;
-    int wArmada = 15;
+    int wArmada = 20;
     int wKategori = 12;
     int wHarga = 15;
 

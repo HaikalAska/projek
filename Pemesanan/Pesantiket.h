@@ -550,7 +550,7 @@ void readTiketPenumpang() {
 
     int totalWidth =
         1 + (wNo+2)+(wID+2)+(wNama+2)+(wTelp+2)+
-        (wRute+2)+(wTgl+2)+(wJam+2)+(wStatus+2)+(wHarga+2);
+        (wRute+2)+(wTgl+2)+(wJam+2)+(wStatus+2)+(wHarga+3);
 
     char garis[300];
     memset(garis, '-', totalWidth);
