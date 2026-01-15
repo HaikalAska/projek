@@ -528,8 +528,8 @@ void readTiketPenumpang() {
     int startY = 12;
 
     // ===== LEBAR KOLOM =====
-    int wNo = 3, wID = 10, wNama = 20, wTelp = 13;
-    int wRute = 20, wTgl = 12,wjam =5 , wStatus = 6;
+    int wNo = 3, wID = 8, wNama = 20, wTelp = 13;
+    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 12;
 
     fp = fopen("tiket.dat", "rb");
     if (!fp) {
@@ -550,7 +550,7 @@ void readTiketPenumpang() {
 
     int totalWidth =
         1 + (wNo+2)+(wID+2)+(wNama+2)+(wTelp+2)+
-        (wRute+2)+(wTgl+2)+(wjam+2)+(wStatus+2);
+        (wRute+2)+(wTgl+2)+(wJam+2)+(wStatus+2)+(wHarga+2);
 
     char garis[300];
     memset(garis, '-', totalWidth);
@@ -568,29 +568,34 @@ void readTiketPenumpang() {
 
         int row = startY + 2;
 
-        // ===== TABEL =====
+        // ===== HEADER TABEL =====
         gotoxy(startX, row++); printf("%s", garis);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1,"No",
                wID+1,"ID Tiket",
                wNama+1,"Nama",
                wTelp+1,"Telepon",
                wRute+1,"Rute",
                wTgl+1,"Tanggal",
-               wjam+1,"Jam",
-               wStatus+1,"Status");
+               wJam+1,"Jam",
+               wStatus+1,"Status",
+               wHarga+2,"Harga");
 
         gotoxy(startX, row++); printf("%s", garis);
 
+        // ===== ISI DATA =====
         for (int i = start; i < end; i++) {
-            char rute[40];
+
+            char rute[60];
             sprintf(rute, "%s-%s",
                     data[i].rute_awal,
                     data[i].tujuan);
 
             gotoxy(startX, row++);
+
+            // cetak kolom sebelum harga
             printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1, i+1,
                    wID+1, data[i].id_tiket,
@@ -598,13 +603,21 @@ void readTiketPenumpang() {
                    wTelp+1, data[i].notlpn,
                    wRute+1, rute,
                    wTgl+1, data[i].tanggal_berangkat,
-                   wjam+1, data[i].jam_berangkat,
+                   wJam+1, data[i].jam_berangkat,
                    wStatus+1, data[i].status);
+
+            // cetak harga dengan format rupiah
+            printf(" ");
+            tampilanhargatiket(data[i].harga);
+
+            // rapikan spasi kolom harga + tutup tabel
+            printf("%*s|", wHarga - 13, "");
         }
+
 
         gotoxy(startX, row++); printf("%s", garis);
 
-        // ===== NAVIGASI (SESUIAI PERMINTAANMU) =====
+        // ===== NAVIGASI =====
         bentukframe(3, 11, 27, 12);
         gotoxy(6, 13); printf("[SPASI] Lanjut");
         gotoxy(6, 15); printf("[BACKSPACE] Kembali");
@@ -621,6 +634,7 @@ void readTiketPenumpang() {
 
     } while (key != 13);
 }
+
 //========================================================================
 
 

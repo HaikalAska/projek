@@ -103,14 +103,16 @@ void BatalTiket() {
         gotoxy(36, 35); printf("Rute           : %s → %s", data.rute_awal, data.tujuan);
         gotoxy(36, 36); printf("Armada         : %s", data.nama_armada);
         gotoxy(36, 37); printf("Berangkat      : %s | %s", data.tanggal_berangkat, data.jam_berangkat);
-        gotoxy(36, 38); printf("Harga          : Rp %ld", data.harga);
+        gotoxy(36, 38); printf("Harga          : ");
+        tampilanhargatiket(data.harga);
         gotoxy(36, 39); printf("Metode Bayar   : %s", data.metode_bayar);
         gotoxy(36, 40); printf("Status         : %s", data.status);
 
         // ================= FRAME METODE PENGEMBALIAN (KANAN) =================
         bentukframe(106, 27, 48, 18);
         gotoxy(115, 28); printf("METODE PENGEMBALIAN DANA");
-        gotoxy(108, 30); printf("Refund 70%%     : Rp %.2f", data.harga * 0.7);
+        gotoxy(108, 30); printf("Refund 70%%     : Rp ");
+        tampilanhargatiket(data.harga * 0.7);
 
         long metode_pengembalian;
         char pilihan_refund;
@@ -145,7 +147,8 @@ void BatalTiket() {
         // ================= KONFIRMASI PEMBATALAN =================
         clearArea(108, 30, 44, 6);
         gotoxy(108, 30); printf("Metode Refund  : %s", (metode_pengembalian == 1) ? "Tunai" : "Non Tunai");
-        gotoxy(108, 31); printf("Refund 70%%     : Rp %.2f", data.harga * 0.7);
+        gotoxy(108, 31); printf("Refund 70%%     : Rp ");
+        tampilanhargatiket(data.harga * 0.7);
         gotoxy(108, 37); printf("Batalkan tiket ini?");
         gotoxy(108, 38); printf("(Y) Ya (N) Tidak : ");
 
@@ -184,7 +187,7 @@ void BatalTiket() {
                 rename("temp.dat", "tiket.dat");
 
                 // ================= SIMPAN DATA PEMBATALAN =================
-                FILE *fp_batal = fopen("batal.dat", "ab");
+                FILE *fp_batal = fopen("tiket.dat", "ab");
                 if (fp_batal) {
                     tiket data_batal = data;
                     strcpy(data_batal.status, "Batal");
