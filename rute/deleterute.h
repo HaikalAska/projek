@@ -50,7 +50,7 @@ void deleterute() {
     // ===== BUKA FILE =====
     fp = fopen("rute.dat", "rb");
     if (!fp) {
-        gotoxy(40, 28); printf("File rute.dat tidak ditemukan!");
+        gotoxy(3, 27); printf("File rute.dat tidak ditemukan!");
         getch();
         return;
     }
@@ -62,7 +62,7 @@ void deleterute() {
     fclose(fp);
 
     if (count == 0) {
-        gotoxy(40, 28); printf("Tidak ada data rute!");
+        gotoxy(3, 27); printf("Tidak ada data rute!");
         getch();
         return;
     }
@@ -74,7 +74,7 @@ void deleterute() {
     scanf("%d", &pilihan);
 
     if (pilihan < 1 || pilihan > count) {
-        gotoxy(40, 29); printf("Nomor tidak valid!");
+        gotoxy(3, 27); printf("Nomor tidak valid!");
         getch(); getch();
         return;
     }

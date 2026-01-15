@@ -10,6 +10,7 @@
 #include "Laporan-Manager/laporan.h"
 #include "pembatalan/pengembaliantiket.h"
 
+
 void validLogin();
 
  void menuSuperAdmin() {
@@ -131,12 +132,12 @@ void validLogin();
         bentukTabel(67, 17, 30, 7, "TOTAL TRANSAKSI");
         transaksi(81,21);
 
-        bentukTabel(100, 17, 30, 7, "TOTAL PENGEMBALIAN");
+        /*bentukTabel(100, 17, 30, 7, "TOTAL PENGEMBALIAN");
         pengembalian(114,21);
 
 
         bentukTabel(35, 25, 95, 7, "TOTAL PENDAPATAN");
-        pendapatan(79,29);
+        pendapatan(79,29);*/
 
 
         pilih = menuNavigasi(2, 13, 2);
@@ -144,7 +145,7 @@ void validLogin();
 
         switch (pilih) {
             case 1:
-                laporan();
+                //laporanBulanan();
                 break;
             case 2:
                 validLogin();
