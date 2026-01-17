@@ -42,7 +42,7 @@ void pemesanantiket() {
                 PesanTiket();
             break;
         case 2:
-                BatalTiket();
+                //BatalTiket();
             break;
         case 3:
                 menuStaff();
