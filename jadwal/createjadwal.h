@@ -10,7 +10,6 @@ typedef struct {
     int rute;
     int kendaraan;
     char tanggal[50];
-
     long harga;
     char jamBerangkat[50];
     char kotaAsal[50];
