@@ -19,84 +19,6 @@ typedef struct {
     char status [20];
 } Kendaraan;
 
-
-
-// ================= INPUT KAPASITAS =================
-static void inputKapasitas2Digit(char *kapasitas, int row, int col) {
-    int i = 0;
-    char ch;
-    char temp[3] = "";   // buffer dibersihkan dari awal
-
-    gotoxy(col, row);
-
-    while (1) {
-        ch = getch();
-
-        // ===== ENTER =====
-        if (ch == 13) {
-            temp[i] = '\0';
-
-            if (i == 0) {
-                gotoxy(col + 0, row);
-                printf("[Tidak boleh kosong]");
-                Sleep(800);
-
-                gotoxy(col + 0, row);
-                printf("%-25s", " ");
-
-                gotoxy(col, row);
-                i = 0;
-                continue;
-            }
-
-            int nilai = atoi(temp);
-            if (nilai < 25 || nilai > 60) {
-                gotoxy(col + 5, row);
-                printf("[Kapasitas 25 - 60]");
-                Sleep(800);
-
-                gotoxy(col + 5, row);
-                printf("%-25s", " ");
-
-                gotoxy(col, row);
-                printf("  ");
-                gotoxy(col, row);
-
-                i = 0;
-                temp[0] = '\0';
-                continue;
-            }
-
-            strcpy(kapasitas, temp);
-            return;
-        }
-
-        // ===== ESC =====
-        else if (ch == 27) {
-            kapasitas[0] = '\0';
-            return;
-        }
-
-        // ===== BACKSPACE =====
-        else if (ch == 8) {
-            if (i > 0) {
-                i--;
-                temp[i] = '\0';
-                printf("\b \b");
-            }
-        }
-
-        // ===== ANGKA =====
-        else if (ch >= '0' && ch <= '9') {
-            if (i < 2) {
-                temp[i++] = ch;
-                temp[i] = '\0';
-                printf("%c", ch);
-            }
-        }
-    }
-}
-
 static int getKendaraanCount() {
     FILE *fp = fopen("kendaraan.dat", "rb");
     if (!fp) return 0;
@@ -108,109 +30,138 @@ static int getKendaraanCount() {
     return size / sizeof(Kendaraan);
 }
 
-// ================= INPUT FASILITAS =================
-static void inputFasilitas(char *fasilitas, int row, int col) {
-    int i = 0;
-    char ch;
-    char temp[100];
+// ================= FUNGSI TAMPILKAN DETAIL KATEGORI (DALAM KOTAK) =================
+static void tampilkanDetailKategori(int pilihan) {
+    // Bersihkan area detail
+    clearArea(105, 31, 32, 9);
 
-    while (1) {
-        ch = getch();
-
-        if (ch == 13) {
-            temp[i] = '\0';
-
-            if (i == 0) {
-                gotoxy(col + 0, row);
-                printf("[Fasilitas tidak boleh kosong!]");
-                Sleep(800);
-
-                gotoxy(col + 0, row);
-                printf("%-35s", " ");
-
-                gotoxy(col, row);
-                i = 0;
-                continue;
-            }
-
-            strcpy(fasilitas, temp);
-            return;
-        }
-        else if (ch == 27) {
-            fasilitas[0] = '\0';
-            return;
-        }
-        else if (ch == 8 && i > 0) {
-            i--;
-            printf("\b \b");
-        }
-        else if ((ch >= 'a' && ch <= 'z') ||
-                 (ch >= 'A' && ch <= 'Z') ||
-                 ch == ' ' || ch == ',') {
-            if (i < 99) {
-                temp[i++] = ch;
-                printf("%c", ch);
-            }
-                 }
+    if (pilihan == 0) {  // Ekonomi
+        gotoxy(105, 31); printf("Kategori  : Ekonomi");
+        gotoxy(105, 32); printf("Kapasitas : 60 orang");
+        gotoxy(105, 33); printf("Fasilitas :");
+        gotoxy(105, 34); printf("- AC");
+    }
+    else if (pilihan == 1) {  // Bisnis
+        gotoxy(105, 31); printf("Kategori  : Bisnis");
+        gotoxy(105, 32); printf("Kapasitas : 40 orang");
+        gotoxy(105, 33); printf("Fasilitas :");
+        gotoxy(105, 34); printf("- AC");
+        gotoxy(105, 35); printf("- Stopcontact");
+        gotoxy(105, 36); printf("- Toilet");
+    }
+    else if (pilihan == 2) {  // Executive
+        gotoxy(105, 31); printf("Kategori  : Executive");
+        gotoxy(105, 32); printf("Kapasitas : 40 orang");
+        gotoxy(105, 33); printf("Fasilitas :");
+        gotoxy(105, 34); printf("- AC");
+        gotoxy(105, 35); printf("- Bantal & Selimut");
+        gotoxy(105, 36); printf("- Camilan");
+        gotoxy(105, 37); printf("- TV");
+        gotoxy(105, 38); printf("- Toilet");
     }
 }
 
-// ================= INPUT KATEGORI =================
-static void inputKategoriKendaraan(char *kategori, int row, int col) {
-    char ch;
-    char temp[30] = "";
+// ================= FUNGSI NAVIGASI KATEGORI =================
+static int rutenavigasiKategoriDalamKotak(int x, int y, int jumlah_pilihan, int spasi) {
+    int pilihan = 0;
+    int ch;
+
+    // Tampilkan detail awal
+    tampilkanDetailKategori(pilihan);
 
     while (1) {
-        ch = getch();
-
-        // ===== ENTER =====
-        if (ch == 13) {
-            if (strlen(temp) == 0) {
-                gotoxy(col + 0, row);
-                printf("[Wajib pilih kategori]");
-                Sleep(800);
-                gotoxy(col + 0, row);
-                printf("%-25s", " ");
-                continue;
+        // Tampilkan panah untuk semua pilihan
+        for (int i = 0; i < jumlah_pilihan; i++) {
+            gotoxy(x, y + (i * spasi));
+            if (i == pilihan) {
+                printf(">>");
+            } else {
+                printf("  ");
             }
-
-            strcpy(kategori, temp);
-            return;
         }
 
-        // ===== ESC =====
-        if (ch == 27) {
-            kategori[0] = '\0';
-            return;
-        }
+        ch = _getch();
 
-        // ===== BACKSPACE → hapus pilihan =====
-        if (ch == 8) {
-            temp[0] = '\0';
+        // Arrow keys
+        if (ch == 0 || ch == 224) {
+            ch = _getch();
 
-            gotoxy(col, row);
-            printf("%-30s", " ");
-            gotoxy(col, row);
-            continue;
+            if (ch == 72) {  // Arrow UP
+                pilihan--;
+                if (pilihan < 0) {
+                    pilihan = jumlah_pilihan - 1;
+                }
+                tampilkanDetailKategori(pilihan);
+            }
+            else if (ch == 80) {  // Arrow DOWN
+                pilihan++;
+                if (pilihan >= jumlah_pilihan) {
+                    pilihan = 0;
+                }
+                tampilkanDetailKategori(pilihan);
+            }
         }
+        // ENTER
+        else if (ch == 13) {
+            return pilihan;
+        }
+        // ESC
+        else if (ch == 27) {
+            return -1;
+        }
+    }
+}
 
-        // ===== PILIHAN KATEGORI =====
-        if (ch == 'e' || ch == 'E') {
-            strcpy(temp, "Ekonomi");
-        }
-        else if (ch == 'b' || ch == 'B') {
-            strcpy(temp, "Bisnis");
-        }
-        else if (ch == 'x' || ch == 'X') {
-            strcpy(temp, "Executive");
-        }
-        else {
-            continue; // tombol lain diabaikan
-        }
+// ================= INPUT KATEGORI DENGAN KOTAK KECIL =================
+static void inputKategoriKendaraanDenganPreview(char *kategori, char *kapasitas, char *fasilitas, int row, int col) {
+    int pilih;
 
-        // tampilkan pilihan
-        gotoxy(col, row);
-        printf("%-30s", temp);
+    // ===== KOTAK KIRI - MENU KATEGORI (18 karakter lebar) =====
+    bentukframe(84, 30, 18, 11);
+    gotoxy(85, 30);
+    printf("[ PILIH KATEGORI ]");
+
+    gotoxy(87, 32); printf("Ekonomi");
+    gotoxy(87, 34); printf("Bisnis");
+    gotoxy(87, 36); printf("Executive");
+
+    gotoxy(85, 38);
+    printf("[%c%c] Navigasi", 24, 25);  // ↑↓
+    gotoxy(85, 39);
+    printf("[Enter] Pilih");
+
+    // ===== KOTAK KANAN - DETAIL KATEGORI (35 karakter lebar) =====
+    bentukframe(103, 30, 35, 11);
+    gotoxy(115, 30);
+    printf("[ DETAIL ]");
+
+    // Navigasi dengan preview (3 pilihan dengan jarak 2 baris)
+    pilih = rutenavigasiKategoriDalamKotak(85, 32, 3, 2);
+
+    // Bersihkan kedua kotak setelah selesai
+    clearArea(83, 29, 57, 13);
+
+    // Set data berdasarkan pilihan
+    if (pilih == 0) {  // Ekonomi
+        strcpy(kategori, "Ekonomi");
+        strcpy(kapasitas, "60");
+        strcpy(fasilitas, "AC");
+    }
+    else if (pilih == 1) {  // Bisnis
+        strcpy(kategori, "Bisnis");
+        strcpy(kapasitas, "40");
+        strcpy(fasilitas, "AC, Stopcontact, Toilet");
+    }
+    else if (pilih == 2) {  // Executive
+        strcpy(kategori, "Executive");
+        strcpy(kapasitas, "40");
+        strcpy(fasilitas, "AC, Bantal dan Selimut, Camilan, TV, Toilet");
+    }
+    else {  // ESC ditekan
+        kategori[0] = '\0';
+        kapasitas[0] = '\0';
+        fasilitas[0] = '\0';
+        return;
     }
 }
 
@@ -246,7 +197,7 @@ static void inputNamaArmada(char *nama, int row, int col) {
             nama[0] = '\0';
             break;
         }
-        else if (ch == 8) {  // BACKSPACE (SAMA)
+        else if (ch == 8) {  // BACKSPACE
             if (i > 0) {
                 i--;
                 printf("\b \b");
@@ -260,7 +211,7 @@ static void inputNamaArmada(char *nama, int row, int col) {
                 temp[i++] = ch;
                 printf("%c", ch);
             }
-                 }
+        }
     }
 }
 
@@ -278,16 +229,13 @@ static void inputTahun(char *tahun, int row, int col) {
 
             // VALIDASI: HARUS 4 DIGIT
             if (i != 4) {
-                // tampilkan error di KANAN input
                 gotoxy(col + 0, row);
                 printf("[Harus 4 digit]");
                 Sleep(800);
 
-                // hapus error DENGAN PANJANG SAMA
                 gotoxy(col + 0, row);
                 printf("%-15s", " ");
 
-                // bersihkan input
                 gotoxy(col, row);
                 printf("    ");
                 gotoxy(col, row);
@@ -421,41 +369,37 @@ void createKendaraan() {
         gotoxy(37, 28);
         printf("ID Kendaraan : %s", data.id_kendaraan);
 
-        // ===== KATEGORI =====
+        // ===== KATEGORI (KOTAK KANAN) =====
         gotoxy(37, 29);
-        printf("Kategori     : ");
+        printf("Kategori     : [Tekan Enter untuk pilih]");
 
-        gotoxy(37, 30);
-        printf("([E]Ekonomi [B]Bisnis [X]Executive)");
-
-        setPointer(29, 53);
-        inputKategoriKendaraan(data.kategori, 29, 52);
+        inputKategoriKendaraanDenganPreview(data.kategori, data.kapasitas, data.fasilitas, 29, 52);
 
         if (strlen(data.kategori) == 0) {
-        fclose(fp);
-        return;
-        }
-
-        // hapus keterangan setelah dipilih
-        clearArea(37, 30, 60, 1);
-
-        // ===== KAPASITAS =====
-        gotoxy(37, 30); printf("Kapasitas    : ");
-        setPointer(30, 53);
-        inputKapasitas2Digit(data.kapasitas, 30, 52);
-        if (strlen(data.kapasitas) == 0) {
             fclose(fp);
+            clearArea(35, 28, 108, 15);
             return;
         }
 
-        // ===== FASILITAS =====
-        gotoxy(37, 31); printf("Fasilitas    : ");
-        setPointer(32, 53);
-        inputFasilitas(data.fasilitas, 31, 52);
-        if (strlen(data.fasilitas) == 0) {
-            fclose(fp);
-            return;
-        }
+        // Gambar ulang frame utama setelah popup kategori
+        bentukframe(35, 27, 108, 16);
+        gotoxy(78, 27); printf("=== TAMBAH KENDARAAN ===");
+
+        // Tampilkan kembali ID
+        gotoxy(37, 28);
+        printf("ID Kendaraan : %s", data.id_kendaraan);
+
+        // Update tampilan setelah memilih
+        gotoxy(37, 29);
+        printf("Kategori     : %-30s", data.kategori);
+
+        // ===== TAMPILKAN KAPASITAS (OTOMATIS DARI KATEGORI) =====
+        gotoxy(37, 30);
+        printf("Kapasitas    : %s orang", data.kapasitas);
+
+        // ===== TAMPILKAN FASILITAS (OTOMATIS DARI KATEGORI) =====
+        gotoxy(37, 31);
+        printf("Fasilitas    : %s", data.fasilitas);
 
         // ===== NAMA ARMADA =====
         gotoxy(37, 32); printf("Nama Armada  : ");
@@ -463,6 +407,7 @@ void createKendaraan() {
         inputNamaArmada(data.nama_armada, 32, 52);
         if (strlen(data.nama_armada) == 0) {
             fclose(fp);
+            clearArea(35, 28, 108, 15);
             return;
         }
 
@@ -472,6 +417,7 @@ void createKendaraan() {
         inputTahun(data.tahun, 33, 52);
         if (strlen(data.tahun) == 0) {
             fclose(fp);
+            clearArea(35, 28, 108, 15);
             return;
         }
 
@@ -491,10 +437,6 @@ void createKendaraan() {
         gotoxy(37, 34);
         printf("Status       : ");
 
-        // ===== STATUS =====
-        gotoxy(37, 34);
-        printf("Status       : ");
-
         // JIKA TIDAK LAYAK (UMUR > 10 TAHUN) → OTOMATIS "TIDAK AKTIF"
         if (umur > 10) {
             strcpy(data.status, "Tidak Aktif");
@@ -505,8 +447,8 @@ void createKendaraan() {
             gotoxy(37, 35);
             printf("[Status otomatis: Tidak Aktif karena bus tidak layak]");
 
-            Sleep(1500); // Tampilkan pesan 1.5 detik
-            clearArea(37, 35, 80, 1); // Hapus pesan
+            Sleep(1500);
+            clearArea(37, 35, 80, 1);
         }
         // JIKA LAYAK → INPUT STATUS MANUAL
         else {
@@ -518,10 +460,10 @@ void createKendaraan() {
 
             if (strlen(data.status) == 0) {
                 fclose(fp);
+                clearArea(35, 28, 108, 15);
                 return;
             }
 
-            // hapus keterangan status setelah dipilih
             clearArea(37, 35, 80, 1);
         }
 
@@ -538,11 +480,11 @@ void createKendaraan() {
         while (1) {
             n = _getch();
             if (n == 27) { // ESC
-                clearArea(35, 28, 70, 12);
+                clearArea(35, 28, 108, 15);
                 return;
             }
             if (n == 'y' || n == 'Y' || n == 'n' || n == 'N') {
-                clearArea(35, 28, 70, 12);
+                clearArea(35, 28, 108, 15);
                 if (n == 'n' || n == 'N') return;
                 break;
             }
@@ -562,18 +504,6 @@ void buatDummyKendaraan() {
         "Ekonomi",
         "Bisnis",
         "Executive"
-    };
-
-    char *kapasitas[] = {
-        "25", "30", "35", "40", "45", "50"
-    };
-
-    char *fasilitas[] = {
-        "AC",
-        "AC, Reclining Seat",
-        "AC, Reclining Seat, Toilet",
-        "AC, TV, USB Charger",
-        "AC, Toilet, WiFi"
     };
 
     char *nama_armada[] = {
@@ -600,8 +530,6 @@ void buatDummyKendaraan() {
     };
 
     int nKategori  = sizeof(kategori) / sizeof(kategori[0]);
-    int nKapasitas = sizeof(kapasitas) / sizeof(kapasitas[0]);
-    int nFasilitas = sizeof(fasilitas) / sizeof(fasilitas[0]);
     int nArmada    = sizeof(nama_armada) / sizeof(nama_armada[0]);
     int nTahun     = sizeof(tahun) / sizeof(tahun[0]);
     int nStatus    = sizeof(status) / sizeof(status[0]);
@@ -617,18 +545,30 @@ void buatDummyKendaraan() {
     printf("     MEMBUAT DATA DUMMY KENDARAAN\n");
 
     for (int i = 0; i < max_data; i++) {
-        // INISIALISASI MEMORI STRUCT DULU
         memset(&data, 0, sizeof(Kendaraan));
 
         // ID OTOMATIS
         sprintf(data.id_kendaraan, "KND%03d", i + 1);
 
-        // ISI DATA (DI-ROTASI BIAR BERVARIASI)
-        strcpy(data.kategori,  kategori[i % nKategori]);
-        strcpy(data.kapasitas, kapasitas[i % nKapasitas]);
-        strcpy(data.fasilitas, fasilitas[i % nFasilitas]);
-        strcpy(data.tahun,     tahun[i % nTahun]);
-        strcpy(data.status,    status[i % nStatus]);
+        // ISI DATA BERDASARKAN KATEGORI
+        strcpy(data.kategori, kategori[i % nKategori]);
+
+        // SET KAPASITAS & FASILITAS BERDASARKAN KATEGORI
+        if (strcmp(data.kategori, "Ekonomi") == 0) {
+            strcpy(data.kapasitas, "60");
+            strcpy(data.fasilitas, "AC");
+        }
+        else if (strcmp(data.kategori, "Bisnis") == 0) {
+            strcpy(data.kapasitas, "40");
+            strcpy(data.fasilitas, "AC, Stopcontact, Toilet");
+        }
+        else if (strcmp(data.kategori, "Executive") == 0) {
+            strcpy(data.kapasitas, "40");
+            strcpy(data.fasilitas, "AC, Bantal dan Selimut, Camilan, TV, Toilet");
+        }
+
+        strcpy(data.tahun, tahun[i % nTahun]);
+        strcpy(data.status, status[i % nStatus]);
 
         // Nama armada + nomor biar unik
         sprintf(data.nama_armada, "%s %d",
@@ -644,4 +584,5 @@ void buatDummyKendaraan() {
     printf("Tekan tombol apapun untuk kembali...");
     getch();
 }
+
 #endif // PROJEK_CREATEKENDARAAN_H
