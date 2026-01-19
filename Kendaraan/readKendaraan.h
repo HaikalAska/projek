@@ -32,6 +32,7 @@ void readKendaraan() {
     int wTahun  = 6;
     int wStatus = 15;
 
+    int rowsPerPage = 10; // ganti jadi variable biasa
     int current_page = 1;
     int total_pages = 1;
     char key;
@@ -55,7 +56,7 @@ void readKendaraan() {
     fclose(fp);
 
     if (total_kendaraan > 0) {
-        total_pages = (total_kendaraan + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
+        total_pages = (total_kendaraan + rowsPerPage - 1) / rowsPerPage;
     }
 
     int totalWidth =
@@ -73,7 +74,7 @@ void readKendaraan() {
     line[totalWidth] = '\0';
 
     do {
-        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 10);
+        clearArea(startX, startY, totalWidth + 5, rowsPerPage + 10);
 
         gotoxy(80, 13);
         printf("=== DAFTAR KENDARAAN ===");
@@ -97,22 +98,68 @@ void readKendaraan() {
         gotoxy(startX, row++);
         printf("%s", line);
 
-        int start_index = (current_page - 1) * MAX_ROWS_PER_PAGE;
-        int end_index = start_index + MAX_ROWS_PER_PAGE;
+        int start_index = (current_page - 1) * rowsPerPage;
+        int end_index = start_index + rowsPerPage;
         if (end_index > total_kendaraan) end_index = total_kendaraan;
 
         for (int i = start_index; i < end_index; i++) {
             Kendaraan k = all_kendaraan[i];
 
+            // BIAR KALO KEPANJANG JADI ...
+            char kategori[20], kapasitas[15], tahun[10], status[20];
+            char fasilitas[32], nama[25];
+
+            snprintf(kategori, wKat+1, "%s", k.kategori);
+            if (strlen(k.kategori) > wKat) {
+                kategori[wKat-2] = '.';
+                kategori[wKat-1] = '.';
+                kategori[wKat] = '\0';
+            }
+
+            snprintf(kapasitas, wKap+1, "%s", k.kapasitas);
+            if (strlen(k.kapasitas) > wKap) {
+                kapasitas[wKap-2] = '.';
+                kapasitas[wKap-1] = '.';
+                kapasitas[wKap] = '\0';
+            }
+
+            snprintf(tahun, wTahun+1, "%s", k.tahun);
+            if (strlen(k.tahun) > wTahun) {
+                tahun[wTahun-2] = '.';
+                tahun[wTahun-1] = '.';
+                tahun[wTahun] = '\0';
+            }
+
+            snprintf(status, wStatus+1, "%s", k.status);
+            if (strlen(k.status) > wStatus) {
+                status[wStatus-2] = '.';
+                status[wStatus-1] = '.';
+                status[wStatus] = '\0';
+            }
+
+            snprintf(fasilitas, wFas+1, "%s", k.fasilitas);
+            if (strlen(k.fasilitas) > wFas) {
+                fasilitas[wFas-2] = '.';
+                fasilitas[wFas-1] = '.';
+                fasilitas[wFas] = '\0';
+            }
+
+            snprintf(nama, wNama+1, "%s", k.nama_armada);
+            if (strlen(k.nama_armada) > wNama) {
+                nama[wNama-2] = '.';
+                nama[wNama-1] = '.';
+                nama[wNama] = '\0';
+            }
+
             gotoxy(startX, row++);
             printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                  wNo+1,    i + 1,
-                 wKat+1,   k.kategori,
-                 wKap+1,   k.kapasitas,
-                 wTahun+1, k.tahun,
-                 wStatus+1, k.status,
-                 wFas+1,   k.fasilitas,
-                 wNama+1,  k.nama_armada
+                 wKat+1,   kategori,
+                 wKap+1,   kapasitas,
+                 wTahun+1, tahun,
+                 wStatus+1, status,
+                 wFas+1,   fasilitas,
+                 wNama+1,  nama
             );
         }
 

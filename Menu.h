@@ -7,8 +7,7 @@
 #include "rute/menurute.h"
 #include "jadwal/menujadwal.h"
 #include "pemesanantiket.h"
-#include "Laporan-Manager/laporan.h"
-#include "pembatalan/pengembaliantiket.h"
+#include "Laporan-Manager/Laporan.h"
 
 
 void validLogin();
@@ -129,15 +128,18 @@ void validLogin();
         totalStaff(48, 21);
 
 
-        bentukTabel(67, 17, 30, 7, "TOTAL TRANSAKSI");
+        bentukTabel(67, 17, 30, 7, "TOTAL SELURUH TRANSAKSI");
         transaksi(81,21);
 
-        /*bentukTabel(100, 17, 30, 7, "TOTAL PENGEMBALIAN");
-        pengembalian(114,21);
+        bentukTabel(35, 25, 30, 7, "TOTAL PENGEMBALIAN");
+        Pembatalan(48,29);
 
 
-        bentukTabel(35, 25, 95, 7, "TOTAL PENDAPATAN");
-        pendapatan(79,29);*/
+        bentukTabel(67, 25, 30, 7, "TOTAL PEMBELIAN");
+        Pembelian(81,29);
+
+        bentukTabel(98, 17, 30, 15, "PENDAPATAN BERSIH");
+        hitungtotalhargatiket(105,24);
 
 
         pilih = menuNavigasi(2, 13, 2);
@@ -145,7 +147,7 @@ void validLogin();
 
         switch (pilih) {
             case 1:
-                //laporanBulanan();
+                Laporan();
                 break;
             case 2:
                 validLogin();

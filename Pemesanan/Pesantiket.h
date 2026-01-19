@@ -3,7 +3,7 @@
 
 #include "../FrameTabel.h"
 #include <time.h>
-// #include "../pembatalan/pengembaliantiket.h"
+
 
 // ================= STRUCT =================
 typedef struct {
@@ -494,15 +494,17 @@ void transaksi(int x, int y) {
     printf("%d", total);
 }
 
-void hitungtotalhargatiket() {
+
+/////////// HU
+void hitungtotalhargatiket(int x, int y) {
     FILE *fp;
     tiket data;
     long total = 0;
 
     fp = fopen("tiket.dat", "rb");
     if (fp == NULL) {
-        gotoxy(37, 30);
-        printf("Data tiket belum tersedia!");
+        gotoxy(x, y);
+        printf("Rp 0");
         return;
     }
 
@@ -512,10 +514,71 @@ void hitungtotalhargatiket() {
 
     fclose(fp);
 
-    gotoxy(37, 32);
-    printf("Total Pendapatan Tiket : ");
+    gotoxy(x, y);
     tampilanhargatiket(total);
 }
+///////////////////////////////////////////////////////////////
+
+
+
+
+/////////////////MENU LAPORAN PEMBELIAN//////////////////////
+void Pembelian(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    tiket data;
+    int total = 0;
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        if (strcmp(data.status, "Aktif") == 0) {
+            total++;
+        }
+    }
+
+    fclose(fp);
+
+    gotoxy(x, y);
+    printf("%d", total);
+}
+/////////////////////////////////////////////////////////////////
+
+
+
+
+//////////////MENU LAPORAN PEMBATALAN///////////////////
+void Pembatalan(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
+
+    if (!fp) {
+        gotoxy(x, y);
+        printf("0");
+        return;
+    }
+
+    tiket data;
+    int total = 0;
+
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        if (strcmp(data.status, "Batal") == 0) {
+            total++;
+        }
+    }
+
+    fclose(fp);
+
+    gotoxy(x, y);
+    printf("%d", total);
+}
+/////////////////////////////////////////////////////////////
+
+
+
 
 
 

@@ -42,7 +42,7 @@ void pemesanantiket() {
                 PesanTiket();
             break;
         case 2:
-                //BatalTiket();
+                BatalTiket();
             break;
         case 3:
                 menuStaff();
@@ -83,7 +83,7 @@ void generateDummyTiket() {
     char *armada[] = {"Eka Prima", "Harapan Jaya", "Sinar Jaya", "Pusaka Jaya", "Maju Lancar"};
 
     // Data dummy tanggal & jam
-    char *tanggal[] = {"12/01/2026", "13/01/2026", "14/01/2026", "15/01/2026", "16/01/2026"};
+    char *tanggal[] = {"12/02/2026", "13/05/2026", "14/04/2026", "15/10/2026", "16/09/2026"};
     char *jam[] = {"08:00", "10:30", "13:00", "15:30", "18:00"};
 
     // Harga
