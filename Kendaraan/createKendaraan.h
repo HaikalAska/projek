@@ -126,7 +126,7 @@ static void inputKategoriKendaraanDenganPreview(char *kategori, char *kapasitas,
     gotoxy(87, 36); printf("Executive");
 
     gotoxy(85, 38);
-    printf("[%c%c] Navigasi", 24, 25);  // ↑↓
+    printf("[\xE2\x86\x91 \xE2\x86\x93] Navigasi", 24, 25);  // ↑↓
     gotoxy(85, 39);
     printf("[Enter] Pilih");
 

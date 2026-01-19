@@ -1095,5 +1095,124 @@ void bentukTabel(int posX, int posY, int width, int height, char *headerText) {
 
 
 
+////////////// BUAT MANAGER /////////////////////////
+
+//LAPORAN BULANAN//
+void inputBulan(char *bulan, int x, int y) {
+    int valid = 0;
+    char input;
+    int angka = 0;
+
+    do {
+        gotoxy(x, y);
+        printf("Masukkan Bulan (1-12): ");
+        // Clear input area
+        for (int i = 0; i < 20; i++) printf(" ");
+        gotoxy(x + 23, y);
+
+        angka = 0;
+
+
+        while (1) {
+            input = getch();
+
+            // Kalau ENTER
+            if (input == 13) {
+                break;
+            }
+            // Kalau BACKSPACE
+            else if (input == 8) {
+                if (angka > 0) {
+                    angka /= 10;
+                    printf("\b \b");
+                }
+            }
+
+            else if (input >= '0' && input <= '9') {
+                int digit = input - '0';
+                int temp = angka * 10 + digit;
+
+
+                if (temp >= 1 && temp <= 12) {
+                    angka = temp;
+                    printf("%c", input);
+                }
+            }
+        }
+
+        // Validasi final
+        if (angka >= 1 && angka <= 12) {
+            valid = 1;
+            sprintf(bulan, "%02d", angka);
+        } else {
+            gotoxy(x, y + 1);
+            printf("Bulan tidak valid! Harus 1-12.");
+            getch();
+            gotoxy(x, y + 1);
+            printf("                                ");
+        }
+
+    } while (!valid);
+}
+////////////////////////////////////////////////////////////////////////
+
+
+
+//// BUAT TAHUNNYA/////
+void TahunJadwal(int *tahun, int x, int y) {
+    int valid = 0;
+    char input;
+    int angka = 0;
+
+    do {
+        gotoxy(x, y);
+        printf("Masukkan Tahun (YYYY) : ");
+        // Clear input area
+        for (int i = 0; i < 20; i++) printf(" ");
+        gotoxy(x + 24, y);
+
+        angka = 0;
+
+        while (1) {
+            input = getch();
+
+            // Kalau ENTER
+            if (input == 13) {
+                break;
+            }
+            // Kalau BACKSPACE
+            else if (input == 8) {
+                if (angka > 0) {
+                    angka /= 10;
+                    printf("\b \b");
+                }
+            }
+
+            else if (input >= '0' && input <= '9') {
+                int digit = input - '0';
+                int temp = angka * 10 + digit;
+
+
+                if (temp <= 2100) {
+                    angka = temp;
+                    printf("%c", input);
+                }
+            }
+        }
+
+
+        if (angka >= 1900 && angka <= 2100) {
+            valid = 1;
+            *tahun = angka;
+        } else {
+            gotoxy(x, y + 1);
+            printf("Tahun tidak valid! Harus 1900-2100.");
+            getch();
+            gotoxy(x, y + 1);
+            printf("                                     ");
+        }
+
+    } while (!valid);
+}
 
 #endif
