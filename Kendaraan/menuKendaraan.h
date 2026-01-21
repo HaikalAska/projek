@@ -60,7 +60,6 @@ void menukendaraan() {
             case 4:
                 menuStaff();
                 break;
-
         }
     }
 }
