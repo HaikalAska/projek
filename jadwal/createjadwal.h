@@ -186,6 +186,8 @@ int liatkendaraan() {
         else if (key==8 && current_page>1) current_page--;
         else if (key==27) return -1;
 
+
+
     } while (key!=13);
 
     // clearArea(startX, startY, width+2, MAX_ROWS_PER_PAGE+6);
@@ -688,5 +690,6 @@ void buatjadwal() {
 
     } while (x == 'y' || x == 'Y');
 }
+
 
 #endif // PROJEK_CREATEJADWAL_H

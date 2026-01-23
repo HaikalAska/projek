@@ -65,8 +65,8 @@ void validLogin() {
     char pw[50];
     char role[50] = "";
 
-    char AdminID[] = "1";
-    char AdminPW[] = "12";
+    char AdminID[] = "superadmin";
+    char AdminPW[] = "superadmin";
 
     int percobaan = 0;
     int Maxpercobaan = 3;

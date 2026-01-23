@@ -91,8 +91,8 @@ void laporanBulanan() {
     }
 
     if (total_filtered == 0) {
-        clearArea(startX, startY, 80, 20);
-        gotoxy(startX, startY);
+        clearArea(40, 27, 80, 18);
+        gotoxy(40, 28);
         printf("Tidak ada data untuk bulan tersebut!");
         getch();
 
