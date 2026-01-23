@@ -19,6 +19,7 @@ typedef struct {
 } stafff;
 
 void menuSuperAdmin();
+
 void menuStaff();
 void menuManager();
 
