@@ -78,7 +78,7 @@ void BatalTiket() {
 
             // Jika tidak ditemukan
             if (!found) {
-                gotoxy(36, 32); printf("ID Tiket '%s' tidak ditemukan!", id_cari);
+                gotoxy(36, 32); printf("ID Tiket  tidak ditemukan!", id_cari);
                 gotoxy(36, 33); printf("Silakan coba lagi...");
                 Sleep(1500);
                 continue;
@@ -206,7 +206,7 @@ void BatalTiket() {
                 }
 
                 clearArea(108, 30, 44, 10);
-                gotoxy(115, 33); printf("Pembatalan berhasil!");
+                gotoxy(108, 31); printf("Pembatalan berhasil!");
                 Sleep(1000);
 
                 gotoxy(36, 40); printf("Status         : Batal");
@@ -361,8 +361,27 @@ static void inputIDTiketBatal(char *id, int x, int y) {
     while (1) {
         ch = getch();
 
-        // ENTER - hanya jika sudah 3 angka
+        // ENTER
         if (ch == 13) {
+            // Validasi: harus 3 angka
+            if (i < 3) {
+                gotoxy(36, 32);
+                printf("ID Tiket harus 3 angka!");
+                Sleep(1500);
+                gotoxy(36, 32);
+                printf("                        ");
+
+                // ===== RESET INPUT =====
+                i = 0;
+                for (int j = 0; j < 4; j++) {
+                    buffer[j] = '\0';
+                }
+                gotoxy(inputX, y);
+                printf("   ");
+                gotoxy(inputX, y);
+                continue;
+            }
+
             if (i == 3) {
                 buffer[i] = '\0';
                 sprintf(id, "TKT%s", buffer);
@@ -381,7 +400,7 @@ static void inputIDTiketBatal(char *id, int x, int y) {
                 printf("\b \b");
             }
         }
-
+        // ANGKA (maksimal 3 digit)
         else if (ch >= '0' && ch <= '9') {
             if (i < 3) {
                 buffer[i++] = ch;
