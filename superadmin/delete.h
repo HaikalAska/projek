@@ -14,6 +14,10 @@ void delete(){
     int pilihan;
     char konfirmasi;
     int found = 0;
+    char strNo[10];
+    int targetNo = 0;
+    int currentNo = 1;
+    int idx;
 
     fp = fopen("staff.dat","rb");
     if (fp == NULL) {
@@ -35,14 +39,59 @@ void delete(){
         return;
     }
 
-    // Input pilihan nomor
+    // --- Input Nomor Urut ---
     gotoxy(3, 25);
     printf("Pilih No Urut: ");
-    scanf("%d", &pilihan);
 
-    // Validasi pilihan
+    idx = 0;
+    while (1) {
+        char ch = _getch();
+
+        // ESC
+        if (ch == 27) return;
+
+        // ENTER
+        else if (ch == 13) {
+            if (idx == 0) {
+                gotoxy(3, 26);
+                printf("Input tidak boleh kosong!");
+                gotoxy(17, 25);
+                continue;
+            }
+
+            targetNo = 0;
+            for (int i = 0; i < idx; i++) {
+                targetNo = targetNo * 10 + (strNo[i] - '0');
+            }
+            break;
+        }
+
+        // BACKSPACE
+        else if (ch == 8) {
+            if (idx > 0) {
+                idx--;
+                printf("\b \b");
+            }
+        }
+
+        // ANGKA SAJA
+        else if (ch >= '0' && ch <= '9') {
+            if (idx < 9) {
+                strNo[idx++] = ch;
+                printf("%c", ch);
+            }
+        }
+
+        else {
+            // do nothing
+        }
+    }
+
+    pilihan =  targetNo;
+
     if (pilihan < 1 || pilihan > count) {
-        gotoxy(3, 14); printf("Pilihan tidak valid!");
+        gotoxy(35, 30);
+        printf("Nomor Urut %d Tidak DItemukan", pilihan);
         getchar();
         getchar();
         return;
@@ -68,7 +117,24 @@ void delete(){
 
     // Konfirmasi nonaktifkan
     gotoxy(38, 35); printf("Yakin ingin menonaktifkan data ini? (y/n): ");
-    scanf(" %c", &konfirmasi);
+
+    while (1) {
+        char ch = _getch();
+
+        if ( ch == 27) return;;
+
+        if (ch == 'y' || ch == 'Y') {
+            konfirmasi = 'y';
+            printf("Y");
+            break;
+        }else if (ch == 'n' || ch == 'N') {
+            konfirmasi = 'n';
+            printf("N");
+            break;
+            getchar();
+            getchar() ;
+        }
+    }
 
     if (tolower(konfirmasi) != 'y') {
         gotoxy(38, 36); printf("Pembatalan proses!");

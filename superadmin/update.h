@@ -30,10 +30,21 @@ void update() {
         char ch = _getch();
         if (ch == 27) return;
         else if (ch == 13) {
-            strNo[idx] = '\0';
-            targetNo = atoi(strNo);
+            if (idx == 0) {
+                gotoxy(3, 26);
+                printf("Input tidak boleh kosong!");
+                gotoxy(17, 25);
+                continue;
+            }
+
+            targetNo = 0;
+            for (int i = 0; i < idx; i++) {
+                targetNo = targetNo * 10 + (strNo[i] - '0');
+            }
             break;
         }
+
+
         else if (ch == 8 && idx > 0) {
             idx--;
             printf("\b \b");
