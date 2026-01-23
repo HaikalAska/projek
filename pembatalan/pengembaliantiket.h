@@ -179,15 +179,19 @@ void BatalTiket() {
                     if (strcmp(temp_data.id_tiket, id_cari) == 0) {
                         strcpy(temp_data.status, "Batal");
 
-                        // TAMBAHKAN INI - Update metode pengembalian
+                        // Simpan biaya pembatalan 30% dari harga ASLI ke hargaTbatal
+                        long harga_asli = temp_data.harga;
+                        temp_data.hargaTbatal = (harga_asli * 30) / 100;  // 30% untuk laporan
+
+                        // Update metode pengembalian
                         if (metode_pengembalian == 1) {
                             strcpy(temp_data.metode_bayar, "Tunai");
                         } else {
                             strcpy(temp_data.metode_bayar, "Non-Tunai");
                         }
 
-                        // TAMBAHKAN INI - Hitung refund 70%
-                        temp_data.harga = temp_data.harga * 0.7;
+                        // PENTING: harga TETAP harga asli, JANGAN dikalikan 0.7
+                        // Hapus baris: temp_data.harga = temp_data.harga * 0.7;
                     }
                     fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
                 }
@@ -336,14 +340,18 @@ void generateIDPembatalan(char *id_pembatalan) {
     tiket data;
     int count = 0;
 
-    fp = fopen("batal.dat", "rb");
+    fp = fopen("tiket.dat", "rb");
     if (fp != NULL) {
+        // Hitung hanya tiket yang sudah dibatalkan
         while (fread(&data, sizeof(tiket), 1, fp) == 1) {
-            count++;
+            if (strcmp(data.status, "Batal") == 0) {
+                count++;
+            }
         }
         fclose(fp);
     }
 
+    // Generate ID: BTL001, BTL002, BTL003, dst
     sprintf(id_pembatalan, "BTL%03d", count + 1);
 }
 

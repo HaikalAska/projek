@@ -499,7 +499,8 @@ void transaksi(int x, int y) {
 void hitungtotalhargatiket(int x, int y) {
     FILE *fp;
     tiket data;
-    long total = 0;
+    long total_aktif = 0;      // Total harga tiket aktif
+    long total_biaya_batal = 0; // Total biaya pembatalan 30%
 
     fp = fopen("tiket.dat", "rb");
     if (fp == NULL) {
@@ -509,13 +510,23 @@ void hitungtotalhargatiket(int x, int y) {
     }
 
     while (fread(&data, sizeof(tiket), 1, fp)) {
-        total += data.harga;
+        // Jika tiket aktif, hitung harga penuh
+        if (strcmp(data.status, "Aktif") == 0) {
+            total_aktif += data.harga;
+        }
+        // Jika tiket batal, hitung biaya pembatalan 30%
+        else if (strcmp(data.status, "Batal") == 0) {
+            total_biaya_batal += data.hargaTbatal;  // 30% masuk pendapatan
+        }
     }
 
     fclose(fp);
 
+    // Pendapatan Bersih = Total Aktif + Biaya Pembatalan 30%
+    long pendapatan_bersih = total_aktif + total_biaya_batal;
+
     gotoxy(x, y);
-    tampilanhargatiket(total);
+    tampilanhargatiket(pendapatan_bersih);
 }
 ///////////////////////////////////////////////////////////////
 
@@ -575,13 +586,30 @@ void Pembatalan(int x, int y) {
     gotoxy(x, y);
     printf("%d", total);
 }
-/////////////////////////////////////////////////////////////
+void TotalBiayaPembatalan(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
 
+    if (!fp) {
+        gotoxy(x, y);
+        printf("Rp 0");
+        return;
+    }
 
+    tiket data;
+    long total_biaya = 0;  // Total 30% dari tiket yang dibatalkan
 
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        if (strcmp(data.status, "Batal") == 0) {
+            total_biaya += data.hargaTbatal;  // Akumulasi 30%
+        }
+    }
 
+    fclose(fp);
 
-
+    gotoxy(x, y);
+    printf("Rp ");
+    tampilanhargatiket(total_biaya);
+}
 void readTiketPenumpang() {
 
     FILE *fp;
@@ -592,7 +620,7 @@ void readTiketPenumpang() {
 
     // ===== LEBAR KOLOM =====
     int wNo = 3, wID = 8, wNama = 20, wTelp = 13;
-    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 12;
+    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 15;
 
     fp = fopen("tiket.dat", "rb");
     if (!fp) {
@@ -644,7 +672,7 @@ void readTiketPenumpang() {
                wTgl+1,"Tanggal",
                wJam+1,"Jam",
                wStatus+1,"Status",
-               wHarga+2,"Harga");
+               wHarga+2,"Harga/Refund");
 
         gotoxy(startX, row++); printf("%s", garis);
 
@@ -669,9 +697,16 @@ void readTiketPenumpang() {
                    wJam+1, data[i].jam_berangkat,
                    wStatus+1, data[i].status);
 
-            // cetak harga dengan format rupiah
+            // TAMPILKAN HARGA: Jika Batal tampilkan 70%, jika tidak tampilkan harga normal
             printf(" ");
-            tampilanhargatiket(data[i].harga);
+            if (strcmp(data[i].status, "Batal") == 0) {
+                // Tampilkan refund 70%
+                long refund = (data[i].harga * 70) / 100;
+                tampilanhargatiket(refund);
+            } else {
+                // Tampilkan harga normal
+                tampilanhargatiket(data[i].harga);
+            }
 
             // rapikan spasi kolom harga + tutup tabel
             printf("%*s|", wHarga - 13, "");
@@ -697,8 +732,5 @@ void readTiketPenumpang() {
 
     } while (key != 13);
 }
-
-//========================================================================
-
 
 #endif
