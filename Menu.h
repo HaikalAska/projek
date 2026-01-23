@@ -153,11 +153,6 @@ void validLogin();
                 validLogin();
                 break;
         }
-
-
-        gotoxy(3, 25); printf("====== Anda Log Out ======");
-        getchar();
-        return;
     }
 }
 

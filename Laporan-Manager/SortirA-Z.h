@@ -14,7 +14,7 @@ void SortirLaporan() {
 
     // ===== LEBAR KOLOM =====
     int wNo = 3, wID = 8, wNama = 20, wTelp = 13;
-    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 12;
+    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 15;
 
     // Baca semua data
     fp = fopen("tiket.dat", "rb");
@@ -111,23 +111,38 @@ void SortirLaporan() {
 
             gotoxy(startX, row++);
 
+
+            char ruteTampil[25];
+
+            if (strlen(rute) > wRute) {
+                strncpy(ruteTampil, rute, wRute - 3);
+                ruteTampil[wRute - 3] = '\0';
+                strcat(ruteTampil, "...");
+            } else {
+                strcpy(ruteTampil, rute);
+            }
+
+
             // cetak kolom sebelum harga
             printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1, i+1,
                    wID+1, all_data[i].id_tiket,
                    wNama+1, all_data[i].nama_penumpang,
                    wTelp+1, all_data[i].notlpn,
-                   wRute+1, rute,
+                   wRute+1, ruteTampil,
                    wTgl+1, all_data[i].tanggal_berangkat,
                    wJam+1, all_data[i].jam_berangkat,
                    wStatus+1, all_data[i].status);
 
-            // cetak harga dengan format rupiah
-            printf(" ");
-            tampilanhargatiket(all_data[i].harga);
+            char hargaStr[30];
 
-            // rapikan spasi kolom harga + tutup tabel
-            printf("%*s|", wHarga - 13, "");
+            if (strcmp(all_data[i].status, "Batal") == 0) {
+                formatHarga(all_data[i].harga, hargaStr);
+            } else {
+                formatHarga(all_data[i].harga, hargaStr);
+            }
+
+            printf(" %-*s|", wHarga+1, hargaStr);
         }
 
         gotoxy(startX, row++); printf("%s", garis);

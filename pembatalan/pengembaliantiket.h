@@ -179,26 +179,26 @@ void BatalTiket() {
                     if (strcmp(temp_data.id_tiket, id_cari) == 0) {
                         strcpy(temp_data.status, "Batal");
 
-                        // Simpan biaya pembatalan 30% dari harga ASLI ke hargaTbatal
                         long harga_asli = temp_data.harga;
-                        temp_data.hargaTbatal = (harga_asli * 30) / 100;  // 30% untuk laporan
+                        long biaya_batal = (harga_asli * 30) / 100;
 
-                        // Update metode pengembalian
+                        temp_data.harga = biaya_batal;
+                        temp_data.hargaTbatal = biaya_batal;
+
                         if (metode_pengembalian == 1) {
                             strcpy(temp_data.metode_bayar, "Tunai");
                         } else {
                             strcpy(temp_data.metode_bayar, "Non-Tunai");
                         }
-
-                        // PENTING: harga TETAP harga asli, JANGAN dikalikan 0.7
-                        // Hapus baris: temp_data.harga = temp_data.harga * 0.7;
                     }
                     fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
                 }
+
                 fclose(fp_read);
                 fclose(fp_temp);
                 remove("tiket.dat");
                 rename("temp.dat", "tiket.dat");
+
 
                 // Tampilan proses pembatalan
                 clearArea(108, 30, 44, 10);
