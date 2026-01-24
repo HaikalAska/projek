@@ -20,7 +20,7 @@ void BatalTiket() {
         bentukframe(3, 4, 27, 3);
         gotoxy(8, 5); printf("Kelompok 5");
         bentukframe(34, 1, 121, 10);
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         bentukframe(3, 29, 27, 10);
         gotoxy(5, 30); printf("=== MENU NAVIGASI ===");
         gotoxy(4, 32); printf("NAVIGASI [↑ ↓]");
