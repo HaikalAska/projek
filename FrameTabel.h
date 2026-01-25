@@ -1034,7 +1034,7 @@ void bacaManagerHalo(int x, int y) {
 
     if (!fp) {
         gotoxy(x, y);
-        printf("File MANAGERHALO.txt tidak ditemukan!");
+        // printf("File MANAGERHALO.txt tidak ditemukan!");
         return;
     }
 

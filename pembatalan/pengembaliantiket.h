@@ -20,7 +20,7 @@ void BatalTiket() {
         bentukframe(3, 4, 27, 3);
         gotoxy(8, 5); printf("Kelompok 5");
         bentukframe(34, 1, 121, 10);
-        tampilanlogin("GAMBARASCI.txt", 60, 3);
+        tampilanlogin("GAMBARASCI.txt", 45, 3);
         bentukframe(3, 29, 27, 10);
         gotoxy(5, 30); printf("=== MENU NAVIGASI ===");
         gotoxy(4, 32); printf("NAVIGASI [↑ ↓]");
@@ -78,7 +78,7 @@ void BatalTiket() {
 
             // Jika tidak ditemukan
             if (!found) {
-                gotoxy(36, 32); printf("ID Tiket '%s' tidak ditemukan!", id_cari);
+                gotoxy(36, 32); printf("ID Tiket  tidak ditemukan!", id_cari);
                 gotoxy(36, 33); printf("Silakan coba lagi...");
                 Sleep(1500);
                 continue;
@@ -179,22 +179,26 @@ void BatalTiket() {
                     if (strcmp(temp_data.id_tiket, id_cari) == 0) {
                         strcpy(temp_data.status, "Batal");
 
-                        // TAMBAHKAN INI - Update metode pengembalian
+                        long harga_asli = temp_data.harga;
+                        long biaya_batal = (harga_asli * 30) / 100;
+
+                        temp_data.harga = biaya_batal;
+                        temp_data.hargaTbatal = biaya_batal;
+
                         if (metode_pengembalian == 1) {
                             strcpy(temp_data.metode_bayar, "Tunai");
                         } else {
                             strcpy(temp_data.metode_bayar, "Non-Tunai");
                         }
-
-                        // TAMBAHKAN INI - Hitung refund 70%
-                        temp_data.harga = temp_data.harga * 0.7;
                     }
                     fwrite(&temp_data, sizeof(tiket), 1, fp_temp);
                 }
+
                 fclose(fp_read);
                 fclose(fp_temp);
                 remove("tiket.dat");
                 rename("temp.dat", "tiket.dat");
+
 
                 // Tampilan proses pembatalan
                 clearArea(108, 30, 44, 10);
@@ -206,7 +210,7 @@ void BatalTiket() {
                 }
 
                 clearArea(108, 30, 44, 10);
-                gotoxy(115, 33); printf("Pembatalan berhasil!");
+                gotoxy(108, 31); printf("Pembatalan berhasil!");
                 Sleep(1000);
 
                 gotoxy(36, 40); printf("Status         : Batal");
@@ -336,14 +340,18 @@ void generateIDPembatalan(char *id_pembatalan) {
     tiket data;
     int count = 0;
 
-    fp = fopen("batal.dat", "rb");
+    fp = fopen("tiket.dat", "rb");
     if (fp != NULL) {
+        // Hitung hanya tiket yang sudah dibatalkan
         while (fread(&data, sizeof(tiket), 1, fp) == 1) {
-            count++;
+            if (strcmp(data.status, "Batal") == 0) {
+                count++;
+            }
         }
         fclose(fp);
     }
 
+    // Generate ID: BTL001, BTL002, BTL003, dst
     sprintf(id_pembatalan, "BTL%03d", count + 1);
 }
 
@@ -361,8 +369,27 @@ static void inputIDTiketBatal(char *id, int x, int y) {
     while (1) {
         ch = getch();
 
-        // ENTER - hanya jika sudah 3 angka
+        // ENTER
         if (ch == 13) {
+            // Validasi: harus 3 angka
+            if (i < 3) {
+                gotoxy(36, 32);
+                printf("ID Tiket harus 3 angka!");
+                Sleep(1500);
+                gotoxy(36, 32);
+                printf("                        ");
+
+                // ===== RESET INPUT =====
+                i = 0;
+                for (int j = 0; j < 4; j++) {
+                    buffer[j] = '\0';
+                }
+                gotoxy(inputX, y);
+                printf("   ");
+                gotoxy(inputX, y);
+                continue;
+            }
+
             if (i == 3) {
                 buffer[i] = '\0';
                 sprintf(id, "TKT%s", buffer);
@@ -381,7 +408,7 @@ static void inputIDTiketBatal(char *id, int x, int y) {
                 printf("\b \b");
             }
         }
-
+        // ANGKA (maksimal 3 digit)
         else if (ch >= '0' && ch <= '9') {
             if (i < 3) {
                 buffer[i++] = ch;

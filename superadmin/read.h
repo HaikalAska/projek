@@ -6,9 +6,6 @@
 #include "../FrameTabel.h"
 #include "create.h"
 
-// --- Konstanta untuk Paging ---
-#define MAX_ROWS_PER_PAGE 8
-
 
 void baca() {
 
@@ -30,6 +27,7 @@ void baca() {
     int wStatus = 10;
     int wRole = 10;
 
+    int rowsPerPage = 8;
     int current_page = 1;
     int total_pages = 1;
     char key;
@@ -53,7 +51,7 @@ void baca() {
     fclose(fp);
 
     if (total_staff > 0) {
-        total_pages = (total_staff + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
+        total_pages = (total_staff + rowsPerPage - 1) / rowsPerPage;
     }
 
     int totalWidth = 1 + (wNo+2) + (wUsr+2) + (wNama+2) + (wPw+2) +
@@ -64,7 +62,7 @@ void baca() {
     line[totalWidth] = '\0';
 
     do {
-        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 10);
+        clearArea(startX, startY, totalWidth + 5, rowsPerPage + 10);
 
         gotoxy(80, 13);
         printf("=== DAFTAR STAFF ===");
@@ -90,37 +88,91 @@ void baca() {
         gotoxy(startX, row++);
         printf("%s", line);
 
-        int start_index = (current_page - 1) * MAX_ROWS_PER_PAGE;
-        int end_index = start_index + MAX_ROWS_PER_PAGE;
+        int start_index = (current_page - 1) * rowsPerPage;
+        int end_index = start_index + rowsPerPage;
         if (end_index > total_staff) end_index = total_staff;
 
         for (int i = start_index; i < end_index; i++) {
             staff current_staff = all_staff[i];
 
-            char maskedPw[7];
+            // Mask password
+            char maskedPw[12];
             int pwLen = strlen(current_staff.password);
             int showLen = (pwLen > 5) ? 5 : pwLen;
             memset(maskedPw, '*', showLen);
             maskedPw[showLen] = '\0';
 
+            // Truncate nama kalau kepanjangan
+            char nama[20];
+            snprintf(nama, wNama+1, "%s", current_staff.nama);
+            if (strlen(current_staff.nama) > wNama) {
+                nama[wNama-2] = '.';
+                nama[wNama-1] = '.';
+                nama[wNama] = '\0';
+            }
+
+            // Truncate username kalau kepanjangan
+            char username[15];
+            snprintf(username, wUsr+1, "%s", current_staff.username);
+            if (strlen(current_staff.username) > wUsr) {
+                username[wUsr-2] = '.';
+                username[wUsr-1] = '.';
+                username[wUsr] = '\0';
+            }
+
+            // Truncate field lainnya
+            char gender[12];
+            snprintf(gender, wGen+1, "%s", current_staff.gender);
+            if (strlen(current_staff.gender) > wGen) {
+                gender[wGen-2] = '.';
+                gender[wGen-1] = '.';
+                gender[wGen] = '\0';
+            }
+
+            char tgl[13];
+            snprintf(tgl, wTgl+1, "%s", current_staff.tgl);
+            if (strlen(current_staff.tgl) > wTgl) {
+                tgl[wTgl-2] = '.';
+                tgl[wTgl-1] = '.';
+                tgl[wTgl] = '\0';
+            }
+
+            char notlpn[13];
+            snprintf(notlpn, wTelp+1, "%s", current_staff.notlpn);
+
+
+            char role[12];
+            snprintf(role, wRole+1, "%s", current_staff.Role);
+            if (strlen(current_staff.Role) > wRole) {
+                role[wRole-2] = '.';
+                role[wRole-1] = '.';
+                role[wRole] = '\0';
+            }
+
+            char status[12];
+            snprintf(status, wStatus+1, "%s", current_staff.status);
+            if (strlen(current_staff.status) > wStatus) {
+                status[wStatus-2] = '.';
+                status[wStatus-1] = '.';
+                status[wStatus] = '\0';
+            }
+
             gotoxy(startX, row++);
             printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1,    i + 1,
-                   wUsr+1,   current_staff.username,     // USERNAME
-                   wNama+1,  current_staff.nama,         // NAMA
+                   wUsr+1,   username,
+                   wNama+1,  nama,
                    wPw+1,    maskedPw,
-                   wGen+1,   current_staff.gender,
-                   wTgl+1,   current_staff.tgl,
-                   wTelp+1,  current_staff.notlpn,
-                   wRole+1,  current_staff.Role,         // ROLE
-                   wStatus+1, current_staff.status
+                   wGen+1,   gender,
+                   wTgl+1,   tgl,
+                   wTelp+1,  notlpn,
+                   wRole+1,  role,
+                   wStatus+1, status
             );
         }
 
         gotoxy(startX, row++);
         printf("%s", line);
-
-
 
         bentukframe(3, 11, 27, 12);
         gotoxy(6, 13);
@@ -131,7 +183,7 @@ void baca() {
         printf("[ENTER] Lanjut");
         gotoxy(6, 19);
         printf("Halaman: %d/%d", current_page, total_pages);
-        gotoxy(6, 21),
+        gotoxy(6, 21);
         printf("Total  : %d data", total_staff);
 
         key = getch();

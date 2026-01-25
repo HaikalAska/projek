@@ -499,7 +499,8 @@ void transaksi(int x, int y) {
 void hitungtotalhargatiket(int x, int y) {
     FILE *fp;
     tiket data;
-    long total = 0;
+    long total_aktif = 0;      // Total harga tiket aktif
+    long total_biaya_batal = 0; // Total biaya pembatalan 30%
 
     fp = fopen("tiket.dat", "rb");
     if (fp == NULL) {
@@ -509,13 +510,23 @@ void hitungtotalhargatiket(int x, int y) {
     }
 
     while (fread(&data, sizeof(tiket), 1, fp)) {
-        total += data.harga;
+        // Jika tiket aktif, hitung harga penuh
+        if (strcmp(data.status, "Aktif") == 0) {
+            total_aktif += data.harga;
+        }
+        // Jika tiket batal, hitung biaya pembatalan 30%
+        else if (strcmp(data.status, "Batal") == 0) {
+            total_biaya_batal += data.hargaTbatal;  // 30% masuk pendapatan
+        }
     }
 
     fclose(fp);
 
+    // Pendapatan Bersih = Total Aktif + Biaya Pembatalan 30%
+    long pendapatan_bersih = total_aktif + total_biaya_batal;
+
     gotoxy(x, y);
-    tampilanhargatiket(total);
+    tampilanhargatiket(pendapatan_bersih);
 }
 ///////////////////////////////////////////////////////////////
 
@@ -575,13 +586,30 @@ void Pembatalan(int x, int y) {
     gotoxy(x, y);
     printf("%d", total);
 }
-/////////////////////////////////////////////////////////////
+void TotalBiayaPembatalan(int x, int y) {
+    FILE *fp = fopen("tiket.dat", "rb");
 
+    if (!fp) {
+        gotoxy(x, y);
+        printf("Rp 0");
+        return;
+    }
 
+    tiket data;
+    long total_biaya = 0;  // Total 30% dari tiket yang dibatalkan
 
+    while (fread(&data, sizeof(tiket), 1, fp)) {
+        if (strcmp(data.status, "Batal") == 0) {
+            total_biaya += data.hargaTbatal;  // Akumulasi 30%
+        }
+    }
 
+    fclose(fp);
 
-
+    gotoxy(x, y);
+    printf("Rp ");
+    tampilanhargatiket(total_biaya);
+}
 void readTiketPenumpang() {
 
     FILE *fp;
@@ -591,8 +619,8 @@ void readTiketPenumpang() {
     int startY = 12;
 
     // ===== LEBAR KOLOM =====
-    int wNo = 3, wID = 8, wNama = 20, wTelp = 13;
-    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 12;
+    int wNo = 3, wID = 8, wNama = 20, wTelp = 12;
+    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 15;
 
     fp = fopen("tiket.dat", "rb");
     if (!fp) {
@@ -648,13 +676,35 @@ void readTiketPenumpang() {
 
         gotoxy(startX, row++); printf("%s", garis);
 
+
+
         // ===== ISI DATA =====
         for (int i = start; i < end; i++) {
 
             char rute[60];
-            sprintf(rute, "%s-%s",
-                    data[i].rute_awal,
-                    data[i].tujuan);
+            sprintf(rute, "%s-%s",data[i].rute_awal, data[i].tujuan);
+
+            char NamaTampil[20];
+
+            if (strlen(data[i].nama_penumpang) > wNama) {
+                strncpy(NamaTampil, data[i].nama_penumpang, wNama - 3);
+                NamaTampil[wNama - 3] = '\0';
+                strcat(NamaTampil, "-");
+            }else {
+                strcpy(NamaTampil, data[i].nama_penumpang);
+            }
+
+            char ruteTampil[25];
+
+            if (strlen(rute) > wRute) {
+                strncpy(ruteTampil, rute, wRute - 3);
+                ruteTampil[wRute - 3] = '\0';
+                strcat(ruteTampil, "...");
+            } else {
+                strcpy(ruteTampil, rute);
+            }
+
+
 
             gotoxy(startX, row++);
 
@@ -662,19 +712,24 @@ void readTiketPenumpang() {
             printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1, i+1,
                    wID+1, data[i].id_tiket,
-                   wNama+1, data[i].nama_penumpang,
+                   wNama+1, NamaTampil,
                    wTelp+1, data[i].notlpn,
-                   wRute+1, rute,
+                   wRute+1, ruteTampil,
                    wTgl+1, data[i].tanggal_berangkat,
                    wJam+1, data[i].jam_berangkat,
                    wStatus+1, data[i].status);
 
-            // cetak harga dengan format rupiah
-            printf(" ");
-            tampilanhargatiket(data[i].harga);
 
-            // rapikan spasi kolom harga + tutup tabel
-            printf("%*s|", wHarga - 13, "");
+
+            char hargaStr[30];
+
+            if (strcmp(data[i].status, "Batal") == 0) {
+                formatHarga(data[i].harga, hargaStr);
+            } else {
+                formatHarga(data[i].harga, hargaStr);
+            }
+
+            printf(" %-*s|", wHarga+1, hargaStr);
         }
 
 
@@ -697,8 +752,5 @@ void readTiketPenumpang() {
 
     } while (key != 13);
 }
-
-//========================================================================
-
 
 #endif

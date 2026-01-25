@@ -68,15 +68,71 @@ void deleterute() {
     }
 
     // ===== INPUT NOMOR =====
-    gotoxy(3, 25);
-    printf("Pilih No Urut Rute: ");
-    gotoxy(23, 25);
-    scanf("%d", &pilihan);
+    while (1) {
+        char buffer[10] = "";
+        int idx = 0;
+        char ch;
 
-    if (pilihan < 1 || pilihan > count) {
-        gotoxy(3, 27); printf("Nomor tidak valid!");
-        getch(); getch();
-        return;
+        gotoxy(3, 25);
+        printf("Pilih No Urut : ");
+        gotoxy(20, 25);
+        printf("          ");
+        gotoxy(20, 25);
+
+        while (1) {
+            ch = getch();
+
+            if (ch == 27) {
+                gotoxy(3, 26);
+                printf("Dibatalkan!");
+                getch();
+                return;
+            }
+
+            if (ch == 13) {
+                // Validasi: cek apakah kosong
+                if (idx == 0) {
+                    gotoxy(3, 26);
+                    printf("Angka tidak boleh kosong!");
+                    Sleep(1500);
+                    gotoxy(3, 26);
+                    printf("                          ");
+                    break;  // keluar dari inner loop untuk input ulang
+                }
+
+                buffer[idx] = '\0';
+                pilihan = atoi(buffer);
+                break;
+            }
+
+            if (ch == 8 && idx > 0) {
+                idx--;
+                buffer[idx] = '\0';
+                gotoxy(20, 25);
+                printf("          ");
+                gotoxy(20, 25);
+                printf("%s", buffer);
+            }
+
+            if (ch >= '0' && ch <= '9') {
+                if (idx < 9) {
+                    buffer[idx++] = ch;
+                    buffer[idx] = '\0';
+                    printf("%c", ch);
+                }
+            }
+        }
+
+        // Jika user tekan ESC (sudah return di atas) atau input kosong, continue
+        if (idx == 0) continue;
+
+        if (pilihan >= 1 && pilihan <= count) break;
+
+        gotoxy(3, 26);
+        printf("Pilihan tidak valid!");
+        Sleep(1500);
+        gotoxy(3, 26);
+        printf("                     ");
     }
 
     Rute terpilih = list[pilihan - 1];
@@ -95,14 +151,49 @@ void deleterute() {
     gotoxy(39, 32); printf("Jam Berangkat : %s", terpilih.jamBerangkat);
     gotoxy(39, 33); printf("Jam Tiba      : %s", terpilih.jamTiba);
 
-    // ===== KONFIRMASI =====
-    gotoxy(39, 35);
-    printf("Yakin ingin menghapus rute ini? (y/n): ");
-    scanf(" %c", &konfirmasi);
+    // ===== KONFIRMASI (Y/N ONLY, BACKSPACE & ESC AKTIF) =====
+    gotoxy(38, 36);
+    printf("Yakin ingin menghapus jadwal ini? (y/n): ");
+    gotoxy(78, 36);
 
-    if (tolower(konfirmasi) != 'y') {
-        gotoxy(39, 36); printf("Penghapusan dibatalkan!");
-        getch(); getch();
+    while (1) {
+        char ch = getch();
+
+        // ESC → batal
+        if (ch == 27) {
+            gotoxy(38, 37);
+            printf("Penghapusan dibatalkan!");
+            getch();
+            return;
+        }
+
+        // BACKSPACE → hapus y/n
+        if (ch == 8 && konfirmasi != '\0') {
+            konfirmasi = '\0';
+            gotoxy(80, 36);
+            printf(" ");
+            gotoxy(80, 36);
+            continue;
+        }
+
+        ch = tolower(ch);
+
+        // hanya y atau n
+        if ((ch == 'y' || ch == 'n') && konfirmasi == '\0') {
+            konfirmasi = ch;
+            printf("%c", ch);
+        }
+
+        // ENTER setelah input valid
+        if (ch == 13 && konfirmasi != '\0') {
+            break;
+        }
+    }
+
+    if (konfirmasi != 'y') {
+        gotoxy(38, 37);
+        printf("Penghapusan dibatalkan!");
+        getch();
         return;
     }
 
@@ -124,10 +215,10 @@ void deleterute() {
     if (found) {
         remove("rute.dat");
         rename("temp.dat", "rute.dat");
-        gotoxy(39, 36); printf("Rute %s berhasil dihapus!", terpilih.id);
+        gotoxy(38, 37); printf("Rute %s berhasil dihapus!", terpilih.id);
     } else {
         remove("temp.dat");
-        gotoxy(39, 36); printf("Gagal menghapus data!");
+        gotoxy(38, 37); printf("Gagal menghapus data!");
     }
 
     getch();

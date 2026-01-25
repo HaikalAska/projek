@@ -9,7 +9,7 @@
 #include "pembatalan/pengembaliantiket.h"
 
 static void menuStaff();
-void generateDummyTiket();
+void generateDummyTiket(int Total);
 
 void pemesanantiket() {
     int pilih;
@@ -59,98 +59,96 @@ void pemesanantiket() {
 
 
 //========CUMA BUAT DUMMY AJA =============================//
-void generateDummyTiket() {
+
+
+int randRange(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
+void generateDummyTiket(int total) {
     FILE *fp = fopen("tiket.dat", "ab");
     if (!fp) {
         printf("Error: Tidak bisa buka file tiket.dat!\n");
         return;
     }
 
-    // Data dummy nama
+    srand(time(NULL));
+
     char *nama[] = {
         "Budi Santoso", "Siti Nurhaliza", "Ahmad Dahlan",
         "Dewi Lestari", "Eko Prasetyo", "Fitri Handayani",
         "Gunawan Wijaya", "Hana Permata", "Irfan Hakim",
         "Joko Widodo", "Kartika Sari", "Linda Wijaya",
-        "Muhammad Rizki", "Nur Azizah", "Oscar Lawalata"
+        "Muhammad Rizki", "Nur Azizah", "Oscar Lawalata",
+        "Rama Putra", "Putri Ayu", "Dika Pratama"
     };
 
-    // Data dummy rute
-    char *rute_awal[] = {"Jakarta", "Bandung", "Surabaya", "Yogyakarta", "Semarang"};
-    char *tujuan[] = {"Bali", "Malang", "Solo", "Medan", "Makassar"};
+    char *kota[] = {
+        "Jakarta", "Bandung", "Surabaya", "Yogyakarta",
+        "Semarang", "Malang", "Solo", "Medan", "Makassar"
+    };
 
-    // Data dummy armada
-    char *armada[] = {"Eka Prima", "Harapan Jaya", "Sinar Jaya", "Pusaka Jaya", "Maju Lancar"};
+    char *armada[] = {
+        "Eka Prima", "Harapan Jaya", "Sinar Jaya",
+        "Pusaka Jaya", "Maju Lancar"
+    };
 
-    // Data dummy tanggal & jam
-    char *tanggal[] = {"12/02/2026", "13/05/2026", "14/04/2026", "15/10/2026", "16/09/2026"};
-    char *jam[] = {"08:00", "10:30", "13:00", "15:30", "18:00"};
-
-    // Harga
-    long harga[] = {150000, 200000, 250000, 300000, 350000};
-
-    // Metode bayar
-    char *metode[] = {"Cash", "Cashless"};
-
-    // No telp prefix
+    char *metode[] = {"Tunai", "Non-Tunai"};
     char *telp_prefix[] = {"0812", "0813", "0851", "0852", "0877"};
 
     int count = getTiketCount();
 
-    // Generate 15 dummy data
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < total; i++) {
         tiket data;
 
-        // ID Tiket
         sprintf(data.id_tiket, "TKT%03d", count + i + 1);
-
-        // ID Penumpang
         sprintf(data.id_penumpang, "PNP%03d", count + i + 1);
 
-        // Nama
-        strcpy(data.nama_penumpang, nama[i % 15]);
+        strcpy(data.nama_penumpang, nama[rand() % 18]);
 
-        // Rute
-        strcpy(data.rute_awal, rute_awal[i % 5]);
-        strcpy(data.tujuan, tujuan[i % 5]);
+        strcpy(data.rute_awal, kota[rand() % 9]);
+        strcpy(data.tujuan, kota[rand() % 9]);
+        while (strcmp(data.rute_awal, data.tujuan) == 0) {
+            strcpy(data.tujuan, kota[rand() % 9]);
+        }
 
-        // Armada
-        strcpy(data.nama_armada, armada[i % 5]);
+        strcpy(data.nama_armada, armada[rand() % 5]);
 
-        // Tanggal & Jam berangkat
-        strcpy(data.tanggal_berangkat, tanggal[i % 5]);
-        strcpy(data.jam_berangkat, jam[i % 5]);
+        int hari = randRange(1, 28);
+        int bulan = randRange(1, 12);
+        int tahun = randRange(2023, 2026);
+        sprintf(data.tanggal_berangkat, "%02d/%02d/%d", hari, bulan, tahun);
 
-        // Harga
-        data.harga = harga[i % 5];
+        int jam = randRange(0, 23);
+        int menit = randRange(0, 59);
+        sprintf(data.jam_berangkat, "%02d:%02d", jam, menit);
 
-        // No Telepon (random 8 digit)
-        sprintf(data.notlpn, "%s%04d%04d", telp_prefix[i % 5], 1000 + (i * 123) % 9000, 1000 + (i * 456) % 9000);
+        data.harga = randRange(70000, 300000);
 
-        // Email
-        sprintf(data.Email, "%s%d@gmail.com", "user", count + i + 1);
+        sprintf(data.notlpn, "%s%08d",
+                telp_prefix[rand() % 5],
+                randRange(10000000, 99999999));
 
-        // Metode bayar
-        strcpy(data.metode_bayar, metode[i % 2]);
+        sprintf(data.Email, "user%d@gmail.com", count + i + 1);
 
-        // Tanggal booking
-        strcpy(data.tanggal_booking, "11/01/2026");
+        strcpy(data.metode_bayar, metode[rand() % 2]);
 
-        // Time (waktu pemesanan)
-        sprintf(data.jam_berangkat, "%02d:%02d", 8 + (i % 10), (i * 7) % 60, (i * 13) % 60);
+        sprintf(data.tanggal_booking, "%02d/%02d/%d",
+                randRange(1, 28),
+                randRange(1, 12),
+                randRange(2023, 2026));
 
-        // Status
         strcpy(data.status, "Aktif");
 
-        // Tulis ke file
         fwrite(&data, sizeof(tiket), 1, fp);
     }
 
     fclose(fp);
 
-    printf("\n=== DUMMY DATA BERHASIL DIBUAT ===\n");
-    printf("Total: 15 tiket dummy telah ditambahkan!\n");
+    printf("\n=== DUMMY DATA RANDOM BERHASIL DIBUAT ===\n");
+    printf("Total: %d tiket dummy ditambahkan!\n", total);
     printf("Tekan tombol apapun untuk kembali...");
     getch();
 }
+
 #endif //PROJEK_PEMESANANTIKET_H

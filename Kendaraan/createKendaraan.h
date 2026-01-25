@@ -54,10 +54,9 @@ static void tampilkanDetailKategori(int pilihan) {
         gotoxy(105, 32); printf("Kapasitas : 40 orang");
         gotoxy(105, 33); printf("Fasilitas :");
         gotoxy(105, 34); printf("- AC");
-        gotoxy(105, 35); printf("- Bantal & Selimut");
-        gotoxy(105, 36); printf("- Camilan");
-        gotoxy(105, 37); printf("- TV");
-        gotoxy(105, 38); printf("- Toilet");
+        gotoxy(105, 35); printf("- Camilan");
+        gotoxy(105, 36); printf("- TV");
+        gotoxy(105, 37); printf("- Toilet");
     }
 }
 
@@ -155,7 +154,7 @@ static void inputKategoriKendaraanDenganPreview(char *kategori, char *kapasitas,
     else if (pilih == 2) {  // Executive
         strcpy(kategori, "Executive");
         strcpy(kapasitas, "40");
-        strcpy(fasilitas, "AC, Bantal dan Selimut, Camilan, TV, Toilet");
+        strcpy(fasilitas, "AC, Camilan, TV, Toilet");
     }
     else {  // ESC ditekan
         kategori[0] = '\0';
@@ -522,8 +521,7 @@ void buatDummyKendaraan() {
     };
 
     char *status[] = {
-        "Tersedia",
-        "Tersedia",
+        "Tidak Tersedia",
         "Tersedia",
         "Dalam Perjalanan",
         "Maintenance"
@@ -564,7 +562,7 @@ void buatDummyKendaraan() {
         }
         else if (strcmp(data.kategori, "Executive") == 0) {
             strcpy(data.kapasitas, "40");
-            strcpy(data.fasilitas, "AC, Bantal dan Selimut, Camilan, TV, Toilet");
+            strcpy(data.fasilitas, "AC, Camilan, TV, Toilet");
         }
 
         strcpy(data.tahun, tahun[i % nTahun]);

@@ -101,16 +101,38 @@ int inputHarga(int x, int y) {
         if (ch == 13 && i > 0) {
             int nilai = atoi(buf);
 
+            // Validasi: angka tidak boleh 0
+            if (nilai == 0) {
+                gotoxy(x, y + 1);
+                printf("Angka tidak boleh 0!");
+                Sleep(1500);  // tampilkan pesan 1.5 detik
+
+                // Hapus pesan error
+                gotoxy(x, y + 1);
+                printf("                      ");  // hapus dengan spasi
+
+                // Reset input
+                i = 0;
+                memset(buf, 0, sizeof(buf));
+                gotoxy(x, y);
+                printf("Rp      ");  // hapus input sebelumnya
+                gotoxy(x, y);
+                printf("Rp");
+                continue;
+            }
+
             // pindah kursor ke akhir input
             printf("Rp");
 
             if (i <= 3) {
                 // contoh: 120 -> Rp120.000,00
-                gotoxy(x,y); printf("RP%d.000,00", nilai);
+                gotoxy(x,y);
+                printf("Rp%d.000,00", nilai);
                 return nilai * 1000;
             } else {
                 // contoh: 1200 -> Rp1.200.000,00
-                gotoxy(x,y); printf("RP%d.%03d.000,00", nilai / 1000, nilai % 1000);
+                gotoxy(x,y);
+                printf("Rp%d.%03d.000,00", nilai / 1000, nilai % 1000);
                 return nilai * 1000;
             }
         }
