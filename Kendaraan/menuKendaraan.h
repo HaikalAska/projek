@@ -55,7 +55,7 @@ void menukendaraan() {
                 deleteKendaraan();
                 break;
             case 3:
-                updateKendaraan();
+                updateKendaraan();//buatDummyKendaraan();
                 break;
             case 4:
                 menuStaff();
