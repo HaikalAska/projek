@@ -17,7 +17,10 @@ typedef struct {
     char nama_armada[50];
     char tahun[10];
     char status [20];
+    char plat_nomor[20];
 } Kendaraan;
+
+int getTahunSekarang();
 
 static int getKendaraanCount() {
     FILE *fp = fopen("kendaraan.dat", "rb");
@@ -29,6 +32,27 @@ static int getKendaraanCount() {
 
     return size / sizeof(Kendaraan);
 }
+
+void generatePlatNomor(char *plat) {
+    const char huruf[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    // random huruf depan (2 huruf)
+    char h1 = huruf[rand() % 26];
+    char h2 = huruf[rand() % 26];
+
+    // random angka 4 digit (1000 - 9999)
+    int angka = rand() % 9000 + 1000;
+
+    // random huruf belakang (3 huruf)
+    char h3 = huruf[rand() % 26];
+    char h4 = huruf[rand() % 26];
+    char h5 = huruf[rand() % 26];
+
+    sprintf(plat, "%c%c %04d %c%c%c",
+            h1, h2, angka, h3, h4, h5);
+}
+
+
 
 // ================= FUNGSI TAMPILKAN DETAIL KATEGORI (DALAM KOTAK) =================
 static void tampilkanDetailKategori(int pilihan) {
@@ -220,47 +244,58 @@ static void inputTahun(char *tahun, int row, int col) {
     char ch;
     char temp[5];
 
+    int tahunSekarang = getTahunSekarang();
+    int tahunMinimal  = tahunSekarang - 10;
+
     while (1) {
         ch = getch();
 
         if (ch == 13) {  // ENTER
             temp[i] = '\0';
 
-            // VALIDASI: HARUS 4 DIGIT
-            if (i != 4) {
-                gotoxy(col + 0, row);
-                printf("[Harus 4 digit]");
-                Sleep(800);
-
-                gotoxy(col + 0, row);
-                printf("%-15s", " ");
-
+            // ===== VALIDASI KOSONG =====
+            if (i == 0) {
                 gotoxy(col, row);
-                printf("    ");
-                gotoxy(col, row);
-
-                i = 0;
-                continue;
-            }
-
-            // VALIDASI: MAKSIMAL 2025
-            int tahunInput = atoi(temp);
-            if (tahunInput < 2000 || tahunInput > 2025) {
-                gotoxy(col, row);
-                printf("[Tahun 2001-2025]");
+                printf("Tahun harus diisi");
                 Sleep(800);
 
                 gotoxy(col, row);
                 printf("%-25s", " ");
+                gotoxy(col, row);
+                continue;
+            }
+
+            // ===== VALIDASI 4 DIGIT =====
+            if (i != 4) {
+                gotoxy(col, row);
+                printf("[Harus 4 digit]");
+                Sleep(800);
 
                 gotoxy(col, row);
-                printf("    ");
+                printf("%-25s", " ");
                 gotoxy(col, row);
 
                 i = 0;
                 continue;
             }
 
+            int tahunInput = atoi(temp);
+
+            // ===== VALIDASI RANGE TAHUN =====
+            if (tahunInput < tahunMinimal || tahunInput > tahunSekarang) {
+                gotoxy(col, row);
+                printf("[Tahun %d - %d]", tahunMinimal, tahunSekarang);
+                Sleep(1000);
+
+                gotoxy(col, row);
+                printf("%-30s", " ");
+                gotoxy(col, row);
+
+                i = 0;
+                continue;
+            }
+
+            // ===== VALID =====
             strcpy(tahun, temp);
             return;
         }
@@ -268,7 +303,7 @@ static void inputTahun(char *tahun, int row, int col) {
             tahun[0] = '\0';
             return;
         }
-        else if (ch == 8) {
+        else if (ch == 8) {   // BACKSPACE
             if (i > 0) {
                 i--;
                 printf("\b \b");
@@ -294,20 +329,22 @@ static void inputStatusKendaraan(char *status, int row, int col) {
         // ===== ENTER =====
         if (ch == 13) {
             if (strlen(temp) == 0) {
-                gotoxy(col + 0, row);
-                printf("[Wajib pilih status]");
+                gotoxy(col, row);
+                printf("Input A / N");
                 Sleep(800);
-                gotoxy(col + 0, row);
-                printf("%-25s", " ");
+                gotoxy(col, row);
+                printf("%-20s", " ");
+                gotoxy(col, row);
                 continue;
             }
+
             strcpy(status, temp);
             return;
         }
 
         // ===== ESC =====
         if (ch == 27) {
-            status[0] = '\0';
+            status[0] = '\0';   // penanda batal
             return;
         }
 
@@ -320,28 +357,25 @@ static void inputStatusKendaraan(char *status, int row, int col) {
             continue;
         }
 
-        // ===== PILIHAN STATUS =====
-        if (ch == 't' || ch == 'T') {
-            strcpy(temp, "Tersedia");
-        }
-        else if (ch == 'm' || ch == 'M') {
-            strcpy(temp, "Maintenance");
-        }
-        else if (ch == 'd' || ch == 'D') {
-            strcpy(temp, "Dalam Perjalanan");
+        // ===== PILIH STATUS =====
+        if (ch == 'a' || ch == 'A') {
+            strcpy(temp, "Aktif");
         }
         else if (ch == 'n' || ch == 'N') {
-            strcpy(temp, "Tidak Aktif");
+            strcpy(temp, "Nonaktif");
         }
         else {
             continue;
         }
 
-        // tampilkan pilihan
+        // tampilkan status
         gotoxy(col, row);
         printf("%-20s", temp);
     }
 }
+
+
+
 
 int getTahunSekarang() {
     time_t t = time(NULL);
@@ -355,7 +389,8 @@ void createKendaraan() {
 
     do {
         bentukframe(35, 27, 108, 16);
-        gotoxy(78, 27); printf("=== TAMBAH KENDARAAN ===");
+        gotoxy(78, 27);
+        printf("=== TAMBAH KENDARAAN ===");
 
         FILE *fp = fopen("kendaraan.dat", "ab");
         if (!fp) return;
@@ -368,11 +403,16 @@ void createKendaraan() {
         gotoxy(37, 28);
         printf("ID Kendaraan : %s", data.id_kendaraan);
 
-        // ===== KATEGORI (KOTAK KANAN) =====
+        // ===== KATEGORI =====
         gotoxy(37, 29);
         printf("Kategori     : [Tekan Enter untuk pilih]");
 
-        inputKategoriKendaraanDenganPreview(data.kategori, data.kapasitas, data.fasilitas, 29, 52);
+        inputKategoriKendaraanDenganPreview(
+            data.kategori,
+            data.kapasitas,
+            data.fasilitas,
+            29, 52
+        );
 
         if (strlen(data.kategori) == 0) {
             fclose(fp);
@@ -380,108 +420,100 @@ void createKendaraan() {
             return;
         }
 
-        // Gambar ulang frame utama setelah popup kategori
+        // ===== REDRAW FRAME =====
         bentukframe(35, 27, 108, 16);
-        gotoxy(78, 27); printf("=== TAMBAH KENDARAAN ===");
+        gotoxy(78, 27);
+        printf("=== TAMBAH KENDARAAN ===");
 
-        // Tampilkan kembali ID
         gotoxy(37, 28);
         printf("ID Kendaraan : %s", data.id_kendaraan);
 
-        // Update tampilan setelah memilih
         gotoxy(37, 29);
         printf("Kategori     : %-30s", data.kategori);
 
-        // ===== TAMPILKAN KAPASITAS (OTOMATIS DARI KATEGORI) =====
         gotoxy(37, 30);
         printf("Kapasitas    : %s orang", data.kapasitas);
 
-        // ===== TAMPILKAN FASILITAS (OTOMATIS DARI KATEGORI) =====
         gotoxy(37, 31);
         printf("Fasilitas    : %s", data.fasilitas);
 
         // ===== NAMA ARMADA =====
-        gotoxy(37, 32); printf("Nama Armada  : ");
+        gotoxy(37, 32);
+        printf("Nama Armada  : ");
         setPointer(33, 53);
         inputNamaArmada(data.nama_armada, 32, 52);
+
         if (strlen(data.nama_armada) == 0) {
             fclose(fp);
             clearArea(35, 28, 108, 15);
             return;
         }
+        srand(time(NULL));
+        gotoxy(37, 33);
+        printf("Nomor Kendaraan : ");
 
-        // ===== TAHUN =====
-        gotoxy(37, 33); printf("Tahun        : ");
-        setPointer(34, 53);
-        inputTahun(data.tahun, 33, 52);
+        generatePlatNomor(data.plat_nomor);
+
+        gotoxy(55, 33);
+        printf("%s", data.plat_nomor);
+
+
+        // ===== INPUT TAHUN =====
+        gotoxy(37, 34);
+        printf("Tahun        : ");
+        setPointer(35, 53);
+        inputTahun(data.tahun, 34, 52);
+
         if (strlen(data.tahun) == 0) {
             fclose(fp);
             clearArea(35, 28, 108, 15);
             return;
         }
 
-        // ===== CEK UMUR BUS =====
-        int tahunBus = atoi(data.tahun);
+        // ===== HITUNG UMUR BUS =====
         int tahunSekarang = getTahunSekarang();
+        int tahunBus = atoi(data.tahun);
         int umur = tahunSekarang - tahunBus;
 
-        gotoxy(85, 33);
+        gotoxy(58, 34);
         if (umur > 10) {
-            printf("[Tidak Layak | Umur %d th] ", umur);
+            printf("[Tidak Layak | Umur %d th]", umur);
         } else {
             printf("[Layak | Umur %d th]", umur);
         }
 
-        // ===== STATUS =====
-        gotoxy(37, 34);
+        // ===== STATUS OTOMATIS =====
+        gotoxy(37, 35);
         printf("Status       : ");
 
-        // JIKA TIDAK LAYAK (UMUR > 10 TAHUN) → OTOMATIS "TIDAK AKTIF"
         if (umur > 10) {
             strcpy(data.status, "Tidak Aktif");
-
-            gotoxy(52, 34);
+            gotoxy(52, 35);
             printf("Tidak Aktif");
-
-            gotoxy(37, 35);
-            printf("[Status otomatis: Tidak Aktif karena bus tidak layak]");
-
-            Sleep(1500);
-            clearArea(37, 35, 80, 1);
-        }
-        // JIKA LAYAK → INPUT STATUS MANUAL
-        else {
-            gotoxy(37, 35);
-            printf("(T=Tersedia  M=Maintenance  D=Perjalanan  N=Tidak aktif)");
-
-            setPointer(34, 52);
-            inputStatusKendaraan(data.status, 34, 52);
-
-            if (strlen(data.status) == 0) {
-                fclose(fp);
-                clearArea(35, 28, 108, 15);
-                return;
-            }
-
-            clearArea(37, 35, 80, 1);
+        } else {
+            strcpy(data.status, "Aktif");
+            gotoxy(52, 35);
+            printf("Aktif");
         }
 
-        // ===== SIMPAN =====
+        // ===== SIMPAN DATA =====
         fwrite(&data, sizeof(Kendaraan), 1, fp);
         fclose(fp);
 
-        gotoxy(37, 36);
+        gotoxy(37, 37);
         printf("Data kendaraan berhasil dibuat!");
 
-        gotoxy(37, 37);
+        gotoxy(37, 38);
         printf("Tambah lagi? (y/n): ");
 
         while (1) {
             n = _getch();
+
             if (n == 27) { // ESC
                 clearArea(35, 28, 108, 15);
                 return;
             }
+
             if (n == 'y' || n == 'Y' || n == 'n' || n == 'N') {
                 clearArea(35, 28, 108, 15);
                 if (n == 'n' || n == 'N') return;
@@ -492,17 +524,22 @@ void createKendaraan() {
     } while (n == 'y' || n == 'Y');
 }
 
+
+
+
 // ================= DATA DUMMY KENDARAAN =================
 void buatDummyKendaraan() {
     FILE *fp;
     Kendaraan data;
     int max_data = 50;
 
+    srand(time(NULL)); // ⬅️ penting untuk random
+
     // ===== CONTOH DATA =====
     char *kategori[] = {
         "Ekonomi",
         "Bisnis",
-        "Executive"
+        "Eksekutif"
     };
 
     char *nama_armada[] = {
@@ -513,7 +550,7 @@ void buatDummyKendaraan() {
         "PO Gunung Harta",
         "PO Sumber Alam",
         "PO Lorena",
-        "PO Agra Mas"
+        "PO Agramas"
     };
 
     char *tahun[] = {
@@ -521,20 +558,18 @@ void buatDummyKendaraan() {
     };
 
     char *status[] = {
-        "Tidak Tersedia",
-        "Tersedia",
-        "Dalam Perjalanan",
-        "Maintenance"
+        "Aktif",
+        // "Nonaktif"
     };
 
-    int nKategori  = sizeof(kategori) / sizeof(kategori[0]);
-    int nArmada    = sizeof(nama_armada) / sizeof(nama_armada[0]);
-    int nTahun     = sizeof(tahun) / sizeof(tahun[0]);
-    int nStatus    = sizeof(status) / sizeof(status[0]);
+    int nKategori = sizeof(kategori) / sizeof(kategori[0]);
+    int nArmada   = sizeof(nama_armada) / sizeof(nama_armada[0]);
+    int nTahun    = sizeof(tahun) / sizeof(tahun[0]);
+    int nStatus   = sizeof(status) / sizeof(status[0]);
 
     // ===== BUAT / RESET FILE =====
     fp = fopen("kendaraan.dat", "wb");
-    if (fp == NULL) {
+    if (!fp) {
         printf("ERROR: Gagal membuat file kendaraan.dat\n");
         getch();
         return;
@@ -545,13 +580,13 @@ void buatDummyKendaraan() {
     for (int i = 0; i < max_data; i++) {
         memset(&data, 0, sizeof(Kendaraan));
 
-        // ID OTOMATIS
+        // ID
         sprintf(data.id_kendaraan, "KND%03d", i + 1);
 
-        // ISI DATA BERDASARKAN KATEGORI
+        // KATEGORI
         strcpy(data.kategori, kategori[i % nKategori]);
 
-        // SET KAPASITAS & FASILITAS BERDASARKAN KATEGORI
+        // KAPASITAS & FASILITAS
         if (strcmp(data.kategori, "Ekonomi") == 0) {
             strcpy(data.kapasitas, "60");
             strcpy(data.fasilitas, "AC");
@@ -560,18 +595,22 @@ void buatDummyKendaraan() {
             strcpy(data.kapasitas, "40");
             strcpy(data.fasilitas, "AC, Stopcontact, Toilet");
         }
-        else if (strcmp(data.kategori, "Executive") == 0) {
+        else {
             strcpy(data.kapasitas, "40");
             strcpy(data.fasilitas, "AC, Camilan, TV, Toilet");
         }
 
+        // NAMA ARMADA
+        strcpy(data.nama_armada, nama_armada[i % nArmada]);
+
+        // TAHUN
         strcpy(data.tahun, tahun[i % nTahun]);
+
+        // STATUS (Aktif / Nonaktif)
         strcpy(data.status, status[i % nStatus]);
 
-        // Nama armada + nomor biar unik
-        sprintf(data.nama_armada, "%s %d",
-                nama_armada[i % nArmada],
-                (i / nArmada) + 1);
+        // PLAT NOMOR OTOMATIS
+        generatePlatNomor(data.plat_nomor);
 
         fwrite(&data, sizeof(Kendaraan), 1, fp);
     }
@@ -582,5 +621,6 @@ void buatDummyKendaraan() {
     printf("Tekan tombol apapun untuk kembali...");
     getch();
 }
+
 
 #endif // PROJEK_CREATEKENDARAAN_H

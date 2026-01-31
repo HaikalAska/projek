@@ -10,9 +10,11 @@
 #include "createKendaraan.h"
 
 void updateKendaraan() {
-
     FILE *fp, *tmp;
     Kendaraan data;
+    Kendaraan list[1000];
+    int total = 0;
+
 
     char strNo[10];
     int targetNo = 0, currentNo = 1;
@@ -51,10 +53,32 @@ void updateKendaraan() {
     if (!fp || !tmp) return;
 
     // ================= LOOP FILE =================
-    while (fread(&data, sizeof(Kendaraan), 1, fp)) {
+    while (fread(&list[total], sizeof(Kendaraan), 1, fp) == 1) {
+        total++;
+    }
+    fclose(fp);
+
+    // ===== SAMAKAN URUTAN DENGAN TAMPILAN (REVERSE DATA) =====
+    for (int i = 0; i < total - 1; i++) {
+        for (int j = 0; j < total - i - 1; j++) {
+            if (strcmp(list[j].id_kendaraan, list[j + 1].id_kendaraan) < 0) {
+                Kendaraan temp = list[j];
+                list[j] = list[j + 1];
+                list[j + 1] = temp;
+            }
+        }
+    }
+
+
+    currentNo = 1;
+
+    for (int i = 0; i < total; i++) {
 
         if (currentNo == targetNo) {
             found = 1;
+
+            // pakai data dari array
+            data = list[i];
 
             // ===== FRAME =====
             bentukframe(3,29,27,10);
@@ -69,12 +93,13 @@ void updateKendaraan() {
 
             // ===== DATA LAMA =====
             gotoxy(54,30); printf("DATA LAMA");
-            gotoxy(40,32); printf("Kategori  : %s", data.kategori);
-            gotoxy(40,33); printf("Kapasitas : %s", data.kapasitas);
-            gotoxy(40,34); printf("Fasilitas : %s", data.fasilitas);
-            gotoxy(40,35); printf("Armada    : %s", data.nama_armada);
-            gotoxy(40,36); printf("Tahun     : %s", data.tahun);
-            gotoxy(40,37); printf("Status    : %s", data.status);
+            gotoxy(40,32); printf("Kategori   : %s", data.kategori);
+            gotoxy(40,33); printf("Kapasita   : %s", data.kapasitas);
+            gotoxy(40,34); printf("Fasilitas  : %s", data.fasilitas);
+            gotoxy(40,35); printf("Armada     : %s", data.nama_armada);
+            gotoxy(40,36); printf("No plat    : %s", data.plat_nomor);
+            gotoxy(40,37); printf("Tahun      : %s", data.tahun);
+            gotoxy(40,38); printf("Status     : %s", data.status);
 
             // ===== DATA BARU =====
             gotoxy(102,30); printf("DATA BARU");
@@ -82,9 +107,10 @@ void updateKendaraan() {
             gotoxy(88,33); printf("Kapasitas : ");
             gotoxy(88,34); printf("Fasilitas : ");
             gotoxy(88,35); printf("Armada    : ");
-            gotoxy(88,36); printf("Tahun     : ");
-            gotoxy(88,37); printf("Status    : ");
-            gotoxy(88,38); printf("[ SIMPAN PERUBAHAN ]");
+            gotoxy(88,36); printf("No plat   : ");
+            gotoxy(88,37); printf("Tahun     : ");
+            gotoxy(88,38); printf("Status    : ");
+            gotoxy(88,39); printf("[ SIMPAN PERUBAHAN ]");
 
 
             int selectedField = 0;
@@ -109,17 +135,17 @@ void updateKendaraan() {
                 else printf("│ ");
 
                 // Tahun (2)
-                gotoxy(85, 36);
+                gotoxy(85, 37);
                 if (selectedField == 2) printf(">>");
                 else printf("│ ");
 
                 // Status (3)
-                gotoxy(85, 37);
+                gotoxy(85, 38);
                 if (selectedField == 3) printf(">>");
                 else printf("│ ");
 
                 // Simpan (4)
-                gotoxy(85, 38);
+                gotoxy(85, 39);
                 if (selectedField == 4) printf(">>");
                 else printf("│ ");
 
@@ -190,8 +216,9 @@ void updateKendaraan() {
                             gotoxy(40,33); printf("Kapasitas : %s", backup_kapasitas);
                             gotoxy(40,34); printf("Fasilitas : %s", backup_fasilitas);
                             gotoxy(40,35); printf("Armada    : %s", data.nama_armada);
-                            gotoxy(40,36); printf("Tahun     : %s", data.tahun);
-                            gotoxy(40,37); printf("Status    : %s", data.status);
+                            gotoxy(40,36); printf("No plat    : %s", data.plat_nomor);
+                            gotoxy(40,37); printf("Tahun     : %s", data.tahun);
+                            gotoxy(40,38); printf("Status    : %s", data.status);
 
                             // ===== DATA BARU (HEADER) =====
                             gotoxy(102,30); printf("DATA BARU");
@@ -199,9 +226,10 @@ void updateKendaraan() {
                             gotoxy(88,33); printf("Kapasitas : ");
                             gotoxy(88,34); printf("Fasilitas : ");
                             gotoxy(88,35); printf("Armada    : ");
-                            gotoxy(88,36); printf("Tahun     : ");
-                            gotoxy(88,37); printf("Status    : ");
-                            gotoxy(88,38); printf("[ SIMPAN PERUBAHAN ]");
+                            gotoxy(88,36); printf("No plat   :");
+                            gotoxy(88,37); printf("Tahun     : ");
+                            gotoxy(88,38); printf("Status    : ");
+                            gotoxy(88,39); printf("[ SIMPAN PERUBAHAN ]");
 
                             // === TAMPILKAN KATEGORI, KAPASITAS, FASILITAS BARU ===
                             gotoxy(inputX, 32);
@@ -218,38 +246,71 @@ void updateKendaraan() {
 
                         case 1: // ARMADA
                             strcpy(backup, data.nama_armada);
+
                             clearArea(inputX, 35, 48, 1);
-                            gotoxy(inputX,35);
+                            clearArea(inputX, 36, 48, 1);
+                            gotoxy(inputX, 35);
+
                             inputNamaArmada(data.nama_armada, 35, inputX);
-                            if (strlen(data.nama_armada)==0)
-                                strcpy(data.nama_armada, backup);
-                            break;
+
+                            // ===== JIKA ESC DITEKAN =====
+                            if (strlen(data.nama_armada) == 0) {
+                                strcpy(data.nama_armada, backup);   // kembalikan data lama
+                                clearArea(inputX, 35, 48, 1);        // hapus input baru dari layar
+                            }
+                            else {
+                                srand(time(NULL));// ===== ARMADA BARU → GENERATE NO PLAT BARU =====
+                                generatePlatNomor(data.plat_nomor);
+
+                                clearArea(inputX, 36, 48, 1);        // area no plat
+                                gotoxy(inputX, 36);
+                                printf("%s", data.plat_nomor);
+                            }
+
+                            break; // kembali ke pilihan case
+
+
+
 
                         case 2: // TAHUN
                             strcpy(backup, data.tahun);
-                            clearArea(inputX, 36, 48, 1);
-                            gotoxy(inputX,36);
-                            inputTahun(data.tahun, 36, inputX);
-                            if (strlen(data.tahun)==0)
-                                strcpy(data.tahun, backup);
-                            break;
+
+                            clearArea(inputX, 37, 48, 1);
+                            gotoxy(inputX, 37);
+
+                            inputTahun(data.tahun, 37, inputX);
+
+                            // ===== JIKA ESC DITEKAN =====
+                            if (strlen(data.tahun) == 0) {
+                                strcpy(data.tahun, backup);   // kembalikan data lama
+                                clearArea(inputX, 37, 48, 1);  // hapus input baru dari layar
+                            }
+
+                            break; // kembali ke pilihan case
+
 
                         case 3: // STATUS
-                            // === TAMPILKAN PETUNJUK SAAT INPUT STATUS ===
-                            gotoxy(88,40);
-                            printf("[T]Tersedia [M]Maintenance [D]Perjalanan [N]Nonaktif");
-
                             strcpy(backup, data.status);
-                            clearArea(inputX, 37, 48, 1);
-                            gotoxy(inputX,37);
-                            inputStatusKendaraan(data.status, 37, inputX);
 
-                            // === HAPUS PETUNJUK SETELAH INPUT ===
-                            clearArea(88, 40, 55, 1);
+                            // bersihkan area input
+                            clearArea(inputX, 38, 48, 1);
+                            gotoxy(inputX, 38);
 
-                            if (strlen(data.status)==0)
+                            inputStatusKendaraan(data.status, 38, inputX);
+
+                            // === JIKA ESC DITEKAN ===
+                            if (strlen(data.status) == 0) {
+                                // hapus input baru
+                                clearArea(inputX, 38, 48, 1);
+
+                                // kembalikan status lama
                                 strcpy(data.status, backup);
+
+                                break;
+                            }
+
                             break;
+
 
                     }
                 }
@@ -263,32 +324,29 @@ void updateKendaraan() {
                 }
             }
 
-            // ===== SIMPAN KE FILE =====
-            fwrite(&data, sizeof(Kendaraan), 1, tmp);
-        }
-        else {
-            fwrite(&data, sizeof(Kendaraan), 1, tmp);
+            list[i] = data;   // ⬅️ INI YANG PALING PENTING
         }
 
+        // TULIS HASIL AKHIR (EDIT ATAU TIDAK)
+        fwrite(&list[i], sizeof(Kendaraan), 1, tmp);
         currentNo++;
     }
+            fclose(fp);
+            fclose(tmp);
 
-    fclose(fp);
-    fclose(tmp);
+            // ===== HASIL =====
+            if (found) {
+                remove("kendaraan.dat");
+                rename("temp.dat", "kendaraan.dat");
+                gotoxy(88,39);
+                printf("Data kendaraan berhasil diupdate!");
+            } else {
+                remove("temp.dat");
+                gotoxy(88,39);
+                printf("Nomor tidak ditemukan!");
+            }
 
-    // ===== HASIL =====
-    if (found) {
-        remove("kendaraan.dat");
-        rename("temp.dat", "kendaraan.dat");
-        gotoxy(88,39);
-        printf("Data kendaraan berhasil diupdate!");
-    } else {
-        remove("temp.dat");
-        gotoxy(88,39);
-        printf("Nomor tidak ditemukan!");
-    }
-
-    _getch();
-}
+            _getch();
+        }
 
 #endif
