@@ -169,96 +169,50 @@ void waitEsc() {
 
 //=============================================//
 //==============Bagian Password===============//
-    static void PWesc(char *pw, int row, int col) {
-        int i = 0;
-        char ch;
-        int showPw = 0;
+static int PWesc(char *password, int y, int x) {
+    int i = 0;
+    char ch;
+    char backup[200];
+    strcpy(backup, password);
 
-        gotoxy(col, row);
+    while (1) {
+        ch = getch();
 
-        while (1) {
-            ch = getch();
-
-            if (ch == 13) {
-                pw[i] = '\0';
-
-                if (i == 0) {
-                    printf(" [Password tidak boleh kosong!]");
-                    Sleep(800);
-
-                    gotoxy(col, row);
-                    printf("                               ");
-                    gotoxy(col, row);
-                    continue;
-                }
-
-                if (i < 5) {
-                    printf(" [Minimal 5 karakter!]");
-                    Sleep(800);
-
-                    gotoxy(col, row);
-                    printf("                               ");
-                    gotoxy(col, row);
-
-                    for (int j = 0; j < i; j++) {
-                        if (showPw) {
-                            printf("%c", pw[j]);
-                        } else {
-                            printf("*");
-                        }
-                    }
-
-                    continue;
-                }
-
-                return;
+        if (ch == 13) {
+            if (i >= 5) {
+                password[i] = '\0';
+                return 1;
+            } else {
+                // Validasi: tampilkan pesan error jika kurang dari 5 karakter
+                int currentX = x + i;
+                gotoxy(97, y + 8);
+                printf("✗ Password minimal 5 karakter!");
+                Sleep(1000);
+                clearArea(97, y + 8, 35, 1);
+                gotoxy(currentX, y);
             }
-            else if (ch == 27) {
-                pw[0] = '\0';
-                return;
+        }
+
+        else if (ch == 27) {
+            for (int k = 0; k < i; k++) {
+                printf("\b \b");
             }
-            else if (ch == 9) {
-                showPw = !showPw;
-
-                int currentCol = col + i;
-
-                gotoxy(col, row);
-
-                for (int j = 0; j < i; j++) {
-                    if (showPw) {
-                        printf("%c", pw[j]);
-                    } else {
-                        printf("*");
-                    }
-                }
-
-                for (int j = i; j < 20; j++) {
-                    printf(" ");
-                }
-
-                gotoxy(currentCol, row);
-                continue;
+            return 0;
+        }
+        else if (ch == 8) {
+            if (i > 0) {
+                i--;
+                printf("\b \b");
             }
-            else if (ch == 8) {
-                if (i > 0) {
-                    i--;
-                    printf("\b \b");
-                }
-            }
-            else if (ch >= 33 && ch <= 126) {
-                if (i < 49) {
-                    pw[i] = ch;
-
-                    if (showPw) {
-                        printf("%c", ch);
-                    } else {
-                        printf("*");
-                    }
-                    i++;
-                }
+        }
+        else if (ch >= 33 && ch <= 126) {
+            if (i < 199) {
+                password[i++] = ch;
+                printf("*");
             }
         }
     }
+}
 //=============================================//
 
 
@@ -340,55 +294,9 @@ void tampilanhargatiket(long harga) {
 
 //=====================================================//
 
-
-
-//===============================================================//
-//==========================INPUT NO TELPON=====================//
-static void inputNoTelp(char *notlpn, int x, int y) {
-    int i = 0;
-    char ch;
-    char display[14] = "08"; // Awalan 08 + 11 digit + null terminator
-
-    // Tampilkan awalan 08
-    gotoxy(x, y);
-    printf("08");
-    i = 2;
-
-    while (1) {
-        ch = getch();
-
-        if (ch == 13) {  // ENTER - Konfirmasi
-            if (i == 12) {  // Hanya bisa enter jika sudah 13 digit
-                display[i] = '\0';
-                strcpy(notlpn, display);
-                break;
-            }
-        }
-        else if (ch == 27) {  // ESC - Batal
-            notlpn[0] = '\0';
-            break;
-        }
-        else if (ch == 8) {  // BACKSPACE - Hapus
-            if (i > 2) {  // Hanya bisa hapus setelah "08"
-                i--;
-                printf("\b \b");
-            }
-        }
-        else if (ch >= '0' && ch <= '9') {  // Input angka
-            if (i < 12) {  // Maksimal 13 digit total
-                display[i++] = ch;
-                printf("%c", ch);
-            }
-        }
-        // Abaikan input selain angka
-    }
-}
-
-
-
 //=====================================================//
 //========================GENDER======================//
-static void inputGender(char *gender, int x, int y) {
+static int inputGender(char *gender, int x, int y) {
     char ch;
 
     gotoxy(x, y);
@@ -454,7 +362,7 @@ static void inputGender(char *gender, int x, int y) {
 
 //==============================================================================================//
 //========================VALIDASI ROLE======================================================//
-static void inputRole(char *role, int x, int y) {
+static int inputRole(char *role, int x, int y) {
     char ch;
 
     gotoxy(x, y);
@@ -484,7 +392,7 @@ static void inputRole(char *role, int x, int y) {
                 }
                 else if (ch == 27) {  // ESC - Batal
                     role[0] = '\0';
-                    return;
+                    break;
                 }
             }
         }
@@ -505,7 +413,7 @@ static void inputRole(char *role, int x, int y) {
                 }
                 else if (ch == 27) {  // ESC - Batal
                     role[0] = '\0';
-                    return;
+                    break;
                 }
             }
         }
@@ -514,7 +422,7 @@ static void inputRole(char *role, int x, int y) {
 }
 //========================================================//
 
-static void inputStatus(char *status, int x, int y) {
+static int inputStatus(char *status, int x, int y) {
     char ch;
     int inputX = x + 6;
 
@@ -577,15 +485,14 @@ static void inputStatus(char *status, int x, int y) {
 
 //===================================================//
 //=================NAMA=============================//
-static void INPUTNama(char *nama) {
+static int INPUTNama(char *nama) {
     int i = 0;
     char ch;
+    char backup[50];
+    strcpy(backup, nama);
 
     // Simpan posisi awal kursor
     int startX, startY;
-
-    // Dapatkan posisi kursor saat ini (jika punya fungsi getCursorPos)
-    // Jika tidak punya, kita simpan secara manual
 
     while (1) {
         ch = getch();
@@ -623,8 +530,10 @@ static void INPUTNama(char *nama) {
                 }
             }
         }
-        else if (ch == 27) {  // ESC
-            nama[0] = '\0';
+        else if (ch == 27) {
+            for (int k = 0; k < i; k++) {
+                printf("\b \b");
+            }
             break;
         }
         else if (ch == 8) {  // BACKSPACE
@@ -669,84 +578,146 @@ static void setPointer(int row, int col){
 }
 //===========================================================//
 //=====================TANGGAL==============================//
-static void inputTanggal(char *tanggal) {
+static int inputTanggal(char *tanggal, int x, int y) {
     int i = 0;
     char ch;
-    char display[12] = ""; // DD-MM-YYYY + null terminator
+    char display[12] = "";
+    int valid = 0;
+    char backup[12];
 
-    while (1) {
-        ch = getch();
+    strcpy(backup, tanggal);
 
-        if (ch == 13) {  // ENTER
-            // Hanya bisa enter jika sudah 10 karakter (DD-MM-YYYY)
-            if (i == 10) {
-                display[i] = '\0';
-                strcpy(tanggal, display);
-                break;
+    do {
+        i = 0;
+        memset(display, 0, sizeof(display));
+
+        gotoxy(x, y);
+        gotoxy(x, y);
+
+        while (1) {
+            ch = getch();
+
+            if (ch == 13) {
+                if (i == 10) {
+                    display[i] = '\0';
+
+                    char tahunStr[5];
+                    strncpy(tahunStr, &display[6], 4);
+                    tahunStr[4] = '\0';
+                    int tahun = atoi(tahunStr);
+
+                    if (tahun >= 1998 && tahun <= 2005) {
+                        strcpy(tanggal, display);
+                        return 1;
+                    } else {
+                        gotoxy(x, y + 1);
+                        printf("Tahun harus antara 1998-2005!");
+                        getch();
+                        gotoxy(x, y + 1);
+                        printf("                              ");
+                        break;
+                    }
+                }
             }
-        }
-        else if (ch == 27) {  // ESC
-            tanggal[0] = '\0';
-            break;
-        }
-        else if (ch == 8) {  // BACKSPACE
-            if (i > 0) {
-                i--;
-                printf("\b \b");
-
-                // Hapus tanda '-' otomatis jika backspace dari posisi setelah '-'
-                if (i == 2 || i == 5) {
-                    i--;
+            else if (ch == 27) {
+                for (int k = 0; k < i; k++) {
                     printf("\b \b");
                 }
+                break;
             }
-        }
-        else if (ch >= '0' && ch <= '9') {  // Hanya terima angka
-            if (i < 10) {  // Maksimal 10 karakter
-                // Validasi digit pertama hari (0-3)
-                if (i == 0 && ch > '3') {
-                    continue;  // Abaikan jika > 3
-                }
-                // Validasi digit kedua hari (jika digit pertama 3, hanya boleh 0-1)
-                if (i == 1) {
-                    int digit1 = display[0] - '0';
-                    int digit2 = ch - '0';
-                    int hari = digit1 * 10 + digit2;
-                    if (hari < 1 || hari > 31) {
-                        continue;  // Abaikan jika hari tidak valid
+            else if (ch == 8) {
+                if (i > 0) {
+                    i--;
+                    printf("\b \b");
+
+                    if (i == 2 || i == 5) {
+                        i--;
+                        printf("\b \b");
                     }
                 }
-                // Validasi digit pertama bulan (0-1)
-                if (i == 3 && ch > '1') {
-                    continue;  // Abaikan jika > 1
-                }
-                // Validasi digit kedua bulan (jika digit pertama 1, hanya boleh 0-2)
-                if (i == 4) {
-                    int digit1 = display[3] - '0';
-                    int digit2 = ch - '0';
-                    int bulan = digit1 * 10 + digit2;
-                    if (bulan < 1 || bulan > 12) {
-                        continue;  // Abaikan jika bulan tidak valid
+            }
+            else if (ch >= '0' && ch <= '9') {
+                if (i < 10) {
+                    if (i == 0 && ch > '3') {
+                        continue;
                     }
-                }
+                    if (i == 1) {
+                        int digit1 = display[0] - '0';
+                        int digit2 = ch - '0';
+                        int hari = digit1 * 10 + digit2;
+                        if (hari < 1 || hari > 31) {
+                            continue;
+                        }
+                    }
+                    if (i == 3 && ch > '1') {
+                        continue;
+                    }
+                    if (i == 4) {
+                        int digit1 = display[3] - '0';
+                        int digit2 = ch - '0';
+                        int bulan = digit1 * 10 + digit2;
+                        if (bulan < 1 || bulan > 12) {
+                            continue;
+                        }
+                    }
+                    if (i == 6 && ch != '1' && ch != '2') {
+                        continue;
+                    }
+                    if (i == 7) {
+                        int digit1 = display[6] - '0';
+                        if (digit1 == 1 && ch != '9') {
+                            continue;
+                        }
+                        if (digit1 == 2 && ch != '0') {
+                            continue;
+                        }
+                    }
+                    if (i == 8) {
+                        int digit1 = display[6] - '0';
+                        int digit2 = display[7] - '0';
+                        if (digit1 == 1 && digit2 == 9 && ch != '9') {
+                            continue;
+                        }
+                        if (digit1 == 2 && digit2 == 0 && ch != '0') {
+                            continue;
+                        }
+                    }
+                    if (i == 9) {
+                        int digit1 = display[6] - '0';
+                        int digit2 = display[7] - '0';
+                        int digit3 = display[8] - '0';
+                        int digit4 = ch - '0';
 
-                display[i++] = ch;
-                printf("%c", ch);
+                        if (digit1 == 1 && digit2 == 9 && digit3 == 9) {
+                            if (digit4 < 8) {
+                                continue;
+                            }
+                        }
+                        else if (digit1 == 2 && digit2 == 0 && digit3 == 0) {
+                            if (digit4 > 5) {
+                                continue;
+                            }
+                        }
+                        else {
+                            continue;
+                        }
+                    }
 
-                // Auto tambah '-' setelah 2 digit pertama (DD)
-                if (i == 2) {
-                    display[i++] = '/';
-                    printf("/");
-                }
-                // Auto tambah '-' setelah 2 digit kedua (MM)
-                else if (i == 5) {
-                    display[i++] = '/';
-                    printf("/");
+                    display[i++] = ch;
+                    printf("%c", ch);
+
+                    if (i == 2) {
+                        display[i++] = '/';
+                        printf("/");
+                    }
+                    else if (i == 5) {
+                        display[i++] = '/';
+                        printf("/");
+                    }
                 }
             }
         }
-        // Abaikan input selain angka
-    }
+    } while (!valid);
 }
 
 
@@ -1215,4 +1186,291 @@ void TahunJadwal(int *tahun, int x, int y) {
     } while (!valid);
 }
 
+
+
+
+
+
+
+
+
+//////////////////////INI BAGIAN UPDATE FUNGSI BARUNYA/////////////////////
+//////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////BAGIAN NAMA//////////////////////////////////////
+static int NamaUpdate(char *nama) {
+    int i = 0;
+    char ch;
+    char backup[50];
+    strcpy(backup, nama);
+
+    // Simpan posisi awal kursor
+    int startX, startY;
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {  // ENTER
+            nama[i] = '\0';
+
+            // Validasi: harus ada minimal 1 huruf
+            int hasLetter = 0;
+            for (int j = 0; j < i; j++) {
+                if ((nama[j] >= 'a' && nama[j] <= 'z') ||
+                    (nama[j] >= 'A' && nama[j] <= 'Z')) {
+                    hasLetter = 1;
+                    break;
+                }
+            }
+
+            if (hasLetter && i > 0) {
+                break;
+            } else {
+
+                int cursorPos = i;
+
+                // Tampilkan peringatan
+                printf(" [Nama harus mengandung huruf!]");
+
+                Sleep(800);
+                for (int k = 0; k < 31; k++) {
+                    printf("\b \b");
+                }
+                for (int k = 0; k < cursorPos; k++) {
+                    printf("%c", nama[k]);
+                }
+                for (int k = 0; k < cursorPos; k++) {
+                }
+            }
+        }
+        else if (ch == 27) {
+            for (int k = 0; k < i; k++) {
+                printf("\b \b");
+            }
+            return 0;
+        }
+        else if (ch == 8) {  // BACKSPACE
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch == 32) {  // SPASI - BOLEH
+            if (i < 49 && i > 0) {  // Spasi tidak boleh di awal
+                // Cek karakter sebelumnya bukan spasi
+                if (nama[i-1] != ' ') {
+                    nama[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
+        }
+        else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+                 ch == '.' || ch == '-' || ch == '\'') {  // Tambah karakter valid
+            if (i < 49) {
+                nama[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+    }
+    nama[i] = '\0';
+}
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+////////////////////////BAGIAN TANGGAL///////////////////////////////////////
+static int UpdateTanggal(char *tanggal, int x, int y) {
+    int i = 0;
+    char ch;
+    char display[12] = "";
+    int valid = 0;
+    char backup[12];
+
+    strcpy(backup, tanggal);
+
+    do {
+        i = 0;
+        memset(display, 0, sizeof(display));
+
+        gotoxy(x, y);
+        gotoxy(x, y);
+
+        while (1) {
+            ch = getch();
+
+            if (ch == 13) {
+                if (i == 10) {
+                    display[i] = '\0';
+
+                    char tahunStr[5];
+                    strncpy(tahunStr, &display[6], 4);
+                    tahunStr[4] = '\0';
+                    int tahun = atoi(tahunStr);
+
+                    if (tahun >= 1998 && tahun <= 2005) {
+                        strcpy(tanggal, display);
+                        return 1;
+                    } else {
+                        gotoxy(x, y + 1);
+                        printf("Tahun harus antara 1998-2005!");
+                        getch();
+                        gotoxy(x, y + 1);
+                        printf("                              ");
+                        break;
+                    }
+                }
+            }
+            else if (ch == 27) {
+                for (int k = 0; k < i; k++) {
+                    printf("\b \b");
+                }
+                return 0;
+            }
+            else if (ch == 8) {
+                if (i > 0) {
+                    i--;
+                    printf("\b \b");
+
+                    if (i == 2 || i == 5) {
+                        i--;
+                        printf("\b \b");
+                    }
+                }
+            }
+            else if (ch >= '0' && ch <= '9') {
+                if (i < 10) {
+                    if (i == 0 && ch > '3') {
+                        continue;
+                    }
+                    if (i == 1) {
+                        int digit1 = display[0] - '0';
+                        int digit2 = ch - '0';
+                        int hari = digit1 * 10 + digit2;
+                        if (hari < 1 || hari > 31) {
+                            continue;
+                        }
+                    }
+                    if (i == 3 && ch > '1') {
+                        continue;
+                    }
+                    if (i == 4) {
+                        int digit1 = display[3] - '0';
+                        int digit2 = ch - '0';
+                        int bulan = digit1 * 10 + digit2;
+                        if (bulan < 1 || bulan > 12) {
+                            continue;
+                        }
+                    }
+                    if (i == 6 && ch != '1' && ch != '2') {
+                        continue;
+                    }
+                    if (i == 7) {
+                        int digit1 = display[6] - '0';
+                        if (digit1 == 1 && ch != '9') {
+                            continue;
+                        }
+                        if (digit1 == 2 && ch != '0') {
+                            continue;
+                        }
+                    }
+                    if (i == 8) {
+                        int digit1 = display[6] - '0';
+                        int digit2 = display[7] - '0';
+                        if (digit1 == 1 && digit2 == 9 && ch != '9') {
+                            continue;
+                        }
+                        if (digit1 == 2 && digit2 == 0 && ch != '0') {
+                            continue;
+                        }
+                    }
+                    if (i == 9) {
+                        int digit1 = display[6] - '0';
+                        int digit2 = display[7] - '0';
+                        int digit3 = display[8] - '0';
+                        int digit4 = ch - '0';
+
+                        if (digit1 == 1 && digit2 == 9 && digit3 == 9) {
+                            if (digit4 < 8) {
+                                continue;
+                            }
+                        }
+                        else if (digit1 == 2 && digit2 == 0 && digit3 == 0) {
+                            if (digit4 > 5) {
+                                continue;
+                            }
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+
+                    display[i++] = ch;
+                    printf("%c", ch);
+
+                    if (i == 2) {
+                        display[i++] = '/';
+                        printf("/");
+                    }
+                    else if (i == 5) {
+                        display[i++] = '/';
+                        printf("/");
+                    }
+                }
+            }
+        }
+    } while (!valid);
+}
+
+
+
+
+
+////////////////UPDATE NO TELPON////////////////////
+
+static int UpdateNoTelp(char *notlpn, int x, int y) {
+    int i = 0;
+    char ch;
+    char display[14] = "08"; // Awalan 08 + 11 digit + null terminator
+    char backup[20];
+
+    // Tampilkan awalan 08
+    gotoxy(x, y);
+    printf("08");
+    i = 2;
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {  // ENTER - Konfirmasi
+            if (i == 12) {  // Hanya bisa enter jika sudah 13 digit
+                display[i] = '\0';
+                strcpy(notlpn, display);
+                break;
+            }
+        }
+        else if (ch == 27) {
+            for (int k = 0; k < i; k++) {
+                printf("\b \b");
+            }
+            return 0;
+        }
+        else if (ch == 8) {  // BACKSPACE - Hapus
+            if (i > 2) {  // Hanya bisa hapus setelah "08"
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch >= '0' && ch <= '9') {  // Input angka
+            if (i < 12) {  // Maksimal 13 digit total
+                display[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+        // Abaikan input selain angka
+    }
+}
 #endif

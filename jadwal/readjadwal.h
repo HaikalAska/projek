@@ -96,11 +96,12 @@ void bacajadwal() {
     int wNo = 3;
     int wTgl = 12;
     int wJam = 7;
-    int wAsal = 12;
-    int wTujuan = 12;
+    int wAsal = 7;
+    int wTujuan = 9;
     int wArmada = 20;
     int wKategori = 12;
-    int wHarga = 15;
+    int wHarga = 10;
+    int wtiba = 7;
 
     int current_page = 1;
     int total_pages = 1;
@@ -123,17 +124,17 @@ void bacajadwal() {
     fclose(fp);
 
     if (total > 0)
-        total_pages = (total + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
+        total_pages = (total + 3 - 1) / 3;
 
     int totalWidth = 1 + (wNo+2) + (wTgl+2) + (wJam+2) + (wAsal+2) +
-                     (wTujuan+2) + (wArmada+2) + (wKategori+2) + (wHarga+2);
+                     (wTujuan+2) + (wArmada+2) + (wKategori+2) + (wHarga+2) + (wtiba +2);
 
     char line[200];
     memset(line, '-', totalWidth);
     line[totalWidth] = '\0';
 
     do {
-        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 10);
+        clearArea(startX, startY, totalWidth + 2, MAX_ROWS_PER_PAGE + 2);
 
         gotoxy(80, 13);
         printf("=== DAFTAR JADWAL ===");
@@ -144,10 +145,11 @@ void bacajadwal() {
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1,"No",
                wTgl+1,"Tanggal",
-               wJam+1,"Jam",
+               wJam+1,"Berangkat",
+               wtiba +1,"Jam Tiba",
                wAsal+1,"Kota Asal",
                wTujuan+1,"Kota Tujuan",
                wArmada+1,"Armada",
@@ -157,8 +159,8 @@ void bacajadwal() {
         gotoxy(startX, row++);
         printf("%s", line);
 
-        int start = (current_page - 1) * MAX_ROWS_PER_PAGE;
-        int end = start + MAX_ROWS_PER_PAGE;
+        int start = (current_page - 1) * 3;
+        int end = start + 3;
         if (end > total) end = total;
 
         for (int i = start; i < end; i++) {
@@ -168,11 +170,12 @@ void bacajadwal() {
             formatHarga(all_jadwal[i].harga, harga);
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1, i+1,
                    wTgl+1, all_jadwal[i].tanggal,
                    wJam+1, all_jadwal[i].jamBerangkat,
-                   wAsal+1, all_jadwal[i].kotaAsal,
+                   wAsal+1, all_jadwal[i].jamTiba,
+                   wtiba+1, all_jadwal[i].kotaAsal,
                    wTujuan+1, all_jadwal[i].kotaTujuan,
                    wArmada+1, all_jadwal[i].nama_armada,
                    wKategori+1, all_jadwal[i].kategori,

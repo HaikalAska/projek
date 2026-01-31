@@ -121,9 +121,7 @@ void PesanTiket() {
 
 
 
-        int pCount = getPenumpangCount() + 1;
-        sprintf(data.id_penumpang, "PNP%03d", pCount);
-        gotoxy(37, 35); printf("ID Penumpang   : %s", data.id_penumpang);
+
 
 
 
