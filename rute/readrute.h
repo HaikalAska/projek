@@ -10,7 +10,7 @@
 #include <string.h>
 #include "../FrameTabel.h"
 
-#define MAX_ROWS_PER_PAGE 8
+#define MAX_ROWS_PER_PAGE 3
 
 // ==================================================
 // FORMAT HARGA RUPIAH (AMAN, TIDAK DOBEL .000)
@@ -50,6 +50,7 @@ void bacaRute() {
     int wHarga = 18;
     int wBerangkat = 12;
     int wTiba = 12;
+    int wStatus = 12;
 
     int current_page = 1;
     int total_pages = 1;
@@ -71,12 +72,23 @@ void bacaRute() {
     }
     fclose(fp);
 
+    for (int i = 0; i < total_rute - 1; i++) {
+        for (int j = i + 1; j < total_rute; j++) {
+            if (strcmp(all_rute[i].id, all_rute[j].id) < 0) {
+                Rute temp = all_rute[i];
+                all_rute[i] = all_rute[j];
+                all_rute[j] = temp;
+            }
+        }
+    }
+
+
     if (total_rute > 0) {
         total_pages = (total_rute + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
     }
 
     int totalWidth = 1 + (wNo+2) + (wAsal+2) + (wTujuan+2)
-                   + (wHarga+2) + (wBerangkat+2) + (wTiba+2);
+                   + (wHarga+2) + (wBerangkat+2) + (wTiba+2) + (wStatus+2);
 
     char line[200];
     memset(line, '-', totalWidth);
@@ -95,13 +107,14 @@ void bacaRute() {
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1, "No",
                wAsal+1, "Kota Asal",
                wTujuan+1, "Kota Tujuan",
                wHarga+1, "Harga",
                wBerangkat+1, "Berangkat",
-               wTiba+1, "Tiba");
+               wTiba+1, "Tiba",
+               wStatus+1, "Status");
 
         gotoxy(startX, row++);
         printf("%s", line);
@@ -115,13 +128,14 @@ void bacaRute() {
             formatHarga((int)all_rute[i].harga, hargaStr);
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|",
+            printf("|%-*d|%-*s|%-*s|%*s|%-*s|%-*s|%-*s|",
                    wNo+1, i + 1,
                    wAsal+1, all_rute[i].kotaAsal,
                    wTujuan+1, all_rute[i].kotaTujuan,
                    wHarga+1, hargaStr,
                    wBerangkat+1, all_rute[i].jamBerangkat,
-                   wTiba+1, all_rute[i].jamTiba);
+                   wTiba+1, all_rute[i].jamTiba,
+                   wStatus+1, all_rute[i].statusRute);
         }
 
         gotoxy(startX, row++);
@@ -131,7 +145,7 @@ void bacaRute() {
         bentukframe(3, 11, 27, 12);
         gotoxy(6, 13); printf("[SPASI] Lanjut");
         gotoxy(6, 15); printf("[BACKSPACE] Kembali");
-        gotoxy(6, 17); printf("[ENTER] Keluar");
+        gotoxy(6, 17); printf("[ENTER] Pilih Menu");
         gotoxy(6, 19); printf("Halaman: %d/%d", current_page, total_pages);
         gotoxy(6, 21); printf("Total  : %d data", total_rute);
 

@@ -16,6 +16,7 @@ typedef struct {
     char kotaTujuan[50];
     char nama_armada[50];
     char kategori[50];
+    char jamTiba[50];
 } jadwal;
 
 void liatjadwal() {
@@ -101,7 +102,7 @@ void liatjadwal() {
                wNo+1, i+1,
                wTgl+1, all_jadwal[i].tanggal,
                wJam+1, all_jadwal[i].jamBerangkat,
-               wAsal+1, all_jadwal[i].kotaAsal,
+               wAsal+1, all_jadwal[i].jamTiba,
                wTujuan+1, all_jadwal[i].kotaTujuan,
                wArmada+1, all_jadwal[i].nama_armada,
                wKategori+1, all_jadwal[i].kategori,
@@ -630,6 +631,8 @@ void buatjadwal() {
 
         gotoxy(37,31);
         printf("Jam Berangkat   : %s", r.jamBerangkat);
+        gotoxy(40,31);
+        printf("Jam Berangkat   : %s", r.jamTiba);
 
         gotoxy(37,32);
         printf("Harga           : ");
@@ -638,6 +641,7 @@ void buatjadwal() {
         strcpy(j.kotaAsal, r.kotaAsal);
         strcpy(j.kotaTujuan, r.kotaTujuan);
         strcpy(j.jamBerangkat, r.jamBerangkat);
+        strcpy(j.jamTiba, r.jamTiba);
         j.harga = r.harga;
 
         Kendaraan k;

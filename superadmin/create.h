@@ -9,7 +9,9 @@
 int getStaffCount();
 static void inputID(char *id);
 int pwESC(char *pw, int col, int row);
-static void inputUsername(char *username, int row, int col);
+static int inputUsername(char *username, int row, int col);
+static int UpdateUsername(char *username, int row, int col);
+static int inputNoTelp(char *notlpn, int x, int y);
 
 typedef struct {
     char nama[50];
@@ -37,8 +39,6 @@ void create() {
         staff data;
 
 
-        /*clearLine(9,4,30);
-        gotoxy(4, 9); printf("Super Admin>Buat\n");*/
         // Generate ID otomatis
         int count = getStaffCount() + 1;
         sprintf(data.id, "STF%03d", count);
@@ -82,8 +82,8 @@ void create() {
         gotoxy(37, 32);
         printf("Tanggal Lahir: ");
         // Clear area input tanggal
-        setPointer(33, 53);
-        inputTanggal(data.tgl);
+        setPointer(33, 53 );
+        inputTanggal(data.tgl,1,53);
         if (strlen(data.tgl) == 0) {
             fclose(fp);
             return;
@@ -102,9 +102,7 @@ void create() {
         // Input No Telepon
         gotoxy(37, 34);
         printf("No. Telepon  : ");
-        // Clear area input telepon
-        inputNoTelp(data.notlpn, 52, 34);
-        if (strlen(data.notlpn) == 0) {
+        if (inputNoTelp(data.notlpn, 52, 34) == 0) {
             fclose(fp);
             return;
         }
@@ -114,7 +112,7 @@ void create() {
         printf("Role         : ");
         // Clear area input gender
         inputRole(data.Role, 46, 35);
-        if (strlen(data.gender) == 0) {
+        if (strlen(data.Role) == 0) {
             fclose(fp);
             return;
         }
@@ -206,10 +204,13 @@ static int cekUsernameDuplicate(char *username) {
 
 //=====================================================//
 //===================USERNAME======================//
-static void inputUsername(char *username, int row, int col) {
+static int inputUsername(char *username, int row, int col) {  // Ubah void jadi int
     int i = 0;
     char ch;
     char temp[50];
+    char backup[50];
+
+    strcpy(backup, username);  // TAMBAHKAN INI - Backup data lama
 
     while (1) {
         ch = getch();
@@ -256,12 +257,13 @@ static void inputUsername(char *username, int row, int col) {
                 continue;
             }
 
-
             strcpy(username, temp);
-            break;
+            return 1;  // UBAH break jadi return 1
         }
-        else if (ch == 27) {  // ESC
-            username[0] = '\0';
+        else if (ch == 27) {
+            for (int k = 0; k < i; k++) {
+                printf("\b \b");
+            }
             break;
         }
         else if (ch == 8) {  // BACKSPACE
@@ -394,6 +396,170 @@ void buatdummy_ke_file() {
 }
 //==============================================================================//
 
+
+
+
+///////////////////BAGIAN USERNAME///////////////////////////////
+static int UpdateUsername(char *username, int row, int col) {  // Ubah void jadi int
+    int i = 0;
+    char ch;
+    char temp[50];
+    char backup[50];
+
+    strcpy(backup, username);  // TAMBAHKAN INI - Backup data lama
+
+    while (1) {
+        ch = getch();
+
+        if (ch == 13) {  // ENTER
+            temp[i] = '\0';
+
+            if (i == 0) {
+                printf(" [Username tidak boleh kosong!]");
+                Sleep(800);
+
+                // Kembali ke posisi awal
+                gotoxy(col, row);
+                printf("                               ");
+                gotoxy(col, row);
+
+                i = 0;
+                continue;
+            }
+
+            // Cek duplicate
+            if (cekUsernameDuplicate(temp)) {
+                printf(" [Username sudah ada! Gunakan yang lain]");
+                Sleep(800);
+
+                // Kembali ke posisi awal
+                gotoxy(col, row);
+                printf("                                                ");
+                gotoxy(col, row);
+
+                // Tampilkan kembali text yang sudah diketik
+                for (int k = 0; k < i; k++) {
+                    printf("%c", temp[k]);
+                }
+
+                // Reset
+                i = 0;
+                temp[0] = '\0';
+
+                // Clear lagi
+                gotoxy(col, row);
+                printf("                                                ");
+                gotoxy(col, row);
+                continue;
+            }
+
+            strcpy(username, temp);
+            return 1;  // UBAH break jadi return 1
+        }
+        else if (ch == 27) {
+            for (int k = 0; k < i; k++) {
+                printf("\b \b");
+            }
+            return 0;
+        }
+        else if (ch == 8) {  // BACKSPACE
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (ch == 32) {  // BLOKIR SPASI
+            continue;
+        }
+        else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||
+                 (ch >= '0' && ch <= '9') || ch == '.' || ch == '_') {
+            if (i < 49) {
+                temp[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+    }
+}
+
+
+//====================================================================//
+//==================VALIDASI NOMER TELPON==============================//
+static int cekNoTelpDuplicate(char *notlpn, char *currentNotlpn) {
+    FILE *fp = fopen("staff.dat", "rb");
+    if (fp == NULL) return 0;
+
+    staff data;
+    while (fread(&data, sizeof(staff), 1, fp)) {
+        if (strcmp(data.notlpn, notlpn) == 0 && strcmp(data.notlpn, currentNotlpn) != 0) {
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+//===================================================================//
+
+
+
+//===============================================================//
+//==========================INPUT NO TELPON=====================//
+static int inputNoTelp(char *notlpn, int x, int y) {
+    int i = 0;
+    char ch;
+    char display[14] = "08";
+    char backup[20];
+
+    strcpy(backup, notlpn);
+
+    while (1) {
+        gotoxy(x, y);
+        printf("08");
+        i = 2;
+        memset(display, 0, sizeof(display));
+        strcpy(display, "08");
+
+        while (1) {
+            ch = getch();
+
+            if (ch == 13) {
+                if (i >= 10 && i <= 13) {
+                    display[i] = '\0';
+
+                    if (cekNoTelpDuplicate(display, backup)) {
+                        gotoxy(x, y + 1);
+                        printf("No. Telepon sudah ada!");
+                        Sleep(1000);
+                        gotoxy(x, y + 1);
+                        printf("                       ");
+                        gotoxy(x, y);
+                        printf("                    ");
+                        break;
+                    }
+
+                    strcpy(notlpn, display);
+                    return 1;
+                }
+            }
+            else if (ch == 27) {
+                strcpy(notlpn, backup);
+                return 0;
+            }
+            else if (ch == 8) {
+                if (i > 2) {
+                    i--;
+                    printf("\b \b");
+                }
+            }
+            else if (ch >= '0' && ch <= '9') {
+                if (i < 13) {
+                    display[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
+        }
+    }
+}
 
 
 

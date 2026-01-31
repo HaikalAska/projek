@@ -13,11 +13,6 @@
 #include "createrute.h"
 
 
-//
-// Created by ASUS on 12/14/2025.
-//
-
-
 // ==================================================
 // FORMAT HARGA RUPIAH
 // ==================================================
@@ -36,10 +31,10 @@ void formatHargass(int harga, char *out) {
 }
 
 // ==================================================
-// DELETE RUTE
+// DELETE RUTE (UBAH STATUS JADI NONAKTIF)
 // ==================================================
 void deleterute() {
-    FILE *fp, *temp;
+    FILE *fp;
     Rute data;
     Rute list[1000];
     int count = 0;
@@ -60,6 +55,17 @@ void deleterute() {
         list[count++] = data;
     }
     fclose(fp);
+
+    // ===== SORTING (descending by ID) =====
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (strcmp(list[i].id, list[j].id) < 0) {
+                Rute temp = list[i];
+                list[i] = list[j];
+                list[j] = temp;
+            }
+        }
+    }
 
     if (count == 0) {
         gotoxy(3, 27); printf("Tidak ada data rute!");
@@ -97,7 +103,7 @@ void deleterute() {
                     Sleep(1500);
                     gotoxy(3, 26);
                     printf("                          ");
-                    break;  // keluar dari inner loop untuk input ulang
+                    break;
                 }
 
                 buffer[idx] = '\0';
@@ -123,7 +129,6 @@ void deleterute() {
             }
         }
 
-        // Jika user tekan ESC (sudah return di atas) atau input kosong, continue
         if (idx == 0) continue;
 
         if (pilihan >= 1 && pilihan <= count) break;
@@ -136,6 +141,17 @@ void deleterute() {
     }
 
     Rute terpilih = list[pilihan - 1];
+
+    // ===== VALIDASI: CEK APAKAH RUTE SUDAH NONAKTIF =====
+    if (strcmp(terpilih.statusRute, "Nonaktif") == 0) {
+        bentukframe(37, 27, 108, 8);
+        gotoxy(75, 27); printf("=== PERINGATAN ===");
+        gotoxy(39, 30); printf("Rute %s sudah nonaktif!", terpilih.id);
+        gotoxy(39, 31); printf("Tidak dapat dihapus lagi.");
+        gotoxy(39, 33); printf("Tekan tombol apa saja untuk kembali...");
+        getch();
+        return;
+    }
 
     // ===== DETAIL RUTE =====
     char hargaStr[25];
@@ -150,24 +166,24 @@ void deleterute() {
     gotoxy(39, 31); printf("Harga         : %s", hargaStr);
     gotoxy(39, 32); printf("Jam Berangkat : %s", terpilih.jamBerangkat);
     gotoxy(39, 33); printf("Jam Tiba      : %s", terpilih.jamTiba);
+    gotoxy(39, 34); printf("Status Rute   : %s", terpilih.statusRute);
 
-    // ===== KONFIRMASI (Y/N ONLY, BACKSPACE & ESC AKTIF) =====
+    // ===== KONFIRMASI =====
     gotoxy(38, 36);
-    printf("Yakin ingin menghapus jadwal ini? (y/n): ");
-    gotoxy(78, 36);
+    printf("Yakin ingin menonaktifkan rute ini? (y/n): ");
+    gotoxy(80, 36);
 
+    konfirmasi = '\0';
     while (1) {
         char ch = getch();
 
-        // ESC → batal
         if (ch == 27) {
             gotoxy(38, 37);
-            printf("Penghapusan dibatalkan!");
+            printf("Penonaktifan dibatalkan!");
             getch();
             return;
         }
 
-        // BACKSPACE → hapus y/n
         if (ch == 8 && konfirmasi != '\0') {
             konfirmasi = '\0';
             gotoxy(80, 36);
@@ -178,13 +194,11 @@ void deleterute() {
 
         ch = tolower(ch);
 
-        // hanya y atau n
         if ((ch == 'y' || ch == 'n') && konfirmasi == '\0') {
             konfirmasi = ch;
             printf("%c", ch);
         }
 
-        // ENTER setelah input valid
         if (ch == 13 && konfirmasi != '\0') {
             break;
         }
@@ -192,39 +206,42 @@ void deleterute() {
 
     if (konfirmasi != 'y') {
         gotoxy(38, 37);
-        printf("Penghapusan dibatalkan!");
+        printf("Penonaktifan dibatalkan!");
         getch();
         return;
     }
 
-    // ===== PROSES HAPUS =====
-    fp   = fopen("rute.dat", "rb");
-    temp = fopen("temp.dat", "wb");
+    // ===== PROSES UBAH STATUS JADI NONAKTIF =====
+    fp = fopen("rute.dat", "rb+");
+    if (!fp) {
+        gotoxy(38, 37); printf("Gagal membuka file!");
+        getch();
+        return;
+    }
 
     while (fread(&data, sizeof(Rute), 1, fp) == 1) {
-        if (strcmp(data.id, terpilih.id) != 0) {
-            fwrite(&data, sizeof(Rute), 1, temp);
-        } else {
+        if (strcmp(data.id, terpilih.id) == 0) {
+            // Ubah status jadi Nonaktif
+            strcpy(data.statusRute, "Nonaktif");
+
+            // Mundur 1 record untuk overwrite
+            fseek(fp, -sizeof(Rute), SEEK_CUR);
+            fwrite(&data, sizeof(Rute), 1, fp);
+
             found = 1;
+            break;
         }
     }
 
     fclose(fp);
-    fclose(temp);
 
     if (found) {
-        remove("rute.dat");
-        rename("temp.dat", "rute.dat");
-        gotoxy(38, 37); printf("Rute %s berhasil dihapus!", terpilih.id);
+        gotoxy(38, 37); printf("Rute %s berhasil dinonaktifkan!", terpilih.id);
     } else {
-        remove("temp.dat");
-        gotoxy(38, 37); printf("Gagal menghapus data!");
+        gotoxy(38, 37); printf("Gagal menonaktifkan rute!");
     }
 
-    getch();
     getch();
 }
 
 #endif // PROJEK_DELETERUTE_H
-
-

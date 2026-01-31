@@ -8,6 +8,9 @@
 #include <windows.h>
 #include "FrameTabel.h"
 #include "Menu.h"
+#define Max_username 50
+#define Max_password 50
+
 
 typedef struct {
     char username[50];
@@ -65,8 +68,8 @@ void validLogin() {
     char pw[50];
     char role[50] = "";
 
-    char AdminID[] = "superadmin";
-    char AdminPW[] = "superadmin";
+    char AdminID[] = "1";
+    char AdminPW[] = "1";
 
     int percobaan = 0;
     int Maxpercobaan = 3;
@@ -177,7 +180,8 @@ static void inputID(char *id) {
         else if (ch == 32) {
             continue;
         }
-        else {
+
+        else if (i < Max_username ) {
             id[i++] = ch;
             printf("%c", ch);
         }
