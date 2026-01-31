@@ -11,6 +11,7 @@
 #include "updatejadwal.h"
 
 static void menuStaff();
+
 void  menujadwal() {
     int pilih;
 

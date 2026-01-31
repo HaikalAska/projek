@@ -4,6 +4,7 @@
 #include "createjadwal.h"
 
 void buatdummyjadwal() {
+
     FILE *fp;
     jadwal data;
     int max_data = 50;

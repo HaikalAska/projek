@@ -22,6 +22,7 @@ typedef struct {
     char status[20];
 } jadwal;
 
+
 void liatjadwal() {
 
     FILE *fp;
