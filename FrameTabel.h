@@ -238,7 +238,7 @@ long inputangka7digit(int x, int y, int *isEsc) {
         // ENTER
         if (ch == 13 && len > 0) {
             buffer[len] = '\0';
-            return atof(buffer);
+            return atol(buffer);  // Gunakan atol untuk long
         }
 
         // BACKSPACE
@@ -246,10 +246,22 @@ long inputangka7digit(int x, int y, int *isEsc) {
             len--;
             buffer[len] = '\0';
 
+            // Hapus dan tampilkan ulang dengan format
             gotoxy(x, y);
-            printf("       "); // hapus tampilan
+            printf("              "); // hapus tampilan
             gotoxy(x, y);
-            printf("%s", buffer);
+
+            if (len > 0) {
+                long nilai = atol(buffer);
+                // Format dengan titik
+                if (nilai < 1000) {
+                    printf("%ld", nilai);
+                } else if (nilai < 1000000) {
+                    printf("%ld.%03ld", nilai / 1000, nilai % 1000);
+                } else {
+                    printf("%ld.%03ld.%03ld", nilai / 1000000, (nilai / 1000) % 1000, nilai % 1000);
+                }
+            }
         }
 
         // ANGKA 0–9 (maks 7 digit)
@@ -257,8 +269,21 @@ long inputangka7digit(int x, int y, int *isEsc) {
             buffer[len++] = ch;
             buffer[len] = '\0';
 
+            long nilai = atol(buffer);
+
+            // Hapus dan tampilkan ulang dengan format
             gotoxy(x, y);
-            printf("%s", buffer);
+            printf("              ");
+            gotoxy(x, y);
+
+            // Format dengan titik pemisah ribuan
+            if (nilai < 1000) {
+                printf("%ld", nilai);
+            } else if (nilai < 1000000) {
+                printf("%ld.%03ld", nilai / 1000, nilai % 1000);
+            } else {
+                printf("%ld.%03ld.%03ld", nilai / 1000000, (nilai / 1000) % 1000, nilai % 1000);
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ static void inputEmailGmail(char *email, int x, int y);
 
 // ================= PESAN TIKET =================
 void PesanTiket() {
-      char n;
+    char n;
 
     do {
         system("chcp 65001 > nul");
@@ -51,7 +51,6 @@ void PesanTiket() {
         gotoxy(4,36); printf("[ESC] Keluar");
         bacajadwal();
 
-
         bentukframe(35, 27, 108, 18);
         gotoxy(78, 27); printf("=== BUAT TIKET ===");
 
@@ -61,47 +60,76 @@ void PesanTiket() {
         tiket data;
         jadwal jadwal_data;
 
+        // ================= HITUNG TOTAL JADWAL =================
+        int totalJadwal = 0;
+        jadwal all_jadwal[1000];
+
+        FILE *fp_jadwal = fopen("jadwal.dat", "rb");
+        if (fp_jadwal) {
+            while (fread(&all_jadwal[totalJadwal], sizeof(jadwal), 1, fp_jadwal) == 1) {
+                totalJadwal++;
+            }
+            fclose(fp_jadwal);
+        }
+
+        // Cek apakah ada jadwal
+        if (totalJadwal == 0) {
+            gotoxy(37, 30);
+            printf("Tidak ada jadwal tersedia!");
+            getch();
+            fclose(fp_tiket);
+            return;
+        }
 
         int count = getTiketCount() + 1;
         sprintf(data.id_tiket, "TKT%03d", count);
 
         gotoxy(37, 28);
-        printf("ID Tiket       : %s", data.id_tiket);
+        printf("ID Tiket         : %s", data.id_tiket);
 
         // ================= INPUT NOMOR JADWAL =================
         int nomor_jadwal;
 
         gotoxy(37, 29);
-        printf("No Jadwal      : ");
+        printf("No Jadwal        : ");
 
-        nomor_jadwal = inputNoJadwal(54, 29);
-        if (nomor_jadwal == -1) {
-            fclose(fp_tiket);
-            return;
-        }
+        while (1) {
+            nomor_jadwal = inputNoJadwal(56, 29);
 
-        FILE *fp_jadwal = fopen("jadwal.dat", "rb");
-
-        int found = 0;
-        int index = 1;
-
-        while (fread(&jadwal_data, sizeof(jadwal), 1, fp_jadwal)) {
-            if (index == nomor_jadwal) {
-                found = 1;
-                break;
+            if (nomor_jadwal == -1) {
+                fclose(fp_tiket);
+                return;
             }
-            index++;
-        }
-        fclose(fp_jadwal);
 
-        if (!found) {
-            fclose(fp_tiket);
-            gotoxy(37, 30);
-            printf("Nomor Tidak Ada di Data!");
-            getch();
-            clearArea(35, 27, 80, 18);
-            continue;
+            if (nomor_jadwal == 0) {
+                gotoxy(56, 30);
+                printf("Nomor tidak boleh kosong!");
+                Sleep(1500);
+                gotoxy(56, 30);
+                printf("                          ");
+                gotoxy(56, 29);
+                printf("          ");
+                gotoxy(56, 29);
+                continue;
+            }
+
+            if (nomor_jadwal < 1 || nomor_jadwal > totalJadwal) {
+                gotoxy(56, 30);
+                printf("Nomor jadwal tidak ada!");
+                Sleep(1500);
+                gotoxy(56, 30);
+                printf("                          ");
+                gotoxy(56, 29);
+                printf("          ");
+                gotoxy(56, 29);
+                continue;
+            }
+
+            break;
         }
+
+        // ================= AMBIL DATA JADWAL =================
+        jadwal_data = all_jadwal[nomor_jadwal - 1];
 
         // ================= COPY DATA JADWAL =================
         strcpy(data.rute_awal, jadwal_data.kotaAsal);
@@ -109,26 +137,19 @@ void PesanTiket() {
         strcpy(data.nama_armada, jadwal_data.nama_armada);
         strcpy(data.jam_berangkat, jadwal_data.jamBerangkat);
         strcpy(data.tanggal_berangkat, jadwal_data.tanggal);
-        strcpy(data.jam_berangkat, jadwal_data.jamBerangkat);
         data.harga = jadwal_data.harga;
 
-        gotoxy(37, 30); printf("Rute           : %s → %s", data.rute_awal, data.tujuan);
-        gotoxy(37, 31); printf("Armada         : %s", data.nama_armada);
-        gotoxy(37, 32); printf("Jam Berangkat  : %s", jadwal_data.jamBerangkat);
-        gotoxy(37, 33);printf("Berangkat      : %s | %s",data.tanggal_berangkat, data.jam_berangkat);
-        gotoxy(37, 34); printf("Harga          : ");
+        gotoxy(37, 30); printf("Rute             : %s → %s", data.rute_awal, data.tujuan);
+        gotoxy(37, 31); printf("Armada           : %s", data.nama_armada);
+        gotoxy(37, 32); printf("Jam Berangkat    : %s", jadwal_data.jamBerangkat);
+        gotoxy(37, 33); printf("tanggal Berangkat: %s ", data.tanggal_berangkat);
+        gotoxy(37, 34); printf("Harga            : ");
         tampilanhargatiket(data.harga);
-
-
-
-
-
-
 
         // NAMA
         gotoxy(37, 36);
-        printf("Nama Penumpang : ");
-        setPointer(37, 55);
+        printf("Nama Penumpang   : ");
+        setPointer(37, 57);
         INPUTNama(data.nama_penumpang);
         if (strlen(data.nama_penumpang) == 0) {
             fclose(fp_tiket);
@@ -137,26 +158,24 @@ void PesanTiket() {
 
         // NO TELP
         gotoxy(37, 37);
-        printf("No. Telepon    : ");
-        inputNoTelp(data.notlpn, 54, 37);
+        printf("No. Telepon      : ");
+        inputNoTelp(data.notlpn, 56, 37);
         if (strlen(data.notlpn) == 0) {
             fclose(fp_tiket);
             return;
         }
 
         gotoxy(37, 38);
-        printf("Email          : ");
-        inputEmailGmail(data.Email, 54, 38);
-
+        printf("Email            : ");
+        inputEmailGmail(data.Email, 56, 38);
         if (strlen(data.Email) == 0) {
             fclose(fp_tiket);
             return;
         }
 
-
         gotoxy(37, 39);
-        printf("Metode Bayar   : ");
-        inputPaymentMethod(data.metode_bayar, 39, 54);
+        printf("Metode Bayar     : ");
+        inputPaymentMethod(data.metode_bayar, 39, 56);
         if (strlen(data.metode_bayar) == 0) {
             fclose(fp_tiket);
             return;
@@ -178,62 +197,49 @@ void PesanTiket() {
             gotoxy(90, 40); printf("Kembalian      : ");
 
             do {
-                // Kosongkan nilai input & kembalian
                 gotoxy(107, 37); printf("           ");
                 gotoxy(107, 40); printf("           ");
                 gotoxy(107, 41); printf("           ");
 
-                // INPUT DIBAYAR
                 gotoxy(107, 37);
-                dibayar = inputangka7digit(107, 37, &escPressed );
+                dibayar = inputangka7digit(107, 37, &escPressed);
 
-                // ESC ditekan
                 if (escPressed) {
                     fclose(fp_tiket);
                     return;
                 }
 
-                // Tampilkan dibayar
                 gotoxy(107, 37);
                 tampilanhargatiket(dibayar);
 
                 kembalian = dibayar - data.harga;
 
-                // Jika uang kurang
                 if (kembalian < 0) {
                     gotoxy(90, 41);
                     printf("Uang kurang!");
-
                     Sleep(800);
-
                     gotoxy(90, 41);
-                    printf("             "); // hapus pesan
-
+                    printf("             ");
                     continue;
                 }
 
             } while (kembalian < 0);
 
-            // ===== TAMPILKAN KEMBALIAN =====
             gotoxy(107, 40);
             tampilanhargatiket(kembalian);
         }
         else if (strcmp(data.metode_bayar, "Cashless") == 0) {
-            // ===== PROSES PEMBAYARAN QRIS =====
-
             gotoxy(103, 35); printf("QRIS");
             gotoxy(90, 37); printf("Scan QR Code berikut:");
             system("cls");
             printQRCodeFromFile("QR.txt", 53, 7);
             gotoxy(75, 6); printf("Rp %ld", data.harga);
 
-
-            // ===== PROSES PEMBAYARAN =====
             gotoxy(60, 35); printf("Memproses pembayaran");
 
             for (int i = 0; i < 3; i++) {
                 printf(".");
-                fflush(stdout); // Paksa print langsung
+                fflush(stdout);
                 Sleep(500);
             }
 
@@ -242,13 +248,11 @@ void PesanTiket() {
             Sleep(1000);
         }
 
-
-
         getCurrentDate(data.tanggal_booking);
         strcpy(data.status, "Aktif");
 
-        gotoxy(37, 40); printf("Tgl Booking    : %s", data.tanggal_booking);
-        gotoxy(37, 41); printf("Status         : %s", data.status);
+        gotoxy(37, 40); printf("Tgl Booking      : %s", data.tanggal_booking);
+        gotoxy(37, 41); printf("Status           : %s", data.status);
         fwrite(&data, sizeof(tiket), 1, fp_tiket);
         fclose(fp_tiket);
 
@@ -315,17 +319,14 @@ static void inputPaymentMethod(char *metode, int row, int col) {
     while (1) {
         ch = getch();
 
-        // ESC
         if (ch == 27) {
             metode[0] = '\0';
             return;
         }
 
-        // CASH
         else if (ch == 'C' || ch == 'c') {
             strcpy(metode, "Cash");
 
-            // clear area input
             gotoxy(inputX, row);
             printf("            ");
             gotoxy(inputX, row);
@@ -333,7 +334,7 @@ static void inputPaymentMethod(char *metode, int row, int col) {
 
             while (1) {
                 ch = getch();
-                if (ch == 13) return; // ENTER
+                if (ch == 13) return;
                 else if (ch == 8) break;
                 else if (ch == 27) {
                     metode[0] = '\0';
@@ -341,13 +342,11 @@ static void inputPaymentMethod(char *metode, int row, int col) {
                 }
             }
 
-
             gotoxy(inputX, row);
             printf("            ");
             gotoxy(inputX, row);
         }
 
-        // CASHLESS
         else if (ch == 'L' || ch == 'l') {
             strcpy(metode, "Cashless");
 
@@ -385,32 +384,29 @@ static int inputNoJadwal(int x, int y) {
     while (1) {
         ch = getch();
 
-        // ENTER
         if (ch == 13) {
             if (i > 0) {
                 buffer[i] = '\0';
                 return atoi(buffer);
+            } else {
+                return 0;
             }
         }
-        // ESC → batal
         else if (ch == 27) {
             return -1;
         }
-        // BACKSPACE
         else if (ch == 8) {
             if (i > 0) {
                 i--;
                 printf("\b \b");
             }
         }
-        // ANGKA SAJA
         else if (ch >= '0' && ch <= '9') {
             if (i < 5) {
                 buffer[i++] = ch;
                 printf("%c", ch);
             }
         }
-        // selain angka DIABAIKAN
     }
 }
 
@@ -425,32 +421,27 @@ static void inputEmailGmail(char *email, int x, int y) {
     while (1) {
         ch = getch();
 
-        // ENTER → baru tambah @gmail.com
         if (ch == 13) {
             if (i > 0) {
                 buffer[i] = '\0';
                 sprintf(email, "%s@gmail.com", buffer);
 
-                // tampilkan hasil akhir di layar
                 gotoxy(x, y);
                 printf("%s@gmail.com", buffer);
 
                 return;
             }
         }
-        // ESC → batal
         else if (ch == 27) {
             email[0] = '\0';
             return;
         }
-        // BACKSPACE
         else if (ch == 8) {
             if (i > 0) {
                 i--;
                 printf("\b \b");
             }
         }
-        // KARAKTER VALID EMAIL (DEPAN AJA)
         else if (
             (ch >= 'a' && ch <= 'z') ||
             (ch >= 'A' && ch <= 'Z') ||
@@ -462,7 +453,6 @@ static void inputEmailGmail(char *email, int x, int y) {
                 printf("%c", ch);
             }
         }
-        // selain itu diabaikan
     }
 }
 
@@ -497,8 +487,8 @@ void transaksi(int x, int y) {
 void hitungtotalhargatiket(int x, int y) {
     FILE *fp;
     tiket data;
-    long total_aktif = 0;      // Total harga tiket aktif
-    long total_biaya_batal = 0; // Total biaya pembatalan 30%
+    long total_aktif = 0;
+    long total_biaya_batal = 0;
 
     fp = fopen("tiket.dat", "rb");
     if (fp == NULL) {
@@ -508,19 +498,16 @@ void hitungtotalhargatiket(int x, int y) {
     }
 
     while (fread(&data, sizeof(tiket), 1, fp)) {
-        // Jika tiket aktif, hitung harga penuh
         if (strcmp(data.status, "Aktif") == 0) {
             total_aktif += data.harga;
         }
-        // Jika tiket batal, hitung biaya pembatalan 30%
         else if (strcmp(data.status, "Batal") == 0) {
-            total_biaya_batal += data.hargaTbatal;  // 30% masuk pendapatan
+            total_biaya_batal += data.hargaTbatal;
         }
     }
 
     fclose(fp);
 
-    // Pendapatan Bersih = Total Aktif + Biaya Pembatalan 30%
     long pendapatan_bersih = total_aktif + total_biaya_batal;
 
     gotoxy(x, y);
@@ -584,6 +571,7 @@ void Pembatalan(int x, int y) {
     gotoxy(x, y);
     printf("%d", total);
 }
+
 void TotalBiayaPembatalan(int x, int y) {
     FILE *fp = fopen("tiket.dat", "rb");
 
@@ -594,11 +582,11 @@ void TotalBiayaPembatalan(int x, int y) {
     }
 
     tiket data;
-    long total_biaya = 0;  // Total 30% dari tiket yang dibatalkan
+    long total_biaya = 0;
 
     while (fread(&data, sizeof(tiket), 1, fp)) {
         if (strcmp(data.status, "Batal") == 0) {
-            total_biaya += data.hargaTbatal;  // Akumulasi 30%
+            total_biaya += data.hargaTbatal;
         }
     }
 
@@ -608,17 +596,30 @@ void TotalBiayaPembatalan(int x, int y) {
     printf("Rp ");
     tampilanhargatiket(total_biaya);
 }
+
+
+
+
+// ================  Helper untuk center teks
+void printCenter(int width, char *text) {
+    int len = strlen(text);
+    int padding = (width - len) / 2;
+    if (padding < 0) padding = 0;
+    printf("%*s%-*s", padding, "", width - padding, text);
+}
+
+
+
 void readTiketPenumpang() {
 
     FILE *fp;
     tiket data[1000];
     int total = 0;
-    int startX = 33;
-    int startY = 12;
+    int startX = 35;
+    int startY = 11;
 
-    // ===== LEBAR KOLOM =====
-    int wNo = 3, wID = 8, wNama = 20, wTelp = 12;
-    int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 15;
+    int wNo = 3, wID = 8, wNama = 18, wTelp = 12;
+    int wRute = 17, wTgl = 10, wJam = 8, wStatus = 7, wHarga = 15;
 
     fp = fopen("tiket.dat", "rb");
     if (!fp) {
@@ -633,7 +634,19 @@ void readTiketPenumpang() {
     }
     fclose(fp);
 
-    int total_pages = (total + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
+    for (int i = 0; i < total - 1; i++) {
+        for (int j = i + 1; j < total; j++) {
+            // Urutkan dari terbesar ke terkecil (descending)
+            if (strcmp(data[i].id_tiket, data[j].id_tiket) < 0) {
+                tiket temp = data[i];
+                data[i] = data[j];
+                data[j] = temp;
+            }
+        }
+    }
+
+
+    int total_pages = (total + 25 - 1) / 25;
     int current_page = 1;
     char key;
 
@@ -646,37 +659,34 @@ void readTiketPenumpang() {
     garis[totalWidth] = '\0';
 
     do {
-        int start = (current_page - 1) * MAX_ROWS_PER_PAGE;
-        int end = start + MAX_ROWS_PER_PAGE;
+        int start = (current_page - 1) * 25;
+        int end = start + 25;
         if (end > total) end = total;
 
-        clearArea(startX, startY + 1, totalWidth, 18);
+        clearArea(startX, startY + 1, totalWidth, 30);
 
-        gotoxy(80, 13);
+        gotoxy(80, 12);
         printf("=== DAFTAR TIKET PENUMPANG ===");
 
         int row = startY + 2;
 
-        // ===== HEADER TABEL =====
         gotoxy(startX, row++); printf("%s", garis);
 
-        gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
-               wNo+1,"No",
-               wID+1,"ID Tiket",
-               wNama+1,"Nama",
-               wTelp+1,"Telepon",
-               wRute+1,"Rute",
-               wTgl+1,"Tanggal",
-               wJam+1,"Jam",
-               wStatus+1,"Status",
-               wHarga+2,"Harga");
+        gotoxy(startX, row);  // ← Tambahkan gotoxy sebelum header
+        printf("|");
+        printCenter(wNo+1, "No"); printf("|");
+        printCenter(wID+1, "ID Tiket"); printf("|");
+        printCenter(wNama+1, "Nama"); printf("|");
+        printCenter(wTelp+1, "Telepon"); printf("|");
+        printCenter(wRute+1, "Rute"); printf("|");
+        printCenter(wTgl+1, "Tanggal"); printf("|");
+        printCenter(wJam+1, "Berangkat"); printf("|");          // ← Tambahkan Jam
+        printCenter(wStatus+1, "Status"); printf("|");
+        printCenter(wHarga+2, "Harga"); printf("|");      // ← Tambahkan Harga
+        row++;                                             // ← Increment row manual
 
         gotoxy(startX, row++); printf("%s", garis);
 
-
-
-        // ===== ISI DATA =====
         for (int i = start; i < end; i++) {
 
             char rute[60];
@@ -702,11 +712,8 @@ void readTiketPenumpang() {
                 strcpy(ruteTampil, rute);
             }
 
-
-
             gotoxy(startX, row++);
 
-            // cetak kolom sebelum harga
             printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1, i+1,
                    wID+1, data[i].id_tiket,
@@ -717,8 +724,6 @@ void readTiketPenumpang() {
                    wJam+1, data[i].jam_berangkat,
                    wStatus+1, data[i].status);
 
-
-
             char hargaStr[30];
 
             if (strcmp(data[i].status, "Batal") == 0) {
@@ -727,13 +732,11 @@ void readTiketPenumpang() {
                 formatHarga(data[i].harga, hargaStr);
             }
 
-            printf(" %-*s|", wHarga+1, hargaStr);
+            printf(" %*s|", wHarga+1, hargaStr);
         }
-
 
         gotoxy(startX, row++); printf("%s", garis);
 
-        // ===== NAVIGASI =====
         bentukframe(3, 11, 27, 12);
         gotoxy(6, 13); printf("[SPASI] Lanjut");
         gotoxy(6, 15); printf("[BACKSPACE] Kembali");
@@ -750,5 +753,7 @@ void readTiketPenumpang() {
 
     } while (key != 13);
 }
+
+
 
 #endif

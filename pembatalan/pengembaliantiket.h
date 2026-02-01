@@ -8,6 +8,12 @@
 void readTiketAktif();
 void generateIDPembatalan(char *id_pembatalan);
 static void inputIDTiketBatal(char *id, int x, int y);
+void parseTanggal(char *tanggal, int *hari, int *bulan, int *tahun);
+int isTanggalLewat(char *tanggal);
+
+
+
+
 
 void BatalTiket() {
     char n;
@@ -28,8 +34,6 @@ void BatalTiket() {
         gotoxy(4, 36); printf("[ESC] Keluar");
         readTiketAktif();
 
-
-
         // ================= CEK FILE TIKET =================
         FILE *fp_tiket = fopen("tiket.dat", "rb");
         if (!fp_tiket) {
@@ -41,7 +45,6 @@ void BatalTiket() {
             return;
         }
         fclose(fp_tiket);
-
 
         bentukframe(34, 27, 70, 18);
         gotoxy(50, 28); printf("=== BATALKAN TIKET ===");
@@ -92,11 +95,22 @@ void BatalTiket() {
                 found = 0; // Reset agar loop lanjut
                 continue;
             }
+
+            // ================= CEK TANGGAL BERANGKAT==============
+            if (isTanggalLewat(data.tanggal_berangkat)) {
+                gotoxy(36, 32); printf("Tidak bisa di-refund!");
+                gotoxy(36, 33); printf("Tanggal berangkat sudah lewat.");
+                gotoxy(36, 34); printf("Silakan coba lagi...");
+                Sleep(1500);
+                clearArea(36, 32, 40, 3);
+                found = 0;
+                continue;
+            }
         }
 
-        // ================= TAMPILKAN DATA TIKET (KIRI) =================
 
-        gotoxy(36, 31); printf("ID Penumpang   : %s", data.id_penumpang);
+
+        // ================= TAMPILKAN DATA TIKET (KIRI) =================
         gotoxy(36, 32); printf("Nama Penumpang : %s", data.nama_penumpang);
         gotoxy(36, 33); printf("No. Telepon    : %s", data.notlpn);
         gotoxy(36, 34); printf("Email          : %s", data.Email);
@@ -199,7 +213,6 @@ void BatalTiket() {
                 remove("tiket.dat");
                 rename("temp.dat", "tiket.dat");
 
-
                 // Tampilan proses pembatalan
                 clearArea(108, 30, 44, 10);
                 gotoxy(115, 35); printf("Membatalkan tiket");
@@ -249,8 +262,8 @@ void readTiketAktif() {
     tiket aktifData[1000];
     int total = 0;
     int totalAktif = 0;
-    int startX = 37;
-    int startY = 12;
+    int startX = 39;
+    int startY = 11;
 
     int wNo = 3, wID = 10, wNama = 20, wTelp = 15;
     int wRute = 25, wTgl = 12, wStatus = 15;
@@ -263,16 +276,30 @@ void readTiketAktif() {
         return;
     }
 
+    // Baca semua data
     while (fread(&data[total], sizeof(tiket), 1, fp) == 1) {
-        if (total < 1000) {
-            if (strcmp(data[total].status, "Aktif") == 0) {
-                aktifData[totalAktif] = data[total];
-                totalAktif++;
-            }
-            total++;
-        }
+        if (total < 1000) total++;
     }
     fclose(fp);
+
+    // ========== BUBBLE SORT SEMUA DATA BERDASARKAN ID (DESCENDING) ==========
+    for (int i = 0; i < total - 1; i++) {
+        for (int j = i + 1; j < total; j++) {
+            if (strcmp(data[i].id_tiket, data[j].id_tiket) < 0) {
+                tiket temp = data[i];
+                data[i] = data[j];
+                data[j] = temp;
+            }
+        }
+    }
+
+    // Filter hanya tiket aktif setelah sorting
+    for (int i = 0; i < total; i++) {
+        if (strcmp(data[i].status, "Aktif") == 0) {
+            aktifData[totalAktif] = data[i];
+            totalAktif++;
+        }
+    }
 
     if (totalAktif == 0) {
         gotoxy(startX, startY);
@@ -297,7 +324,7 @@ void readTiketAktif() {
         if (end > totalAktif) end = totalAktif;
 
         clearArea(startX, startY + 1, totalWidth, 18);
-        gotoxy(80, 13); printf("=== DAFTAR TIKET AKTIF ===");
+        gotoxy(80, 11); printf("=== DAFTAR TIKET AKTIF ===");
 
         int row = startY + 2;
         gotoxy(startX, row++); printf("%s", garis);
@@ -416,6 +443,39 @@ static void inputIDTiketBatal(char *id, int x, int y) {
             }
         }
     }
+}
+
+// ================= HELPER: PARSE TANGGAL =================
+// Format tanggal: DD/MM/YYYY
+void parseTanggal(char *tanggal, int *hari, int *bulan, int *tahun) {
+    sscanf(tanggal, "%d/%d/%d", hari, bulan, tahun);
+}
+
+// Bandigkan tanggal: return 1 jika tanggal1 < tanggal2
+int isTanggalLewat(char *tanggal) {
+    int hari1, bulan1, tahun1;
+    int hari2, bulan2, tahun2;
+
+    // Parse tanggal berangkat
+    parseTanggal(tanggal, &hari1, &bulan1, &tahun1);
+
+    // Dapatkan tanggal hari ini
+    char hariIni[15];
+    getCurrentDate(hariIni);
+    parseTanggal(hariIni, &hari2, &bulan2, &tahun2);
+
+    // Bandigkan tahun
+    if (tahun1 < tahun2) return 1;
+    if (tahun1 > tahun2) return 0;
+
+    // Bandigkan bulan
+    if (bulan1 < bulan2) return 1;
+    if (bulan1 > bulan2) return 0;
+
+    // Bandigkan hari (sama hari juga tidak bisa)
+    if (hari1 <= hari2) return 1;
+
+    return 0;
 }
 
 #endif

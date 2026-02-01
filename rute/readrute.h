@@ -10,7 +10,7 @@
 #include <string.h>
 #include "../FrameTabel.h"
 
-#define MAX_ROWS_PER_PAGE 3
+#define MAX_ROWS_PER_PAGE 10
 
 // ==================================================
 // FORMAT HARGA RUPIAH (AMAN, TIDAK DOBEL .000)
