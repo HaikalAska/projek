@@ -10,6 +10,7 @@
 //Untuk menghapus jadwal//
 //(versi NONAKTIFKAN)   //
 void hapusjadwal() {
+    
 
 
     FILE *fp, *temp;

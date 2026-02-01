@@ -50,6 +50,17 @@ void baca() {
     }
     fclose(fp);
 
+
+    for (int i = 0; i < total_staff - 1; i++) {
+        for (int j = i + 1; j < total_staff; j++) {
+            if (strcmp(all_staff[i].id, all_staff[j].id) < 0) {
+                staff temp = all_staff[i];
+                all_staff[i] = all_staff[j];
+                all_staff[j] = temp;
+            }
+        }
+    }
+
     if (total_staff > 0) {
         total_pages = (total_staff + rowsPerPage - 1) / rowsPerPage;
     }
@@ -180,7 +191,7 @@ void baca() {
         gotoxy(6, 15);
         printf("[BACKSPACE] Kembali");
         gotoxy(6, 17);
-        printf("[ENTER] Lanjut");
+        printf("[ENTER] Menu Berikutnya");
         gotoxy(6, 19);
         printf("Halaman: %d/%d", current_page, total_pages);
         gotoxy(6, 21);

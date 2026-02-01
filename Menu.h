@@ -26,7 +26,7 @@ void validLogin();
         bentukframe(3, 29, 27, 8);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
-        gotoxy(4, 34);printf("[ENTER] Pilih");
+        gotoxy(4, 34);printf("[ENTER] Pilih Menu");
 
 
 
@@ -65,10 +65,7 @@ void validLogin();
         bentukframe(3, 29, 27, 10);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
-        gotoxy(4, 34);printf("[ENTER] Pilih");
-        gotoxy(4, 36);printf("[Esc] Keluar");
-
-
+        gotoxy(4, 34);printf("[ENTER] Pilih Menu");
 
         bentukframe(3, 10, 27, 14);
         gotoxy(10, 11); printf(" MENU STAFF \n");
@@ -116,7 +113,7 @@ void validLogin();
         gotoxy(5,30); printf("  MENU NAVIGASI  ");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
         gotoxy(4, 34);printf("[ENTER] Pilih");
-        gotoxy(4, 36);printf("[Esc] Keluar");
+        gotoxy(4, 36);printf("[ESC] Keluar");
 
 
         bentukframe(3, 10, 27, 14);

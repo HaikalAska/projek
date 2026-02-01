@@ -17,6 +17,7 @@ typedef struct {
     float harga;
     char jamBerangkat[10];
     char jamTiba[10];
+    char statusRute[10];
 } Rute;
 
 // ================= HITUNG DATA =================
@@ -32,7 +33,7 @@ int getRuteCount() {
 }
 
 // ================= INPUT JAM =================
-void inputJam(char *out) {
+int inputJam(char *out) {  // ← Ubah return type dari void ke int
     char jam[3] = "", menit[3] = "";
     int i = 0;
     char ch;
@@ -41,7 +42,10 @@ void inputJam(char *out) {
     while (i < 2) {
         ch = _getch();
 
-        if (ch == 27) { out[0] = '\0'; return; }
+        if (ch == 27) {
+            out[0] = '\0';
+            return -1;  // ← Return -1 sebagai penanda ESC
+        }
 
         // digit pertama jam: 0 - 2
         if (i == 0 && ch >= '0' && ch <= '2') {
@@ -63,14 +67,17 @@ void inputJam(char *out) {
     while (i < 2) {
         ch = _getch();
 
-        if (ch == 27) { out[0] = '\0'; return; }
+        if (ch == 27) {
+            out[0] = '\0';
+            return -1;  // ← Return -1 sebagai penanda ESC
+        }
 
         // digit pertama menit: 0 - 5
         if (i == 0 && ch >= '0' && ch <= '5') {
             menit[i++] = ch;
             printf("%c", ch);
         }
-        // digit kedua menit: 1 - 9
+        // digit kedua menit: 0 - 9
         else if (i == 1 && ch >= '0' && ch <= '9') {
             menit[i++] = ch;
             printf("%c", ch);
@@ -80,12 +87,13 @@ void inputJam(char *out) {
     menit[2] = '\0';
 
     sprintf(out, "%s:%s", jam, menit);
+    return 0;  // ← Return 0 jika sukses
 }
 
 
 // ================= INPUT HARGA =================
 int inputHarga(int x, int y) {
-    char buf[5] = "";   // max 4 digit + '\0'
+    char buf[9] = "";   // max 8 digit + '\0'
     int i = 0;
 
     gotoxy(x, y);
@@ -95,7 +103,7 @@ int inputHarga(int x, int y) {
         char ch = _getch();
 
         // ESC batal
-        if (ch == 27) return 0;
+        if (ch == 27) return -1;
 
         // ENTER
         if (ch == 13 && i > 0) {
@@ -105,49 +113,82 @@ int inputHarga(int x, int y) {
             if (nilai == 0) {
                 gotoxy(x, y + 1);
                 printf("Angka tidak boleh 0!");
-                Sleep(1500);  // tampilkan pesan 1.5 detik
+                Sleep(1500);
 
                 // Hapus pesan error
                 gotoxy(x, y + 1);
-                printf("                      ");  // hapus dengan spasi
+                printf("                      ");
 
                 // Reset input
                 i = 0;
                 memset(buf, 0, sizeof(buf));
                 gotoxy(x, y);
-                printf("Rp      ");  // hapus input sebelumnya
+                printf("Rp              ");
                 gotoxy(x, y);
                 printf("Rp");
                 continue;
             }
 
-            // pindah kursor ke akhir input
+            // Format final dengan titik pemisah ribuan
+            gotoxy(x, y);
             printf("Rp");
 
-            if (i <= 3) {
-                // contoh: 120 -> Rp120.000,00
-                gotoxy(x,y);
-                printf("Rp%d.000,00", nilai);
-                return nilai * 1000;
+            if (nilai < 1000) {
+                printf("%d", nilai);
+            } else if (nilai < 1000000) {
+                printf("%d.%03d", nilai / 1000, nilai % 1000);
             } else {
-                // contoh: 1200 -> Rp1.200.000,00
-                gotoxy(x,y);
-                printf("Rp%d.%03d.000,00", nilai / 1000, nilai % 1000);
-                return nilai * 1000;
+                printf("%d.%03d.%03d", nilai / 1000000, (nilai / 1000) % 1000, nilai % 1000);
             }
+
+            return nilai;
         }
 
         // BACKSPACE
         if (ch == 8 && i > 0) {
             i--;
             buf[i] = '\0';
-            printf("\b \b");
+
+            // Hapus tampilan dan tampilkan ulang
+            gotoxy(x, y);
+            printf("Rp              ");
+            gotoxy(x, y);
+            printf("Rp");
+
+            // Tampilkan ulang dengan format
+            if (i > 0) {
+                int nilai = atoi(buf);
+                if (nilai < 1000) {
+                    printf("%d", nilai);
+                } else if (nilai < 1000000) {
+                    printf("%d.%03d", nilai / 1000, nilai % 1000);
+                } else {
+                    printf("%d.%03d.%03d", nilai / 1000000, (nilai / 1000) % 1000, nilai % 1000);
+                }
+            }
         }
 
-        // ANGKA (maks 4 digit)
-        if (ch >= '0' && ch <= '9' && i < 4) {
+        // ANGKA (maks 8 digit)
+        if (ch >= '0' && ch <= '9' && i < 8) {
             buf[i++] = ch;
-            printf("%c", ch);
+            buf[i] = '\0';
+
+            int nilai = atoi(buf);
+
+            // Hapus dan tampilkan ulang dengan format
+            gotoxy(x, y);
+            printf("Rp              ");
+            gotoxy(x, y);
+            printf("Rp");
+
+            // Format dengan titik
+            if (nilai < 1000) {
+                printf("%d", nilai);
+            } else if (nilai < 1000000) {
+                printf("%d.%03d", nilai / 1000, nilai % 1000);
+            } else {
+                printf("%d.%03d.%03d", nilai / 1000000, (nilai / 1000) % 1000, nilai % 1000);
+            }
         }
     }
 }
@@ -184,13 +225,13 @@ int rutenavigasi(int x, int y, int jumlah, int spasi) {
 }
 
 
-void pilihKota(char *output) {
+void pilihKota(char *output, char *kotaTerpilihSebelumnya) {
     int x = 82, y = 29;
     int pilih;
 
 pilihProvinsi:
     // Bersihkan area sebelumnya (samakan dengan frame)
- clearArea(85, 29, 45, 12);
+    clearArea(85, 29, 45, 12);
 
     // Buat frame
     bentukframe(85, 29, 45, 12);
@@ -217,14 +258,45 @@ pilihProvinsi:
         bentukframe(85,29, 45, 12);
 
         gotoxy(101, 30); printf("=== BANTEN ===");
-        gotoxy(95, 32); printf("Serang");
-        gotoxy(93, 33); printf("  Tangerang");
 
-        pilih = rutenavigasi(93, 32, 2, 1);
+        int indexSerang = 0, indexTangerang = 1;
+        int jumlahOpsi = 0;
+        int mapping[2]; // untuk mapping pilihan ke kota asli
 
-        if      (pilih == 0) strcpy(output, "Serang");
-        else if (pilih == 1) strcpy(output, "Tangerang");
-        else goto pilihProvinsi;
+        // Tampilkan Serang jika belum dipilih
+        if (strcmp(kotaTerpilihSebelumnya, "Serang") != 0) {
+            gotoxy(95, 32 + jumlahOpsi);
+            printf("Serang");
+            mapping[jumlahOpsi] = 0;
+            jumlahOpsi++;
+        }
+
+        // Tampilkan Tangerang jika belum dipilih
+        if (strcmp(kotaTerpilihSebelumnya, "Tangerang") != 0) {
+            gotoxy(95, 32 + jumlahOpsi);
+            printf("Tangerang");
+            mapping[jumlahOpsi] = 1;
+            jumlahOpsi++;
+        }
+
+        // Jika semua kota sudah dipilih
+        if (jumlahOpsi == 0) {
+            gotoxy(95, 32);
+            printf("Semua kota sudah dipilih!");
+            gotoxy(95, 34);
+            printf("Tekan ESC untuk kembali");
+            _getch();
+            goto pilihProvinsi;
+        }
+
+        pilih = rutenavigasi(93, 32, jumlahOpsi, 1);
+
+        if (pilih >= 0 && pilih < jumlahOpsi) {
+            if (mapping[pilih] == 0) strcpy(output, "Serang");
+            else if (mapping[pilih] == 1) strcpy(output, "Tangerang");
+        } else {
+            goto pilihProvinsi;
+        }
 
         clearArea(85, 29, 45, 12);
         return;
@@ -233,6 +305,18 @@ pilihProvinsi:
 
     // ================= DKI =================
     else if (pilih == 1) {
+        // Cek apakah Jakarta sudah dipilih sebelumnya
+        if (strcmp(kotaTerpilihSebelumnya, "Jakarta") == 0) {
+            clearArea(85, 29, 45, 12);
+            bentukframe(85, 29, 45, 12);
+            gotoxy(95, 32);
+            printf("Jakarta sudah dipilih!");
+            gotoxy(95, 34);
+            printf("Tekan ESC untuk kembali");
+            _getch();
+            goto pilihProvinsi;
+        }
+
         strcpy(output, "Jakarta");
         clearArea(85, 29, 45, 12);
         return;
@@ -245,20 +329,38 @@ pilihProvinsi:
         bentukframe(85, 29, 45, 12);
 
         gotoxy(99, 30); printf("=== JAWA BARAT ===");
-        gotoxy(95, 32); printf("Bandung");
-        gotoxy(95, 33); printf("Bekasi");
-        gotoxy(95, 34); printf("Bogor");
-        gotoxy(95, 35); printf("Cirebon");
-        gotoxy(95, 36); printf("Tasikmalaya");
 
-        pilih = rutenavigasi(93, 32, 5, 1);
+        int jumlahOpsi = 0;
+        int mapping[5];
+        char *namaKota[5] = {"Bandung", "Bekasi", "Bogor", "Cirebon", "Tasikmalaya"};
 
-        if      (pilih == 0) strcpy(output, "Bandung");
-        else if (pilih == 1) strcpy(output, "Bekasi");
-        else if (pilih == 2) strcpy(output, "Bogor");
-        else if (pilih == 3) strcpy(output, "Cirebon");
-        else if (pilih == 4) strcpy(output, "Tasikmalaya");
-        else goto pilihProvinsi;
+        // Tampilkan hanya kota yang belum dipilih
+        for (int i = 0; i < 5; i++) {
+            if (strcmp(kotaTerpilihSebelumnya, namaKota[i]) != 0) {
+                gotoxy(95, 32 + jumlahOpsi);
+                printf("%s", namaKota[i]);
+                mapping[jumlahOpsi] = i;
+                jumlahOpsi++;
+            }
+        }
+
+        // Jika semua kota sudah dipilih
+        if (jumlahOpsi == 0) {
+            gotoxy(95, 32);
+            printf("Semua kota sudah dipilih!");
+            gotoxy(95, 34);
+            printf("Tekan ESC untuk kembali");
+            _getch();
+            goto pilihProvinsi;
+        }
+
+        pilih = rutenavigasi(93, 32, jumlahOpsi, 1);
+
+        if (pilih >= 0 && pilih < jumlahOpsi) {
+            strcpy(output, namaKota[mapping[pilih]]);
+        } else {
+            goto pilihProvinsi;
+        }
 
         clearArea(85, 29, 45, 12);
         return;
@@ -271,18 +373,36 @@ pilihProvinsi:
         bentukframe(85, 29, 45, 12);
 
         gotoxy(99, 30); printf("=== JAWA TENGAH ===");
-        gotoxy(95, 32); printf("Semarang");
-        gotoxy(95, 33); printf("Magelang");
-        gotoxy(95, 34); printf("Pekalongan");
-        gotoxy(95, 35); printf("Tegal");
 
-        pilih = rutenavigasi(93, 32, 4, 1);
+        int jumlahOpsi = 0;
+        int mapping[4];
+        char *namaKota[4] = {"Semarang", "Magelang", "Pekalongan", "Tegal"};
 
-        if      (pilih == 0) strcpy(output, "Semarang");
-        else if (pilih == 1) strcpy(output, "Magelang");
-        else if (pilih == 2) strcpy(output, "Pekalongan");
-        else if (pilih == 3) strcpy(output, "Tegal");
-        else goto pilihProvinsi;
+        for (int i = 0; i < 4; i++) {
+            if (strcmp(kotaTerpilihSebelumnya, namaKota[i]) != 0) {
+                gotoxy(95, 32 + jumlahOpsi);
+                printf("%s", namaKota[i]);
+                mapping[jumlahOpsi] = i;
+                jumlahOpsi++;
+            }
+        }
+
+        if (jumlahOpsi == 0) {
+            gotoxy(95, 32);
+            printf("Semua kota sudah dipilih!");
+            gotoxy(95, 34);
+            printf("Tekan ESC untuk kembali");
+            _getch();
+            goto pilihProvinsi;
+        }
+
+        pilih = rutenavigasi(93, 32, jumlahOpsi, 1);
+
+        if (pilih >= 0 && pilih < jumlahOpsi) {
+            strcpy(output, namaKota[mapping[pilih]]);
+        } else {
+            goto pilihProvinsi;
+        }
 
         clearArea(85, 29, 45, 12);
         return;
@@ -291,6 +411,17 @@ pilihProvinsi:
 
     // ================= YOGYAKARTA =================
     else if (pilih == 4) {
+        if (strcmp(kotaTerpilihSebelumnya, "Yogyakarta") == 0) {
+            clearArea(85, 29, 45, 12);
+            bentukframe(85, 29, 45, 12);
+            gotoxy(95, 32);
+            printf("Yogyakarta sudah dipilih!");
+            gotoxy(95, 34);
+            printf("Tekan ESC untuk kembali");
+            _getch();
+            goto pilihProvinsi;
+        }
+
         strcpy(output, "Yogyakarta");
         clearArea(85, 29, 45, 12);
         return;
@@ -302,27 +433,40 @@ pilihProvinsi:
         bentukframe(85, 29, 45, 12);
 
         gotoxy(99, 30); printf("=== JAWA TIMUR ===");
-        gotoxy(95, 32); printf("Surabaya");
-        gotoxy(95, 33); printf("Malang");
-        gotoxy(95, 34); printf("Kediri");
-        gotoxy(95, 35); printf("Mojokerto");
-        gotoxy(95, 36); printf("Madiun");
-        gotoxy(95, 37); printf("Probolinggo");
 
-        pilih = rutenavigasi(93, 32, 6, 1);
+        int jumlahOpsi = 0;
+        int mapping[6];
+        char *namaKota[6] = {"Surabaya", "Malang", "Kediri", "Mojokerto", "Madiun", "Probolinggo"};
 
-        if      (pilih == 0) strcpy(output, "Surabaya");
-        else if (pilih == 1) strcpy(output, "Malang");
-        else if (pilih == 2) strcpy(output, "Kediri");
-        else if (pilih == 3) strcpy(output, "Mojokerto");
-        else if (pilih == 4) strcpy(output, "Madiun");
-        else if (pilih == 5) strcpy(output, "Probolinggo");
-        else goto pilihProvinsi;
+        for (int i = 0; i < 6; i++) {
+            if (strcmp(kotaTerpilihSebelumnya, namaKota[i]) != 0) {
+                gotoxy(95, 32 + jumlahOpsi);
+                printf("%s", namaKota[i]);
+                mapping[jumlahOpsi] = i;
+                jumlahOpsi++;
+            }
+        }
+
+        if (jumlahOpsi == 0) {
+            gotoxy(95, 32);
+            printf("Semua kota sudah dipilih!");
+            gotoxy(95, 34);
+            printf("Tekan ESC untuk kembali");
+            _getch();
+            goto pilihProvinsi;
+        }
+
+        pilih = rutenavigasi(93, 32, jumlahOpsi, 1);
+
+        if (pilih >= 0 && pilih < jumlahOpsi) {
+            strcpy(output, namaKota[mapping[pilih]]);
+        } else {
+            goto pilihProvinsi;
+        }
 
         clearArea(85, 29, 45, 12);
         return;
     }
-
 }
 
 
@@ -330,6 +474,8 @@ pilihProvinsi:
 // ================= CREATE RUTE =================
 void buatrute() {
     char n;
+    char kotaPertama[50];
+    char kotaKedua[50];
 
     do {
         bentukframe(35, 27, 108, 16);
@@ -345,11 +491,13 @@ void buatrute() {
         gotoxy(37, 28); printf("ID Rute      : %s", r.id);
 
         gotoxy(37, 29); printf("Kota Asal    : ");
-        pilihKota(r.kotaAsal);
+        pilihKota(kotaPertama, "");
+        strcpy(r.kotaAsal, kotaPertama);
         gotoxy(52, 29); printf("%s", r.kotaAsal);
 
         gotoxy(37, 30); printf("Kota Tujuan  : ");
-        pilihKota(r.kotaTujuan);
+        pilihKota(kotaKedua, kotaPertama);
+        strcpy(r.kotaTujuan, kotaKedua);
         gotoxy(52, 30); printf("%s", r.kotaTujuan);
 
         gotoxy(37, 31); printf("Harga        : ");
@@ -357,12 +505,20 @@ void buatrute() {
         if (r.harga == 0) { fclose(fp); return; }
 
         gotoxy(37, 32); printf("Jam Berangkat: ");
-        inputJam(r.jamBerangkat);
-        if (strlen(r.jamBerangkat) == 0) { fclose(fp); return; }
+        if (inputJam(r.jamBerangkat) == -1) {  // ← Cek return value
+            fclose(fp);
+            return;
+        }
 
         gotoxy(37, 33); printf("Jam Tiba     : ");
-        inputJam(r.jamTiba);
-        if (strlen(r.jamTiba) == 0) { fclose(fp); return; }
+        if (inputJam(r.jamTiba) == -1) {  // ← Cek return value
+            fclose(fp);
+            return;
+        }
+
+        strcpy(r.statusRute, "Aktif");
+        gotoxy(37, 34);
+        printf("Status       : %s ", r.statusRute);
 
         fwrite(&r, sizeof(Rute), 1, fp);
         fclose(fp);
