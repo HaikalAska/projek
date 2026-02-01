@@ -134,7 +134,7 @@ void buatdummyjadwal() {
     }
 
     if (total > 0)
-        total_pages = (total + 3 - 1) / 3;
+        total_pages = (total + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
 
     int totalWidth = 1 + (wNo+2) + (wTgl+2) + (wJam+2) +
                      (wRute+2) + (wArmada+2) +
@@ -145,7 +145,7 @@ void buatdummyjadwal() {
     line[totalWidth] = '\0';
 
     do {
-        clearArea(startX, startY, totalWidth + 2, MAX_ROWS_PER_PAGE + 2);
+        clearArea(startX, startY, totalWidth + 5, MAX_ROWS_PER_PAGE + 10);
 
         gotoxy(80, 13);
         printf("=== DAFTAR JADWAL ===");
@@ -156,7 +156,7 @@ void buatdummyjadwal() {
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1,"No",
                wTgl+1,"Tanggal",
                wJam+1,"Jam",
@@ -169,8 +169,8 @@ void buatdummyjadwal() {
         gotoxy(startX, row++);
         printf("%s", line);
 
-        int start = (current_page - 1) * 3;
-        int end = start + 3;
+        int start = (current_page - 1) * MAX_ROWS_PER_PAGE;
+        int end = start + MAX_ROWS_PER_PAGE;
         if (end > total) end = total;
 
         for (int i = start; i < end; i++) {

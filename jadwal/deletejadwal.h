@@ -12,7 +12,6 @@
 void hapusjadwal() {
     
 
-
     FILE *fp, *temp;
     jadwal list[200];
     jadwal data;
