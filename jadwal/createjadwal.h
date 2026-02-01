@@ -3,6 +3,7 @@
 
 #include "../FrameTabel.h"
 #include "../rute/createrute.h"
+#include "../Kendaraan/createKendaraan.h"
 #include <conio.h>
 
 typedef struct {
@@ -12,12 +13,16 @@ typedef struct {
     char tanggal[50];
     long harga;
     char jamBerangkat[50];
+    char jamTiba[10];
     char kotaAsal[50];
     char kotaTujuan[50];
     char nama_armada[50];
     char kategori[50];
+    char durasi[20];
+    char status[20];
     char jamTiba[50];
 } jadwal;
+
 
 void liatjadwal() {
 
@@ -126,7 +131,16 @@ int liatkendaraan() {
     int startX = 37;
     int startY = 14;
 
-    int wNo = 3, wKat = 15, wKap = 10, wFas = 25, wNama = 18;
+    // ===== LEBAR KOLOM =====
+    int wNo = 3;
+    int wKat = 10;
+    int wKap = 10;
+    int wFas = 25;
+    int wNama = 18;
+    int wPlat = 12;
+    int wTahun = 6;
+    int wStatus = 10;
+
     int current_page = 1, total_pages = 1;
     char key;
 
@@ -138,12 +152,28 @@ int liatkendaraan() {
     }
     fclose(fp);
 
+    // ===== BUBBLE SORT BERDASARKAN ID (DESCENDING) =====
+    for (int i = 0; i < total - 1; i++) {
+        for (int j = 0; j < total - i - 1; j++) {
+            if (strcmp(all[j].id_kendaraan,
+                       all[j + 1].id_kendaraan) < 0) {
+                Kendaraan temp = all[j];
+                all[j] = all[j + 1];
+                all[j + 1] = temp;
+            }
+        }
+    }
+
     if (total == 0) return -1;
 
     total_pages = (total + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
 
-    int width = 1+(wNo+2)+(wKat+2)+(wKap+2)+(wFas+2)+(wNama+2);
-    char line[200];
+    // ===== HITUNG LEBAR TABEL =====
+    int width = 1 +
+        (wNo+2) + (wKat+2) + (wKap+2) + (wFas+2) + (wNama+2) +
+        (wPlat+2) + (wTahun+2) + (wStatus+2);
+
+    char line[250];
     memset(line, '-', width);
     line[width] = '\0';
 
@@ -157,44 +187,53 @@ int liatkendaraan() {
 
         gotoxy(startX, row++); printf("%s", line);
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|",
-               wNo+1,"No", wKat+1,"Kategori",
-               wKap+1,"Kapasitas", wFas+1,"Fasilitas",
-               wNama+1,"Armada");
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+               wNo+1,"No",
+               wKat+1,"Kategori",
+               wKap+1,"Kapasitas",
+               wFas+1,"Fasilitas",
+               wNama+1,"Armada",
+               wPlat+1,"No Plat",
+               wTahun+1,"Tahun",
+               wStatus+1,"Status");
         gotoxy(startX, row++); printf("%s", line);
 
         int s = (current_page-1)*MAX_ROWS_PER_PAGE;
         int e = s + MAX_ROWS_PER_PAGE;
         if (e > total) e = total;
 
-        for (int i=s;i<e;i++) {
+        int no_urut = s + 1;   // 🔥 NO URUT BERDASARKAN DATA AKTIF
+
+        for (int i = s; i < e; i++) {
+
+            if (strcmp(all[i].status, "Aktif") != 0)
+                continue;
+
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|",
-                   wNo+1,i+1,
-                   wKat+1,all[i].kategori,
-                   wKap+1,all[i].kapasitas,
-                   wFas+1,all[i].fasilitas,
-                   wNama+1,all[i].nama_armada);
+            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+                   wNo+1, no_urut++,
+                   wKat+1, all[i].kategori,
+                   wKap+1, all[i].kapasitas,
+                   wFas+1, all[i].fasilitas,
+                   wNama+1, all[i].nama_armada,
+                   wPlat+1, all[i].plat_nomor,
+                   wTahun+1, all[i].tahun,
+                   wStatus+1, all[i].status);
         }
 
         gotoxy(startX, row++); printf("%s", line);
         gotoxy(startX, row+1);
-        // printf("[SPASI] Next  [BACKSPACE] Prev  [ENTER] Pilih  [ESC] Batal");
 
         key = _getch();
 
-        if (key==' ' && current_page<total_pages) current_page++;
-        else if (key==8 && current_page>1) current_page--;
-        else if (key==27) return -1;
+        if (key == ' ' && current_page < total_pages) current_page++;
+        else if (key == 8 && current_page > 1) current_page--;
+        else if (key == 27) return -1;
 
+    } while (key != 13);
 
-
-    } while (key!=13);
-
-    // clearArea(startX, startY, width+2, MAX_ROWS_PER_PAGE+6);
     return 1;
 }
-
 
 //====================================================//
 //Fungsi untuk menampilkan tabel rute untuk pilih rute//
@@ -296,10 +335,15 @@ int liatrute() {
 //======================================//
 //Fungsi untuk input tanggal pada jadwal//
 //======================================//
-int inputtanggaljadwal(char *tanggal) {
+int inputtanggaljadwal(char *tanggal, int xInput, int yInput) {
     int idx = 0;
     char ch;
-    int selesai = 0; // penanda sudah input tahun
+    int selesai = 0;
+
+    int xMsg = xInput;
+    int yMsg = yInput;
+
+    gotoxy(xInput, yInput);
 
     while (1) {
         ch = _getch();
@@ -310,32 +354,69 @@ int inputtanggaljadwal(char *tanggal) {
             return -1;
         }
 
-        // ENTER (hanya boleh kalau sudah lengkap)
+        // ===== ENTER TAPI KOSONG =====
+        if (ch == 13 && !selesai) {
+            gotoxy(xMsg, yMsg);
+            printf("[Tanggal tidak boleh kosong!]");
+            Sleep(1200);
+            clearArea(xMsg, yMsg, 30, 1);
+
+            gotoxy(xInput, yInput);
+
+            idx = 0;
+            tanggal[0] = '\0';
+            selesai = 0;
+            continue;
+        }
+
+        // ===== ENTER NORMAL =====
         if (ch == 13 && selesai) {
+            int d, m, y;
+            sscanf(tanggal, "%d/%d/%d", &d, &m, &y);
+
+            time_t t = time(NULL);
+            struct tm *now = localtime(&t);
+
+            int td = now->tm_mday;
+            int tm = now->tm_mon + 1;
+            int ty = now->tm_year + 1900;
+
+            if (
+                y < ty ||
+                (y == ty && m < tm) ||
+                (y == ty && m == tm && d < td)
+            ) {
+                gotoxy(xMsg, yMsg);
+                printf("[Tanggal tidak boleh lampau!]");
+                Sleep(1200);
+                clearArea(xMsg, yMsg, 30, 1);
+
+                gotoxy(xInput, yInput);
+
+                idx = 0;
+                tanggal[0] = '\0';
+                selesai = 0;
+                continue;
+            }
+
             tanggal[idx] = '\0';
             return 1;
         }
 
         // BACKSPACE
         if (ch == 8 && idx > 0) {
-            if (tanggal[idx - 1] == '/') {
-                printf("\b \b");
-                idx--;
-            }
             printf("\b \b");
             idx--;
             tanggal[idx] = '\0';
-            selesai = 0;   // batal selesai kalau dihapus
+            selesai = 0;
             continue;
         }
 
-        // ===== DIGIT 1 (hari puluhan) =====
+        // ===== INPUT DD/MM/YYYY =====
         if (idx == 0 && ch >= '0' && ch <= '3') {
             tanggal[idx++] = ch;
             printf("%c", ch);
         }
-
-        // ===== DIGIT 2 (hari satuan) =====
         else if (idx == 1) {
             char d1 = tanggal[0];
             if (
@@ -344,19 +425,14 @@ int inputtanggaljadwal(char *tanggal) {
                 (d1 == '3' && ch >= '0' && ch <= '1')
             ) {
                 tanggal[idx++] = ch;
-                printf("%c", ch);
+                printf("%c/", ch);
                 tanggal[idx++] = '/';
-                printf("/");
             }
         }
-
-        // ===== DIGIT 3 (bulan puluhan) =====
         else if (idx == 3 && ch >= '0' && ch <= '1') {
             tanggal[idx++] = ch;
             printf("%c", ch);
         }
-
-        // ===== DIGIT 4 (bulan satuan) =====
         else if (idx == 4) {
             char m1 = tanggal[3];
             if (
@@ -364,26 +440,26 @@ int inputtanggaljadwal(char *tanggal) {
                 (m1 == '1' && ch >= '0' && ch <= '2')
             ) {
                 tanggal[idx++] = ch;
-                printf("%c", ch);
+                printf("%c/", ch);
                 tanggal[idx++] = '/';
-                printf("/");
             }
         }
+        else if (idx == 6 && (ch == '5' || ch == '6' || ch == '7')) {
+            if (ch == '5') strcpy(&tanggal[idx], "2025");
+            else if (ch == '6') strcpy(&tanggal[idx], "2026");
+            else strcpy(&tanggal[idx], "2027");
 
-        // ===== DIGIT 5 (tahun selector) =====
-        else if (idx == 6 && (ch == '5' || ch == '6')) {
-            if (ch == '5') {
-                strcpy(&tanggal[idx], "2025");
-                printf("2025");
-            } else {
-                strcpy(&tanggal[idx], "2026");
-                printf("2026");
-            }
+            printf("%s", &tanggal[idx]);
             idx += 4;
             selesai = 1;
         }
     }
 }
+
+
+
+
+
 
 //==================================//
 //Format tampilan harga untuk jadwal//
@@ -419,24 +495,28 @@ void tampilanhargajadwal(long harga) {
 //====================================================================//
 int pilihkendaraan(Kendaraan *hasil) {
 
+    // tampilkan daftar kendaraan aktif
     if (liatkendaraan() == -1)
         return -1;
 
     FILE *fp = fopen("kendaraan.dat", "rb");
     if (!fp) return -1;
 
-    Kendaraan list[100];
-    int total = 0;
+    Kendaraan aktif[100];
+    Kendaraan temp;
+    int total_aktif = 0;
 
-    while (fread(&list[total], sizeof(Kendaraan), 1, fp)) {
-        total++;
+    // ===== BACA & FILTER DATA AKTIF =====
+    while (fread(&temp, sizeof(Kendaraan), 1, fp)) {
+        if (strcmp(temp.status, "Aktif") == 0) {
+            aktif[total_aktif++] = temp;
+        }
     }
     fclose(fp);
 
-    if (total == 0) return -1;
+    if (total_aktif == 0) return -1;
 
     int x = 37, y = 33;
-
     gotoxy(x, y);
     printf("Pilih Kendaraan : ");
 
@@ -452,24 +532,35 @@ int pilihkendaraan(Kendaraan *hasil) {
         }
 
         // ===== ENTER =====
-            if (ch == 13) {
-                 pilihan = atoi(input);
+        if (ch == 13) {
 
-            if (pilihan >= 1 && pilihan <= total) {
-                *hasil = list[pilihan - 1];
-                return 1;
-            } else {
-                // tampilkan pesan error
-                gotoxy(55, 33);
-                printf("Kendaraan tidak ditemukan!");
+            if (idx == 0) {
+                gotoxy(55, y);
+                printf("Kendaraan tidak boleh kosong!");
+                Sleep(1200);
+                clearArea(55, y, 30, 1);
 
-                Sleep(1000); // 1.5 detik
-                clearArea(55,33,26,1);
-
-                // hapus pesan error & reset input
                 gotoxy(x, y);
                 printf("Pilih Kendaraan : ");
+                idx = 0;
+                input[0] = '\0';
+                continue;
+            }
 
+            pilihan = atoi(input);
+
+            // ===== VALIDASI BERDASARKAN DATA AKTIF =====
+            if (pilihan >= 1 && pilihan <= total_aktif) {
+                *hasil = aktif[pilihan - 1];
+                return 1;
+            } else {
+                gotoxy(55, y);
+                printf("Kendaraan tidak ditemukan!");
+                Sleep(1200);
+                clearArea(55, y, 30, 1);
+
+                gotoxy(x, y);
+                printf("Pilih Kendaraan : ");
                 idx = 0;
                 input[0] = '\0';
             }
@@ -493,12 +584,13 @@ int pilihkendaraan(Kendaraan *hasil) {
     }
 }
 
+
 //==========================================================//
 //Fungsi untuk mengambil data dari rute.dat untuk pilih rute//
 //==========================================================//
 int pilihrute(Rute *hasil) {
 
-if (liatrute() == -1)
+    if (liatrute() == -1)
         return -1;
 
     FILE *fp = fopen("rute.dat", "rb");
@@ -530,23 +622,39 @@ if (liatrute() == -1)
 
         // ===== ENTER =====
         if (ch == 13) {
+
+            // ===== INPUT KOSONG =====
+            if (idx == 0) {
+                gotoxy(55, 29);
+                printf("Rute tidak boleh kosong!");
+                Sleep(1200);
+                clearArea(55, 29, 25, 1);
+
+                // 🔥 BALIK KE POSISI INPUT
+                gotoxy(x, y);
+                printf("Pilih rute      : ");
+
+                idx = 0;
+                input[0] = '\0';
+                continue;
+            }
+
             pilihan = atoi(input);
 
             if (pilihan >= 1 && pilihan <= total) {
                 *hasil = daftar[pilihan - 1];
                 return pilihan;
             } else {
-                // tampilkan pesan error
+                // ===== RUTE TIDAK ADA =====
                 gotoxy(55, 29);
                 printf("Rute tidak ditemukan!");
+                Sleep(1200);
+                clearArea(55, 29, 25, 1);
 
-                Sleep(1000); // 1.5 detik
-                clearArea(55,29,22,1);
-                // hapus pesan error
+                // 🔥 BALIK KE POSISI INPUT
                 gotoxy(x, y);
                 printf("Pilih rute      : ");
 
-                // reset input
                 idx = 0;
                 input[0] = '\0';
             }
@@ -570,6 +678,7 @@ if (liatrute() == -1)
     }
 }
 
+
 //================================//
 //Fungsi untuk membuat id otomatis//
 //================================//
@@ -588,14 +697,26 @@ void jadwalid(char *id) {
     sprintf(id, "JD%03d", lastID + 1);
 }
 
+static int getjadwalcount() {
+    FILE *fp = fopen("jadwal.dat", "rb");
+    if (!fp) return 0;
+
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fclose(fp);
+
+    return size / sizeof(jadwal);
+}
+
 //===========================//
 //Fungsi untuk membuat jadwal//
 //===========================//
 void buatjadwal() {
     char x;
+    int durasi;
 
     do {
-        bentukframe(36,27,108,16);
+        bentukframe(35,27,108,16);
         gotoxy(80,27); printf("=== BUAT JADWAL ===");
 
         FILE *fp = fopen("jadwal.dat", "ab");
@@ -608,16 +729,20 @@ void buatjadwal() {
 
         jadwal j;
 
-        // ID otomatis
-        jadwalid(j.id);
+        // ================= ID OTOMATIS =================
+        int count = getjadwalcount() + 1;
+        sprintf(j.id, "JD%03d", count);
         gotoxy(37,28);
         printf("ID Jadwal       : %s", j.id);
+        // =================================================
 
+        // ================= PILIH RUTE ===================
         Rute r;
         int hasil = pilihrute(&r);
 
         if (hasil == -1) {
             clearArea(35,28,80,25);
+            fclose(fp);
             return;
         }
 
@@ -643,23 +768,40 @@ void buatjadwal() {
         strcpy(j.jamBerangkat, r.jamBerangkat);
         strcpy(j.jamTiba, r.jamTiba);
         j.harga = r.harga;
+        // =================================================
 
+        // ================= PILIH KENDARAAN ===============
         Kendaraan k;
         int kendaraan = pilihkendaraan(&k);
-        if (kendaraan == -1) return;
+        if (kendaraan == -1) {
+            fclose(fp);
+            return;
+        }
 
         j.kendaraan = kendaraan;
-
 
         gotoxy(37,33);
         printf("Armada          : %s", k.nama_armada);
 
         gotoxy(37,34);
         printf("Kategori        : %s", k.kategori);
+        // =================================================
 
-        gotoxy(37,35);
+        // ================= INPUT TANGGAL =================
+        gotoxy(37, 35);
         printf("Tanggal         : ");
-        if (inputtanggaljadwal(j.tanggal) == -1) return;
+        if (inputtanggaljadwal(j.tanggal, 55, 35) == -1) {
+            fclose(fp);
+            return;
+        }
+
+        // =================================================
+
+        // ================= STATUS OTOMATIS ===============
+        strcpy(j.status, "Aktif");
+        gotoxy(37,36);
+        printf("Status          : Aktif");
+        // =================================================
 
         strcpy(j.nama_armada, k.nama_armada);
         strcpy(j.kategori, k.kategori);
@@ -667,18 +809,11 @@ void buatjadwal() {
         fwrite(&j, sizeof(jadwal), 1, fp);
         fclose(fp);
 
-        gotoxy(37,36);
+        gotoxy(37,37);
         printf("Data berhasil dibuat!");
 
-        gotoxy(37,37);
+        gotoxy(37,38);
         printf("Tambah lagi? (y/n): ");
-
-        // dari rute
-
-
-        // dari kendaraan
-
-
 
         while (1) {
             x = _getch();
@@ -694,6 +829,7 @@ void buatjadwal() {
 
     } while (x == 'y' || x == 'Y');
 }
+
 
 
 #endif // PROJEK_CREATEJADWAL_H
