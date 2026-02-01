@@ -20,7 +20,6 @@ typedef struct {
     char kategori[50];
     char durasi[20];
     char status[20];
-    char jamTiba[50];
 } jadwal;
 
 
