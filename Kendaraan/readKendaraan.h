@@ -1,7 +1,3 @@
-//
-// Created by yoyop on 14/12/2025.
-//
-
 #ifndef PROJEK_READKENDARAAN_H
 #define PROJEK_READKENDARAAN_H
 
@@ -25,14 +21,15 @@ void readKendaraan() {
 
     // ===== LEBAR KOLOM =====
     int wNo     = 3;
-    int wKat    = 15;
+    int wKat    = 10;
     int wKap    = 10;
-    int wFas    = 27;
-    int wNama   = 20;
+    int wFas    = 25;
+    int wNama   = 18;
+    int wPlat   = 12;
     int wTahun  = 6;
-    int wStatus = 15;
+    int wStatus = 10;
 
-    int rowsPerPage = 10; // ganti jadi variable biasa
+    int rowsPerPage = 8;
     int current_page = 1;
     int total_pages = 1;
     char key;
@@ -55,19 +52,34 @@ void readKendaraan() {
     }
     fclose(fp);
 
+    // ================= BUBBLE SORT BERDASARKAN ID (CHAR) =================
+    // DESCENDING (ID terbesar di atas)
+    for (int i = 0; i < total_kendaraan - 1; i++) {
+        for (int j = 0; j < total_kendaraan - i - 1; j++) {
+            if (strcmp(all_kendaraan[j].id_kendaraan,
+                       all_kendaraan[j + 1].id_kendaraan) < 0) {
+
+                Kendaraan temp = all_kendaraan[j];
+                all_kendaraan[j] = all_kendaraan[j + 1];
+                all_kendaraan[j + 1] = temp;
+            }
+        }
+    }
+
     if (total_kendaraan > 0) {
         total_pages = (total_kendaraan + rowsPerPage - 1) / rowsPerPage;
     }
 
     int totalWidth =
-            1 +
-            (wNo+2) +
-            (wKat+2) +
-            (wKap+2) +
-            (wFas+2) +
-            (wTahun+2) +
-            (wStatus+2) +
-            (wNama+2);
+        1 +
+        (wNo+2) +
+        (wKat+2) +
+        (wKap+2) +
+        (wFas+2) +
+        (wNama+2) +
+        (wPlat+2) +
+        (wTahun+2) +
+        (wStatus+2);
 
     char line[300];
     memset(line, '-', totalWidth);
@@ -81,18 +93,20 @@ void readKendaraan() {
 
         int row = startY + 2;
 
-        gotoxy(startX, row++ );
+        gotoxy(startX, row++);
         printf("%s", line);
 
+        // ===== HEADER =====
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
-                 wNo+1, "No",
-                 wKat+1, "Kategori",
-                 wKap+1, "Kapasitas",
-                 wTahun+1, "Tahun",
-                 wStatus+1, "Status",
-                 wFas+1, "Fasilitas",
-                 wNama+1, "Nama Armada"
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+            wNo+1, "No",
+            wKat+1, "Kategori",
+            wKap+1, "Kapasitas",
+            wFas+1, "Fasilitas",
+            wNama+1, "Nama Armada",
+            wPlat+1, "No Plat",
+            wTahun+1, "Tahun",
+            wStatus+1, "Status"
         );
 
         gotoxy(startX, row++);
@@ -105,61 +119,37 @@ void readKendaraan() {
         for (int i = start_index; i < end_index; i++) {
             Kendaraan k = all_kendaraan[i];
 
-            // BIAR KALO KEPANJANG JADI ...
-            char kategori[20], kapasitas[15], tahun[10], status[20];
-            char fasilitas[32], nama[25];
+            char kategori[15], kapasitas[15], fasilitas[30];
+            char nama[25], plat[20], tahun[10], status[15];
 
             snprintf(kategori, wKat+1, "%s", k.kategori);
-            if (strlen(k.kategori) > wKat) {
-                kategori[wKat-2] = '.';
-                kategori[wKat-1] = '.';
-                kategori[wKat] = '\0';
-            }
-
             snprintf(kapasitas, wKap+1, "%s", k.kapasitas);
-            if (strlen(k.kapasitas) > wKap) {
-                kapasitas[wKap-2] = '.';
-                kapasitas[wKap-1] = '.';
-                kapasitas[wKap] = '\0';
-            }
-
-            snprintf(tahun, wTahun+1, "%s", k.tahun);
-            if (strlen(k.tahun) > wTahun) {
-                tahun[wTahun-2] = '.';
-                tahun[wTahun-1] = '.';
-                tahun[wTahun] = '\0';
-            }
-
-            snprintf(status, wStatus+1, "%s", k.status);
-            if (strlen(k.status) > wStatus) {
-                status[wStatus-2] = '.';
-                status[wStatus-1] = '.';
-                status[wStatus] = '\0';
-            }
-
             snprintf(fasilitas, wFas+1, "%s", k.fasilitas);
+            snprintf(nama, wNama+1, "%s", k.nama_armada);
+            snprintf(plat, wPlat+1, "%s", k.plat_nomor);
+            snprintf(tahun, wTahun+1, "%s", k.tahun);
+            snprintf(status, wStatus+1, "%s", k.status);
+
             if (strlen(k.fasilitas) > wFas) {
                 fasilitas[wFas-2] = '.';
                 fasilitas[wFas-1] = '.';
-                fasilitas[wFas] = '\0';
             }
 
-            snprintf(nama, wNama+1, "%s", k.nama_armada);
             if (strlen(k.nama_armada) > wNama) {
                 nama[wNama-2] = '.';
                 nama[wNama-1] = '.';
-                nama[wNama] = '\0';
             }
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
-                 wNo+1,    i + 1,
-                 wKat+1,   kategori,
-                 wKap+1,   kapasitas,
-                 wTahun+1, tahun,
-                 wStatus+1, status,
-                 wFas+1,   fasilitas,
-                 wNama+1,  nama
+            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+                wNo+1,    i + 1,
+                wKat+1,   kategori,
+                wKap+1,   kapasitas,
+                wFas+1,   fasilitas,
+                wNama+1,  nama,
+                wPlat+1,  plat,
+                wTahun+1, tahun,
+                wStatus+1, status
             );
         }
 
@@ -184,4 +174,5 @@ void readKendaraan() {
 
     } while (key != 13);
 }
+
 #endif
