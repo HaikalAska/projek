@@ -4,6 +4,7 @@
 #include "createjadwal.h"
 
 void buatdummyjadwal() {
+
     FILE *fp;
     jadwal data;
     int max_data = 50;
@@ -31,7 +32,7 @@ void buatdummyjadwal() {
     };
 
     char *kategori[] = {
-        "Ekonomi","Bisnis", "eksekutif"
+        "Ekonomi","Bisnis", "Eksekutif"
     };
 
     int harga[] = {
@@ -65,7 +66,7 @@ void buatdummyjadwal() {
         strcpy(data.kategori, kategori[i % n_kategori]);
 
         data.harga = harga[i % n_harga] + (i * 5000);
-
+        strcpy(data.status, "Aktif");
         fwrite(&data, sizeof(jadwal), 1, fp);
     }
 
@@ -81,26 +82,24 @@ void buatdummyjadwal() {
 //=====================================//
 //Fungsi untuk menampilkan tabel jadwal//
 //=====================================//
-void bacajadwal() {
+   void bacajadwal() {
 
     FILE *fp;
     jadwal all_jadwal[1000];
     int total = 0;
 
-    // buatdummyjadwal();
-
     int startX = 37;
     int startY = 12;
 
-    // Lebar kolom (disesuaikan)
+    // Lebar kolom
     int wNo = 3;
-    int wTgl = 12;
-    int wJam = 7;
-    int wAsal = 12;
-    int wTujuan = 12;
-    int wArmada = 20;
-    int wKategori = 12;
-    int wHarga = 15;
+    int wTgl = 10;
+    int wJam = 5;
+    int wRute = 20;
+    int wArmada = 17;
+    int wKategori = 10;
+    int wHarga = 13;
+    int wStatus = 8;
 
     int current_page = 1;
     int total_pages = 1;
@@ -110,7 +109,6 @@ void bacajadwal() {
 
     fp = fopen("jadwal.dat", "rb");
     if (!fp) {
-
         gotoxy(startX, startY);
         printf("File jadwal.dat tidak ditemukan!");
         getch();
@@ -122,13 +120,27 @@ void bacajadwal() {
     }
     fclose(fp);
 
+    // ===== BUBBLE SORT BERDASARKAN ID (DESCENDING) =====
+    for (int i = 0; i < total - 1; i++) {
+        for (int j = 0; j < total - i - 1; j++) {
+            if (strcmp(all_jadwal[j].id,
+                       all_jadwal[j + 1].id) < 0) {
+
+                jadwal temp = all_jadwal[j];
+                all_jadwal[j] = all_jadwal[j + 1];
+                all_jadwal[j + 1] = temp;
+            }
+        }
+    }
+
     if (total > 0)
         total_pages = (total + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE;
 
-    int totalWidth = 1 + (wNo+2) + (wTgl+2) + (wJam+2) + (wAsal+2) +
-                     (wTujuan+2) + (wArmada+2) + (wKategori+2) + (wHarga+2);
+    int totalWidth = 1 + (wNo+2) + (wTgl+2) + (wJam+2) +
+                     (wRute+2) + (wArmada+2) +
+                     (wKategori+2) + (wHarga+2) + (wStatus+2);
 
-    char line[200];
+    char line[250];
     memset(line, '-', totalWidth);
     line[totalWidth] = '\0';
 
@@ -148,11 +160,11 @@ void bacajadwal() {
                wNo+1,"No",
                wTgl+1,"Tanggal",
                wJam+1,"Jam",
-               wAsal+1,"Kota Asal",
-               wTujuan+1,"Kota Tujuan",
+               wRute+1,"Rute",
                wArmada+1,"Armada",
                wKategori+1,"Kategori",
-               wHarga+1,"Harga");
+               wHarga+1,"Harga",
+               wStatus+1,"Status");
 
         gotoxy(startX, row++);
         printf("%s", line);
@@ -164,19 +176,30 @@ void bacajadwal() {
         for (int i = start; i < end; i++) {
 
             char harga[25];
-            // formatHarga(atoi(all_jadwal[i].harga), harga); // jika harga string
+            char statusText[15];
+            char rute[60];
+
             formatHarga(all_jadwal[i].harga, harga);
+            sprintf(rute, "%s - %s",
+                    all_jadwal[i].kotaAsal,
+                    all_jadwal[i].kotaTujuan);
+
+            if (strcmp(all_jadwal[i].status, "Aktif") == 0)
+                strcpy(statusText, "Aktif");
+            else
+                strcpy(statusText, "Nonaktif");
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+            printf("|%-*d|%-*s|%-*s|%-*.*s|%-*s|%-*s|%*s|%-*s|",
                    wNo+1, i+1,
                    wTgl+1, all_jadwal[i].tanggal,
                    wJam+1, all_jadwal[i].jamBerangkat,
-                   wAsal+1, all_jadwal[i].kotaAsal,
-                   wTujuan+1, all_jadwal[i].kotaTujuan,
+                   wRute+1, wRute+1, rute,
                    wArmada+1, all_jadwal[i].nama_armada,
                    wKategori+1, all_jadwal[i].kategori,
-                   wHarga+1, harga);
+                   wHarga+1, harga,
+                   wStatus+1, statusText
+            );
         }
 
         gotoxy(startX, row++);
@@ -198,5 +221,6 @@ void bacajadwal() {
 
     } while (key != 13);
 }
+
 
 #endif // PROJEK_READJADWAL_H

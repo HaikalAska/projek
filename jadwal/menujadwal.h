@@ -11,6 +11,7 @@
 #include "updatejadwal.h"
 
 static void menuStaff();
+
 void  menujadwal() {
     int pilih;
 
@@ -24,12 +25,13 @@ void  menujadwal() {
         tampilanlogin("GAMBARASCI.txt", 45, 3);
         gotoxy(11,5); printf("Kelompok 5");
         bacajadwal();
-        bentukframe(3, 29, 27, 10);
+        bentukframe(3, 29, 27, 14);
         gotoxy(5,30); printf("===  MENU NAVIGASI  ===");
         gotoxy(4, 32);printf("NAVIGASI [\xE2\x86\x91 \xE2\x86\x93]");
         gotoxy(4, 34);printf("[ENTER] Pilih");
         gotoxy(4, 36);printf("[Esc] Keluar");
-
+        gotoxy(4, 38);printf("[Space] Lanjut");
+        gotoxy(4, 40);printf("[Backspace] Kembali");
 
         bentukframe(3, 10, 27, 14);
         gotoxy(4,11); printf("=== KELOLA JADWAL ===");
@@ -46,7 +48,7 @@ void  menujadwal() {
                 hapusjadwal();
                 break;
             case 3:
-                perbaruijadwal();
+                perbaruijadwal();//buatdummyjadwal();
                 break;
             case 4:
                 menuStaff();
