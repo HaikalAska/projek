@@ -16,6 +16,8 @@ void SortirLaporan() {
     int wNo = 3, wID = 8, wNama = 20, wTelp = 13;
     int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 15;
 
+    clearArea(32,32,126,10);
+
     // Baca semua data
     fp = fopen("tiket.dat", "rb");
     if (!fp) {
