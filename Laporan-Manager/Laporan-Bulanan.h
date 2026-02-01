@@ -23,6 +23,8 @@ void laporanBulanan() {
     int wNo = 3, wID = 8, wNama = 20, wTelp = 13;
     int wRute = 17, wTgl = 12, wJam = 5, wStatus = 7, wHarga = 15;
 
+    clearArea(32,12,126,30);
+
     // Baca semua data dulu
     fp = fopen("tiket.dat", "rb");
     if (!fp) {

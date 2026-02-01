@@ -33,7 +33,7 @@ int getRuteCount() {
 }
 
 // ================= INPUT JAM =================
-int inputJam(char *out) {  // ← Ubah return type dari void ke int
+int inputJam(char *out) {
     char jam[3] = "", menit[3] = "";
     int i = 0;
     char ch;
@@ -44,18 +44,31 @@ int inputJam(char *out) {  // ← Ubah return type dari void ke int
 
         if (ch == 27) {
             out[0] = '\0';
-            return -1;  // ← Return -1 sebagai penanda ESC
+            return -1;
         }
 
-        // digit pertama jam: 0 - 2
-        if (i == 0 && ch >= '0' && ch <= '2') {
-            jam[i++] = ch;
-            printf("%c", ch);
+        if (i == 0) {
+            // Digit pertama jam: hanya 0, 1, 2
+            if (ch >= '0' && ch <= '2') {
+                jam[i++] = ch;
+                printf("%c", ch);
+            }
         }
-        // digit kedua jam: 0 - 9
-        else if (i == 1 && ch >= '0' && ch <= '9') {
-            jam[i++] = ch;
-            printf("%c", ch);
+        else if (i == 1) {
+            // Jika digit pertama 0 atau 1 → digit kedua 0-9
+            if (jam[0] == '0' || jam[0] == '1') {
+                if (ch >= '0' && ch <= '9') {
+                    jam[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
+            // Jika digit pertama 2 → digit kedua hanya 0-3
+            else if (jam[0] == '2') {
+                if (ch >= '0' && ch <= '3') {
+                    jam[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
         }
     }
 
@@ -69,25 +82,29 @@ int inputJam(char *out) {  // ← Ubah return type dari void ke int
 
         if (ch == 27) {
             out[0] = '\0';
-            return -1;  // ← Return -1 sebagai penanda ESC
+            return -1;
         }
 
-        // digit pertama menit: 0 - 5
-        if (i == 0 && ch >= '0' && ch <= '5') {
-            menit[i++] = ch;
-            printf("%c", ch);
+        if (i == 0) {
+            // Digit pertama menit: hanya 0-5
+            if (ch >= '0' && ch <= '5') {
+                menit[i++] = ch;
+                printf("%c", ch);
+            }
         }
-        // digit kedua menit: 0 - 9
-        else if (i == 1 && ch >= '0' && ch <= '9') {
-            menit[i++] = ch;
-            printf("%c", ch);
+        else if (i == 1) {
+            // Digit kedua menit: 0-9
+            if (ch >= '0' && ch <= '9') {
+                menit[i++] = ch;
+                printf("%c", ch);
+            }
         }
     }
 
     menit[2] = '\0';
 
     sprintf(out, "%s:%s", jam, menit);
-    return 0;  // ← Return 0 jika sukses
+    return 0;
 }
 
 
