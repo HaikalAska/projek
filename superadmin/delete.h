@@ -1,4 +1,4 @@
-#ifndef PROJEK_DELETE_H
+ #ifndef PROJEK_DELETE_H
 #define PROJEK_DELETE_H
 #include <stdio.h>
 #include <string.h>

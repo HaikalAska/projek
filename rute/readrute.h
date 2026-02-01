@@ -9,13 +9,14 @@
 #include <conio.h>
 #include <string.h>
 #include "../FrameTabel.h"
+//#include "rute/createrute.h"
 
 #define MAX_ROWS_PER_PAGE 8
 
 // ==================================================
 // FORMAT HARGA RUPIAH (AMAN, TIDAK DOBEL .000)
 // ==================================================
-void formatHarga(int harga, char *out) {
+void formatHarga(long harga, char *out) {
     int juta = harga / 1000000;
     int ribu = (harga / 1000) % 1000;
     int sisa = harga % 1000;
@@ -45,11 +46,13 @@ void bacaRute() {
 
     // Lebar kolom
     int wNo = 3;
-    int wAsal = 18;
-    int wTujuan = 18;
-    int wHarga = 18;
-    int wBerangkat = 12;
-    int wTiba = 12;
+    int wAsal = 12;
+    int wTujuan = 12;
+    int wHarga = 16;
+    int wBerangkat = 9;
+    int wTiba = 7;
+    int wDurasi = 13;
+    int wStatus = 10;
 
     int current_page = 1;
     int total_pages = 1;
@@ -76,9 +79,9 @@ void bacaRute() {
     }
 
     int totalWidth = 1 + (wNo+2) + (wAsal+2) + (wTujuan+2)
-                   + (wHarga+2) + (wBerangkat+2) + (wTiba+2);
+                   + (wHarga+2) + (wBerangkat+2) + (wTiba+2) +(wDurasi+2)+ (wStatus+1);
 
-    char line[200];
+    char line[   200];
     memset(line, '-', totalWidth);
     line[totalWidth] = '\0';
 
@@ -95,13 +98,15 @@ void bacaRute() {
         printf("%s", line);
 
         gotoxy(startX, row++);
-        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
+        printf("|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|%-*s|",
                wNo+1, "No",
                wAsal+1, "Kota Asal",
                wTujuan+1, "Kota Tujuan",
                wHarga+1, "Harga",
                wBerangkat+1, "Berangkat",
-               wTiba+1, "Tiba");
+               wTiba+1, "Tiba",
+               wDurasi+1, "Durasi",
+               wStatus+1, "Status");
 
         gotoxy(startX, row++);
         printf("%s", line);
@@ -115,13 +120,15 @@ void bacaRute() {
             formatHarga((int)all_rute[i].harga, hargaStr);
 
             gotoxy(startX, row++);
-            printf("|%-*d|%-*s|%-*s|%-*s|%-*s|%-*s|",
+            printf("|%-*d|%-*s|%-*s|%*s|%-*s|%-*s|%-*s|%-*s|",
                    wNo+1, i + 1,
                    wAsal+1, all_rute[i].kotaAsal,
                    wTujuan+1, all_rute[i].kotaTujuan,
                    wHarga+1, hargaStr,
                    wBerangkat+1, all_rute[i].jamBerangkat,
-                   wTiba+1, all_rute[i].jamTiba);
+                   wTiba+1, all_rute[i].jamTiba,
+                   wDurasi+1, all_rute[i].durasi,
+                   wStatus+1, all_rute[i].status);
         }
 
         gotoxy(startX, row++);

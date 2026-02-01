@@ -14,9 +14,11 @@ typedef struct {
     char id[20];
     char kotaAsal[50];
     char kotaTujuan[50];
-    float harga;
+    long harga;
     char jamBerangkat[10];
     char jamTiba[10];
+    char durasi[20];
+    char status[10];
 } Rute;
 
 // ================= HITUNG DATA =================
@@ -41,19 +43,35 @@ void inputJam(char *out) {
     while (i < 2) {
         ch = _getch();
 
-        if (ch == 27) { out[0] = '\0'; return; }
+        if (ch == 27) {
+            out[0] = '\0';
+            return;
+        }
 
         // digit pertama jam: 0 - 2
         if (i == 0 && ch >= '0' && ch <= '2') {
             jam[i++] = ch;
             printf("%c", ch);
         }
-        // digit kedua jam: 0 - 9
-        else if (i == 1 && ch >= '0' && ch <= '9') {
-            jam[i++] = ch;
-            printf("%c", ch);
+        // digit kedua jam:
+        else if (i == 1) {
+            // jika digit pertama = '0' atau '1' → 0 - 9
+            if ((jam[0] == '0' || jam[0] == '1') &&
+                ch >= '0' && ch <= '9') {
+
+                jam[i++] = ch;
+                printf("%c", ch);
+                }
+            // jika digit pertama = '2' → 0 - 3
+            else if (jam[0] == '2' &&
+                     ch >= '0' && ch <= '3') {
+
+                jam[i++] = ch;
+                printf("%c", ch);
+                     }
         }
     }
+
 
     jam[2] = '\0';
     printf(":");
@@ -82,74 +100,28 @@ void inputJam(char *out) {
     sprintf(out, "%s:%s", jam, menit);
 }
 
+void hitungDurasi(char *jamBerangkat, char *jamTiba, char *durasi) {
+    int jb, mb, jt, mt;
 
-// ================= INPUT HARGA =================
-int inputHarga(int x, int y) {
-    char buf[5] = "";   // max 4 digit + '\0'
-    int i = 0;
+    sscanf(jamBerangkat, "%d:%d", &jb, &mb);
+    sscanf(jamTiba, "%d:%d", &jt, &mt);
 
-    gotoxy(x, y);
-    printf("Rp");
+    int menitBerangkat = jb * 60 + mb;
+    int menitTiba      = jt * 60 + mt;
 
-    while (1) {
-        char ch = _getch();
-
-        // ESC batal
-        if (ch == 27) return 0;
-
-        // ENTER
-        if (ch == 13 && i > 0) {
-            int nilai = atoi(buf);
-
-            // Validasi: angka tidak boleh 0
-            if (nilai == 0) {
-                gotoxy(x, y + 1);
-                printf("Angka tidak boleh 0!");
-                Sleep(1500);  // tampilkan pesan 1.5 detik
-
-                // Hapus pesan error
-                gotoxy(x, y + 1);
-                printf("                      ");  // hapus dengan spasi
-
-                // Reset input
-                i = 0;
-                memset(buf, 0, sizeof(buf));
-                gotoxy(x, y);
-                printf("Rp      ");  // hapus input sebelumnya
-                gotoxy(x, y);
-                printf("Rp");
-                continue;
-            }
-
-            // pindah kursor ke akhir input
-            printf("Rp");
-
-            if (i <= 3) {
-                // contoh: 120 -> Rp120.000,00
-                gotoxy(x,y);
-                printf("Rp%d.000,00", nilai);
-                return nilai * 1000;
-            } else {
-                // contoh: 1200 -> Rp1.200.000,00
-                gotoxy(x,y);
-                printf("Rp%d.%03d.000,00", nilai / 1000, nilai % 1000);
-                return nilai * 1000;
-            }
-        }
-
-        // BACKSPACE
-        if (ch == 8 && i > 0) {
-            i--;
-            buf[i] = '\0';
-            printf("\b \b");
-        }
-
-        // ANGKA (maks 4 digit)
-        if (ch >= '0' && ch <= '9' && i < 4) {
-            buf[i++] = ch;
-            printf("%c", ch);
-        }
+    // Jika melewati tengah malam
+    if (menitTiba < menitBerangkat) {
+        menitTiba += 24 * 60;
     }
+
+    int selisih = menitTiba - menitBerangkat;
+    int jam = selisih / 60;
+    int menit = selisih % 60;
+
+    if (menit == 0)
+        sprintf(durasi, "%d Jam", jam);
+    else
+        sprintf(durasi, "%d Jam %d Menit", jam, menit);
 }
 
 
@@ -162,6 +134,7 @@ int rutenavigasi(int x, int y, int jumlah, int spasi) {
             gotoxy(x, y + i * spasi);
             if (i == pilih)
                 printf(">>");
+
             else
                 printf("  ");
         }
@@ -328,6 +301,7 @@ pilihProvinsi:
 
 
 // ================= CREATE RUTE =================
+// ================= CREATE RUTE =================
 void buatrute() {
     char n;
 
@@ -348,13 +322,64 @@ void buatrute() {
         pilihKota(r.kotaAsal);
         gotoxy(52, 29); printf("%s", r.kotaAsal);
 
-        gotoxy(37, 30); printf("Kota Tujuan  : ");
-        pilihKota(r.kotaTujuan);
+        // Validasi kota tujuan tidak sama dengan kota asal
+        do {
+            gotoxy(37, 30); printf("Kota Tujuan  : ");
+            pilihKota(r.kotaTujuan);
+
+            if (strcmp(r.kotaAsal, r.kotaTujuan) == 0) {
+                gotoxy(37, 31);
+                printf("Kota tujuan tidak boleh sama dengan kota asal!");
+                Sleep(1500);
+
+                gotoxy(37, 31);
+                printf("                                                ");
+
+                gotoxy(37, 30);
+                printf("Kota Tujuan  :                    ");
+
+                continue;
+            }
+
+            break;
+
+        } while (1);
+
         gotoxy(52, 30); printf("%s", r.kotaTujuan);
 
-        gotoxy(37, 31); printf("Harga        : ");
-        r.harga = inputHarga(52, 31);
-        if (r.harga == 0) { fclose(fp); return; }
+        // Input harga dengan validasi
+        int escPressed = 0;
+
+        do {
+            gotoxy(37, 31); printf("Harga        : ");
+
+            r.harga = inputangka7digit(52, 31, &escPressed);
+
+            if (escPressed) {
+                fclose(fp);
+                return;
+            }
+
+            if (r.harga == 0) {
+                gotoxy(37, 32);
+                printf("Harga tidak boleh 0!");
+                Sleep(1500);
+
+                gotoxy(37, 32);
+                printf("                      ");
+
+                gotoxy(37, 31);
+                printf("Harga        :                    ");
+
+                continue;
+            }
+
+            break;
+
+        } while (1);
+
+        gotoxy(52, 31);
+        tampilanhargatiket(r.harga);
 
         gotoxy(37, 32); printf("Jam Berangkat: ");
         inputJam(r.jamBerangkat);
@@ -364,11 +389,18 @@ void buatrute() {
         inputJam(r.jamTiba);
         if (strlen(r.jamTiba) == 0) { fclose(fp); return; }
 
+        hitungDurasi(r.jamBerangkat, r.jamTiba, r.durasi);
+        gotoxy(37, 34); printf("Durasi       : %s", r.durasi);
+
+        // ===== SET STATUS OTOMATIS =====
+        strcpy(r.status, "Aktif");
+        gotoxy(37, 35); printf("Status       : %s", r.status);
+
         fwrite(&r, sizeof(Rute), 1, fp);
         fclose(fp);
 
-        gotoxy(37, 35); printf("Data rute berhasil ditambahkan!");
-        gotoxy(37, 36); printf("Tambah lagi? (y/n): ");
+        gotoxy(37, 36); printf("Data rute berhasil ditambahkan!");
+        gotoxy(37, 37); printf("Tambah lagi? (y/n): ");
 
         while (1) {
             n = _getch();
@@ -440,7 +472,7 @@ void buatDummyRute() {
         sprintf(r.jamBerangkat, "%02d:%02d", jam, menit);
         sprintf(r.jamTiba, "%02d:%02d", (jam + 4) % 24, menit);
 
-        fwrite(&r, sizeof(Rute), 1, fp);
+        fwrite(&r,  sizeof(Rute), 1, fp);
     }
 
     fclose(fp);
